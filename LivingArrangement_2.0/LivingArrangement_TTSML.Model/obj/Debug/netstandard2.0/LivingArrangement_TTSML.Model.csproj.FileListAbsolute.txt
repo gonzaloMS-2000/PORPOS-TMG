@@ -1,0 +1,10 @@
+C:\Users\gonza\Desktop\TMG\Machine Learning\LivingArrangement_2.0\LivingArrangement_TTSML.Model\bin\Debug\netstandard2.0\MLModel.zip
+C:\Users\gonza\Desktop\TMG\Machine Learning\LivingArrangement_2.0\LivingArrangement_TTSML.Model\bin\Debug\netstandard2.0\LivingArrangement_TTSML.Model.deps.json
+C:\Users\gonza\Desktop\TMG\Machine Learning\LivingArrangement_2.0\LivingArrangement_TTSML.Model\bin\Debug\netstandard2.0\LivingArrangement_TTSML.Model.dll
+C:\Users\gonza\Desktop\TMG\Machine Learning\LivingArrangement_2.0\LivingArrangement_TTSML.Model\bin\Debug\netstandard2.0\LivingArrangement_TTSML.Model.pdb
+C:\Users\gonza\Desktop\TMG\Machine Learning\LivingArrangement_2.0\LivingArrangement_TTSML.Model\obj\Debug\netstandard2.0\LivingArrangement_TTSML.Model.csprojAssemblyReference.cache
+C:\Users\gonza\Desktop\TMG\Machine Learning\LivingArrangement_2.0\LivingArrangement_TTSML.Model\obj\Debug\netstandard2.0\LivingArrangement_TTSML.Model.AssemblyInfoInputs.cache
+C:\Users\gonza\Desktop\TMG\Machine Learning\LivingArrangement_2.0\LivingArrangement_TTSML.Model\obj\Debug\netstandard2.0\LivingArrangement_TTSML.Model.AssemblyInfo.cs
+C:\Users\gonza\Desktop\TMG\Machine Learning\LivingArrangement_2.0\LivingArrangement_TTSML.Model\obj\Debug\netstandard2.0\LivingArrangement_TTSML.Model.csproj.CoreCompileInputs.cache
+C:\Users\gonza\Desktop\TMG\Machine Learning\LivingArrangement_2.0\LivingArrangement_TTSML.Model\obj\Debug\netstandard2.0\LivingArrangement_TTSML.Model.dll
+C:\Users\gonza\Desktop\TMG\Machine Learning\LivingArrangement_2.0\LivingArrangement_TTSML.Model\obj\Debug\netstandard2.0\LivingArrangement_TTSML.Model.pdb
