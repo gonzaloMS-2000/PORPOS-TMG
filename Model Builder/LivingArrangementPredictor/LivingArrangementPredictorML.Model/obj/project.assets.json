@@ -3729,11 +3729,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ethan\\source\\repos\\LivingArrangementPredictor\\LivingArrangementPredictorML.Model\\LivingArrangementPredictorML.Model.csproj",
+      "projectUniqueName": "C:\\Users\\ethan\\Documents\\Ethan\\TMG\\Research\\PORPOS-TMG\\Model Builder\\LivingArrangementPredictor\\LivingArrangementPredictorML.Model\\LivingArrangementPredictorML.Model.csproj",
       "projectName": "LivingArrangementPredictorML.Model",
-      "projectPath": "C:\\Users\\ethan\\source\\repos\\LivingArrangementPredictor\\LivingArrangementPredictorML.Model\\LivingArrangementPredictorML.Model.csproj",
+      "projectPath": "C:\\Users\\ethan\\Documents\\Ethan\\TMG\\Research\\PORPOS-TMG\\Model Builder\\LivingArrangementPredictor\\LivingArrangementPredictorML.Model\\LivingArrangementPredictorML.Model.csproj",
       "packagesPath": "C:\\Users\\ethan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ethan\\source\\repos\\LivingArrangementPredictor\\LivingArrangementPredictorML.Model\\obj\\",
+      "outputPath": "C:\\Users\\ethan\\Documents\\Ethan\\TMG\\Research\\PORPOS-TMG\\Model Builder\\LivingArrangementPredictor\\LivingArrangementPredictorML.Model\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ethan\\AppData\\Roaming\\NuGet\\NuGet.Config",

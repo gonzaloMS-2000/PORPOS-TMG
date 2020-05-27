@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "qYB4RSs0ytopbuH5hp7B5ltbjQlMb4ZphW+hLplGRdiSP5zrY+KGcON39oCINOwb92D5WxuzdXE+0YJoJlavUA==",
+  "dgSpecHash": "qJbJk+f8RB1G4CcHMG+nYrMBop0N+mh4HffqycpBR/3UwYWJEoLJkR8d0eI560pvW/t+I3+YUE7CHsBnqN5I8g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\ethan\\source\\repos\\LivingArrangementPredictor\\LivingArrangementPredictor\\LivingArrangementPredictor.csproj",
+  "projectFilePath": "C:\\Users\\ethan\\Documents\\Ethan\\TMG\\Research\\PORPOS-TMG\\Model Builder\\LivingArrangementPredictor\\LivingArrangementPredictor\\LivingArrangementPredictor.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ethan\\.nuget\\packages\\lightgbm\\2.2.3\\lightgbm.2.2.3.nupkg.sha512",
     "C:\\Users\\ethan\\.nuget\\packages\\microsoft.csharp\\4.3.0\\microsoft.csharp.4.3.0.nupkg.sha512",
