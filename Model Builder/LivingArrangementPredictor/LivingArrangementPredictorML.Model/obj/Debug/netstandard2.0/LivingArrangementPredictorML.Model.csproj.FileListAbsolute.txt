@@ -1,0 +1,10 @@
+C:\Users\ethan\source\repos\LivingArrangementPredictor\LivingArrangementPredictorML.Model\bin\Debug\netstandard2.0\MLModel.zip
+C:\Users\ethan\source\repos\LivingArrangementPredictor\LivingArrangementPredictorML.Model\bin\Debug\netstandard2.0\LivingArrangementPredictorML.Model.deps.json
+C:\Users\ethan\source\repos\LivingArrangementPredictor\LivingArrangementPredictorML.Model\bin\Debug\netstandard2.0\LivingArrangementPredictorML.Model.dll
+C:\Users\ethan\source\repos\LivingArrangementPredictor\LivingArrangementPredictorML.Model\bin\Debug\netstandard2.0\LivingArrangementPredictorML.Model.pdb
+C:\Users\ethan\source\repos\LivingArrangementPredictor\LivingArrangementPredictorML.Model\obj\Debug\netstandard2.0\LivingArrangementPredictorML.Model.csprojAssemblyReference.cache
+C:\Users\ethan\source\repos\LivingArrangementPredictor\LivingArrangementPredictorML.Model\obj\Debug\netstandard2.0\LivingArrangementPredictorML.Model.AssemblyInfoInputs.cache
+C:\Users\ethan\source\repos\LivingArrangementPredictor\LivingArrangementPredictorML.Model\obj\Debug\netstandard2.0\LivingArrangementPredictorML.Model.AssemblyInfo.cs
+C:\Users\ethan\source\repos\LivingArrangementPredictor\LivingArrangementPredictorML.Model\obj\Debug\netstandard2.0\LivingArrangementPredictorML.Model.csproj.CoreCompileInputs.cache
+C:\Users\ethan\source\repos\LivingArrangementPredictor\LivingArrangementPredictorML.Model\obj\Debug\netstandard2.0\LivingArrangementPredictorML.Model.dll
+C:\Users\ethan\source\repos\LivingArrangementPredictor\LivingArrangementPredictorML.Model\obj\Debug\netstandard2.0\LivingArrangementPredictorML.Model.pdb
