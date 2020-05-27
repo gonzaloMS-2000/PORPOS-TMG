@@ -3724,19 +3724,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\gonza\\.nuget\\packages\\": {}
+    "C:\\Users\\ethan\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gonza\\Desktop\\TMG\\Machine Learning\\LivingArrangement_2.0\\LivingArrangement_TTSML.Model\\LivingArrangement_TTSML.Model.csproj",
+      "projectUniqueName": "C:\\Users\\ethan\\Documents\\Ethan\\TMG\\Research\\PORPOS-TMG\\Model Builder\\LivingArrangementPredictor_2.0\\LivingArrangement_TTSML.Model\\LivingArrangement_TTSML.Model.csproj",
       "projectName": "LivingArrangement_TTSML.Model",
-      "projectPath": "C:\\Users\\gonza\\Desktop\\TMG\\Machine Learning\\LivingArrangement_2.0\\LivingArrangement_TTSML.Model\\LivingArrangement_TTSML.Model.csproj",
-      "packagesPath": "C:\\Users\\gonza\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gonza\\Desktop\\TMG\\Machine Learning\\LivingArrangement_2.0\\LivingArrangement_TTSML.Model\\obj\\",
+      "projectPath": "C:\\Users\\ethan\\Documents\\Ethan\\TMG\\Research\\PORPOS-TMG\\Model Builder\\LivingArrangementPredictor_2.0\\LivingArrangement_TTSML.Model\\LivingArrangement_TTSML.Model.csproj",
+      "packagesPath": "C:\\Users\\ethan\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ethan\\Documents\\Ethan\\TMG\\Research\\PORPOS-TMG\\Model Builder\\LivingArrangementPredictor_2.0\\LivingArrangement_TTSML.Model\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\gonza\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\ethan\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
