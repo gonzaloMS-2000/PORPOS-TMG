@@ -1,0 +1,87 @@
+*** File created 2020-05-29 10:32:50.638990 ***
+*** Log file from biogeme 3.2.5 [2020-05-29]
+[10:32:47] < General >   Remove 10 unused variables from the database as only 9 are used.
+[10:32:47] < General >   Log likelihood (N=2225):   -4329.65
+[10:32:47] < General >   Minimize with tol 1e-07
+[10:32:47] < General >   Log likelihood (N=2225):   -4329.65 Gradient norm:      1e+04  
+[10:32:47] < General >   Log likelihood (N=2225):  -8351.876 Gradient norm:      7e+03  
+[10:32:47] < General >   Log likelihood (N=2225):   -3831.96 Gradient norm:      5e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -3586.975 Gradient norm:      3e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -3642.461 Gradient norm:      8e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -3423.763 Gradient norm:      1e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -3386.436 Gradient norm:      1e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -2874.285 Gradient norm:      5e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -2336.209 Gradient norm:      3e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -2196.641 Gradient norm:      9e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -2184.422 Gradient norm:      3e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -2180.114 Gradient norm:      3e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -2175.955 Gradient norm:      6e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -2168.229 Gradient norm:      1e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -2151.807 Gradient norm:      1e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -2118.267 Gradient norm:      2e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -2067.685 Gradient norm:      2e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -2550.173 Gradient norm:      1e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -2062.486 Gradient norm:      2e+03  
+[10:32:48] < General >   Log likelihood (N=2225):  -2189.573 Gradient norm:      4e+03  
+[10:32:48] < General >   Log likelihood (N=2225):   -2022.04 Gradient norm:      4e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -2016.811 Gradient norm:      1e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -2015.644 Gradient norm:      2e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -2014.687 Gradient norm:      3e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -2006.946 Gradient norm:      5e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -2000.437 Gradient norm:      4e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -1995.172 Gradient norm:      3e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -1993.691 Gradient norm:      7e+01  
+[10:32:48] < General >   Log likelihood (N=2225):    -1993.4 Gradient norm:      1e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -1992.608 Gradient norm:      2e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -1990.949 Gradient norm:      3e+02  
+[10:32:48] < General >   Log likelihood (N=2225):   -1987.05 Gradient norm:      4e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -1979.889 Gradient norm:      5e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -1976.841 Gradient norm:      7e+01  
+[10:32:48] < General >   Log likelihood (N=2225):  -1970.521 Gradient norm:      2e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -1968.803 Gradient norm:      2e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -1968.264 Gradient norm:      4e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -1966.948 Gradient norm:      1e+02  
+[10:32:48] < General >   Log likelihood (N=2225):  -1966.696 Gradient norm:      8e+01  
+[10:32:48] < General >   Log likelihood (N=2225):  -1965.717 Gradient norm:      7e+01  
+[10:32:48] < General >   Log likelihood (N=2225):  -1965.242 Gradient norm:      9e+01  
+[10:32:48] < General >   Log likelihood (N=2225):  -1963.494 Gradient norm:      2e+02  
+[10:32:49] < General >   Log likelihood (N=2225):   -1972.76 Gradient norm:      1e+02  
+[10:32:49] < General >   Log likelihood (N=2225):   -1961.57 Gradient norm:      2e+02  
+[10:32:49] < General >   Log likelihood (N=2225):   -1958.09 Gradient norm:      2e+02  
+[10:32:49] < General >   Log likelihood (N=2225):  -1959.757 Gradient norm:      5e+02  
+[10:32:49] < General >   Log likelihood (N=2225):  -1956.503 Gradient norm:      1e+02  
+[10:32:49] < General >   Log likelihood (N=2225):   -1955.25 Gradient norm:      3e+01  
+[10:32:49] < General >   Log likelihood (N=2225):  -1955.122 Gradient norm:      2e+01  
+[10:32:49] < General >   Log likelihood (N=2225):  -1954.863 Gradient norm:      3e+01  
+[10:32:49] < General >   Log likelihood (N=2225):  -1954.422 Gradient norm:      3e+01  
+[10:32:49] < General >   Log likelihood (N=2225):  -13826.78 Gradient norm:      3e+03  
+[10:32:49] < General >   Log likelihood (N=2225):  -1954.391 Gradient norm:      4e+01  
+[10:32:49] < General >   Log likelihood (N=2225):  -1953.169 Gradient norm:      8e+01  
+[10:32:49] < General >   Log likelihood (N=2225):  -1952.145 Gradient norm:      6e+01  
+[10:32:49] < General >   Log likelihood (N=2225):  -1951.728 Gradient norm:      3e+01  
+[10:32:49] < General >   Log likelihood (N=2225):  -1951.668 Gradient norm:          6  
+[10:32:49] < General >   Log likelihood (N=2225):  -1951.657 Gradient norm:          1  
+[10:32:49] < General >   Log likelihood (N=2225):  -1951.657 Gradient norm:          8  
+[10:32:49] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:          3  
+[10:32:49] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:          2  
+[10:32:49] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:        0.2  
+[10:32:49] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:        0.2  
+[10:32:49] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:        0.1  
+[10:32:49] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:        0.6  
+[10:32:49] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:        0.1  
+[10:32:49] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:        0.2  
+[10:32:50] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:        0.7  
+[10:32:50] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:        0.1  
+[10:32:50] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:       0.03  
+[10:32:50] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:       0.01  
+[10:32:50] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:       0.02  
+[10:32:50] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:       0.03  
+[10:32:50] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:       0.08  
+[10:32:50] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:      0.009  
+[10:32:50] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:      0.008  
+[10:32:50] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:      0.001  
+[10:32:50] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:     0.0003  
+[10:32:50] < General >   Log likelihood (N=2225):  -1951.656 Gradient norm:     0.0003 Hessian norm:       6e+04 BHHH norm:       6e+04
+[10:32:50] < General >   Results saved in file SMTO_Segmented_Output/SMTO_Campus_Choice_Segment_10.html
+[10:32:50] < General >   Results saved in file SMTO_Segmented_Output/SMTO_Campus_Choice_Segment_10.pickle
+[10:32:50] < General >   Log file created: SMTO_Segmented_Output/SMTO_Campus_Choice_Segment_10.log
