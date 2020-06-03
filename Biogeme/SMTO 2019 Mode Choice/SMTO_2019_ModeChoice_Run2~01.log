@@ -1,0 +1,47 @@
+*** File created 2020-06-03 17:04:18.959555 ***
+*** Log file from biogeme 3.2.5 [2020-06-03]
+[17:04:16] < General >   Remove 7 unused variables from the database as only 5 are used.
+[17:04:17] < General >   Log likelihood (N=7337):  -44634.26
+[17:04:17] < General >   Minimize with tol 1e-07
+[17:04:17] < General >   Log likelihood (N=7337):  -44634.26 Gradient norm:      9e+05  
+[17:04:17] < General >   Log likelihood (N=7337):   -1270926 Gradient norm:      1e+06  
+[17:04:17] < General >   Log likelihood (N=7337):  -111190.5 Gradient norm:      1e+06  
+[17:04:17] < General >   Log likelihood (N=7337):  -18864.91 Gradient norm:      7e+05  
+[17:04:17] < General >   Log likelihood (N=7337):  -117980.7 Gradient norm:      1e+06  
+[17:04:17] < General >   Log likelihood (N=7337):  -11089.04 Gradient norm:      5e+05  
+[17:04:17] < General >   Log likelihood (N=7337):  -51795.22 Gradient norm:      1e+06  
+[17:04:17] < General >   Log likelihood (N=7337):  -10943.54 Gradient norm:      8e+05  
+[17:04:17] < General >   Log likelihood (N=7337):  -10490.66 Gradient norm:      3e+05  
+[17:04:17] < General >   Log likelihood (N=7337):  -10903.02 Gradient norm:      8e+05  
+[17:04:17] < General >   Log likelihood (N=7337):  -10375.99 Gradient norm:      5e+04  
+[17:04:17] < General >   Log likelihood (N=7337):  -10356.47 Gradient norm:      6e+04  
+[17:04:17] < General >   Log likelihood (N=7337):  -10192.16 Gradient norm:      3e+05  
+[17:04:17] < General >   Log likelihood (N=7337):  -9994.918 Gradient norm:      3e+05  
+[17:04:17] < General >   Log likelihood (N=7337):  -9777.469 Gradient norm:      2e+05  
+[17:04:17] < General >   Log likelihood (N=7337):  -9644.718 Gradient norm:      6e+04  
+[17:04:17] < General >   Log likelihood (N=7337):   -9576.43 Gradient norm:      2e+05  
+[17:04:17] < General >   Log likelihood (N=7337):    -9484.2 Gradient norm:      3e+05  
+[17:04:17] < General >   Log likelihood (N=7337): -2.708215e+16 Gradient norm:      3e+20  
+[17:04:17] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:17] < General >   Log likelihood (N=7337): -3.557506e+18 Gradient norm:      3e+20  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337): -1.01159e+18 Gradient norm:      3e+20  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05  
+[17:04:18] < General >   Log likelihood (N=7337):  -9390.869 Gradient norm:      3e+05 Hessian norm:       4e+24 BHHH norm:       1e+09
+[17:04:18] < General >   Results saved in file SMTO_2019_ModeChoice_Run2~01.html
+[17:04:18] < General >   Results saved in file SMTO_2019_ModeChoice_Run2~01.pickle
+[17:04:18] < General >   Log file created: SMTO_2019_ModeChoice_Run2~01.log

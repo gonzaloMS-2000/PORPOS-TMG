@@ -1,0 +1,48 @@
+*** File created 2020-06-03 17:11:18.727361 ***
+*** Log file from biogeme 3.2.5 [2020-06-03]
+[17:11:16] < General >   Remove 7 unused variables from the database as only 5 are used.
+[17:11:16] < General >   Log likelihood (N=7337):     -3e+17
+[17:11:16] < General >   Minimize with tol 1e-07
+[17:11:16] < General >   Log likelihood (N=7337):     -3e+17 Gradient norm:      3e+20  
+[17:11:16] < General >   Log likelihood (N=7337):  -258830.6 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337): -1.797693e+308 Gradient norm:      3e+20  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337): -8.23911e+20 Gradient norm:      3e+20  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337): -3.620805e+20 Gradient norm:      3e+20  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337): -2.050581e+20 Gradient norm:      3e+20  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337): -5.265402e+19 Gradient norm:      3e+20  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337): -1.797693e+308 Gradient norm:      3e+20  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337): -1.756564e+20 Gradient norm:      3e+20  
+[17:11:17] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:17] < General >   Log likelihood (N=7337): -8.201821e+19 Gradient norm:      3e+20  
+[17:11:18] < General >   Log likelihood (N=7337):  -87912.01 Gradient norm:      1e+06  
+[17:11:18] < General >   Log likelihood (N=7337): -2.021699e+19 Gradient norm:      3e+20  
+[17:11:18] < General >   Log likelihood (N=7337):  -504064.1 Gradient norm:      1e+06  
+[17:11:18] < General >   Log likelihood (N=7337):  -88825.97 Gradient norm:      8e+05  
+[17:11:18] < General >   Log likelihood (N=7337):  -54713.61 Gradient norm:      5e+05  
+[17:11:18] < General >   Log likelihood (N=7337):  -50387.73 Gradient norm:      2e+05  
+[17:11:18] < General >   Log likelihood (N=7337):  -50208.54 Gradient norm:      2e+05  
+[17:11:18] < General >   Log likelihood (N=7337):  -40619.26 Gradient norm:      6e+05  
+[17:11:18] < General >   Log likelihood (N=7337):  -492086.9 Gradient norm:      1e+06  
+[17:11:18] < General >   Log likelihood (N=7337):   -37684.5 Gradient norm:      1e+06  
+[17:11:18] < General >   Log likelihood (N=7337):  -38323.38 Gradient norm:      7e+05  
+[17:11:18] < General >   Log likelihood (N=7337):  -36016.84 Gradient norm:      7e+05  
+[17:11:18] < General >   Log likelihood (N=7337):  -35318.13 Gradient norm:      7e+05  
+[17:11:18] < General >   Log likelihood (N=7337):  -37201.83 Gradient norm:      5e+05  
+[17:11:18] < General >   Log likelihood (N=7337): -1.797693e+308 Gradient norm:      3e+20  
+[17:11:18] < General >   Log likelihood (N=7337):  -35318.13 Gradient norm:      7e+05  
+[17:11:18] < General >   Log likelihood (N=7337):  -35318.13 Gradient norm:      7e+05 Hessian norm:       1e+08 BHHH norm:       1e+09
+[17:11:18] < General >   Results saved in file SMTO_2019_ModeChoice_Run2~03.html
+[17:11:18] < General >   Results saved in file SMTO_2019_ModeChoice_Run2~03.pickle
+[17:11:18] < General >   Log file created: SMTO_2019_ModeChoice_Run2~03.log
