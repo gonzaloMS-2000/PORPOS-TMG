@@ -1,0 +1,19 @@
+*** File created 2020-06-03 16:28:54.947827 ***
+*** Log file from biogeme 3.2.5 [2020-06-03]
+[16:28:53] < General >   Remove 7 unused variables from the database as only 5 are used.
+[16:28:54] < General >   Log likelihood (N=7360):   -1.5e+19
+[16:28:54] < General >   Minimize with tol 1e-07
+[16:28:54] < General >   Log likelihood (N=7360):   -1.5e+19 Gradient norm:      3e+20  
+[16:28:54] < General >   Log likelihood (N=7360):  -314696.8 Gradient norm:      1e+06  
+[16:28:54] < General >   Log likelihood (N=7360):  -314696.8 Gradient norm:      1e+06  
+[16:28:54] < General >   Log likelihood (N=7360): -1.797693e+308 Gradient norm:        inf  
+[16:28:54] < General >   Log likelihood (N=7360):  -314696.8 Gradient norm:      1e+06  
+[16:28:54] < General >   Log likelihood (N=7360):  -314696.8 Gradient norm:      1e+06  
+[16:28:54] < General >   Log likelihood (N=7360): -1.797693e+308 Gradient norm:      3e+20  
+[16:28:54] < General >   Log likelihood (N=7360):  -314696.8 Gradient norm:      1e+06  
+[16:28:54] < General >   Log likelihood (N=7360): -1.797693e+308 Gradient norm:        inf  
+[16:28:54] < General >   Log likelihood (N=7360):  -314696.8 Gradient norm:      1e+06  
+[16:28:54] < General >   Log likelihood (N=7360):  -314696.8 Gradient norm:      1e+06 Hessian norm:       2e+04 BHHH norm:       2e+09
+[16:28:54] < General >   Results saved in file SMTO_2019_ModeChoice_Run2.html
+[16:28:54] < General >   Results saved in file SMTO_2019_ModeChoice_Run2.pickle
+[16:28:54] < General >   Log file created: SMTO_2019_ModeChoice_Run2.log
