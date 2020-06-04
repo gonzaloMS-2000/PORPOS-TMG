@@ -1,0 +1,72 @@
+*** File created 2020-06-04 13:36:45.176130 ***
+*** Log file from biogeme 3.2.5 [2020-06-04]
+[13:36:42] < General >   Remove 7 unused variables from the database as only 5 are used.
+[13:36:43] < General >   Log likelihood (N=14260):  -54960.48
+[13:36:43] < General >   Minimize with tol 1e-07
+[13:36:43] < General >   Log likelihood (N=14260):  -54960.48 Gradient norm:      9e+05  
+[13:36:43] < General >   Log likelihood (N=14260):  -235634.9 Gradient norm:      3e+05  
+[13:36:43] < General >   Log likelihood (N=14260):  -56031.81 Gradient norm:      3e+05  
+[13:36:43] < General >   Log likelihood (N=14260):  -16721.79 Gradient norm:      2e+05  
+[13:36:43] < General >   Log likelihood (N=14260):  -13472.68 Gradient norm:      2e+05  
+[13:36:43] < General >   Log likelihood (N=14260):  -35999.34 Gradient norm:      9e+05  
+[13:36:43] < General >   Log likelihood (N=14260):  -11945.88 Gradient norm:      1e+05  
+[13:36:43] < General >   Log likelihood (N=14260):  -12218.95 Gradient norm:      2e+05  
+[13:36:43] < General >   Log likelihood (N=14260):  -11292.37 Gradient norm:      3e+04  
+[13:36:43] < General >   Log likelihood (N=14260):   -11174.3 Gradient norm:      4e+04  
+[13:36:43] < General >   Log likelihood (N=14260):  -10814.72 Gradient norm:      8e+04  
+[13:36:43] < General >   Log likelihood (N=14260):  -10657.54 Gradient norm:      1e+04  
+[13:36:43] < General >   Log likelihood (N=14260):  -10622.14 Gradient norm:      5e+03  
+[13:36:43] < General >   Log likelihood (N=14260):  -10609.95 Gradient norm:      5e+03  
+[13:36:43] < General >   Log likelihood (N=14260):  -10586.04 Gradient norm:      6e+03  
+[13:36:43] < General >   Log likelihood (N=14260):  -10503.22 Gradient norm:      1e+04  
+[13:36:43] < General >   Log likelihood (N=14260):  -10397.09 Gradient norm:      9e+03  
+[13:36:43] < General >   Log likelihood (N=14260):  -10310.78 Gradient norm:      4e+03  
+[13:36:43] < General >   Log likelihood (N=14260):  -10271.64 Gradient norm:      3e+03  
+[13:36:43] < General >   Log likelihood (N=14260):  -10245.06 Gradient norm:      3e+03  
+[13:36:43] < General >   Log likelihood (N=14260):  -10198.71 Gradient norm:      7e+03  
+[13:36:43] < General >   Log likelihood (N=14260):  -10120.89 Gradient norm:      1e+04  
+[13:36:43] < General >   Log likelihood (N=14260):  -9971.675 Gradient norm:      4e+04  
+[13:36:43] < General >   Log likelihood (N=14260):  -9668.733 Gradient norm:      3e+04  
+[13:36:43] < General >   Log likelihood (N=14260):  -9091.914 Gradient norm:      3e+04  
+[13:36:44] < General >   Log likelihood (N=14260):  -8917.138 Gradient norm:      6e+04  
+[13:36:44] < General >   Log likelihood (N=14260):  -8507.855 Gradient norm:      4e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -8482.701 Gradient norm:      3e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -8466.631 Gradient norm:      2e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -8462.872 Gradient norm:      3e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -8461.783 Gradient norm:      1e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -8461.326 Gradient norm:      7e+02  
+[13:36:44] < General >   Log likelihood (N=14260):  -8460.653 Gradient norm:      2e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -8459.375 Gradient norm:      4e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -8456.266 Gradient norm:      7e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -8448.825 Gradient norm:      1e+04  
+[13:36:44] < General >   Log likelihood (N=14260):  -8429.541 Gradient norm:      2e+04  
+[13:36:44] < General >   Log likelihood (N=14260):  -8379.332 Gradient norm:      3e+04  
+[13:36:44] < General >   Log likelihood (N=14260):  -8268.466 Gradient norm:      5e+04  
+[13:36:44] < General >   Log likelihood (N=14260):  -8054.755 Gradient norm:      6e+04  
+[13:36:44] < General >   Log likelihood (N=14260):  -7802.248 Gradient norm:      4e+04  
+[13:36:44] < General >   Log likelihood (N=14260):    -7819.4 Gradient norm:      3e+04  
+[13:36:44] < General >   Log likelihood (N=14260):   -7764.79 Gradient norm:      9e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -7727.799 Gradient norm:      8e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -7755.491 Gradient norm:      6e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -7725.505 Gradient norm:      5e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -7722.095 Gradient norm:      2e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -7721.626 Gradient norm:      6e+02  
+[13:36:44] < General >   Log likelihood (N=14260):  -7721.471 Gradient norm:      4e+02  
+[13:36:44] < General >   Log likelihood (N=14260):  -7721.236 Gradient norm:      7e+02  
+[13:36:44] < General >   Log likelihood (N=14260):  -7720.676 Gradient norm:      1e+03  
+[13:36:44] < General >   Log likelihood (N=14260):   -7720.13 Gradient norm:      1e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -7720.946 Gradient norm:      2e+03  
+[13:36:44] < General >   Log likelihood (N=14260):  -7720.067 Gradient norm:      6e+02  
+[13:36:44] < General >   Log likelihood (N=14260):  -7719.891 Gradient norm:      2e+02  
+[13:36:44] < General >   Log likelihood (N=14260):  -7719.887 Gradient norm:      6e+02  
+[13:36:44] < General >   Log likelihood (N=14260):  -7719.903 Gradient norm:      8e+02  
+[13:36:44] < General >   Log likelihood (N=14260):  -7719.876 Gradient norm:      5e+01  
+[13:36:44] < General >   Log likelihood (N=14260):  -7719.874 Gradient norm:          3  
+[13:36:45] < General >   Log likelihood (N=14260):  -7719.874 Gradient norm:      1e+01  
+[13:36:45] < General >   Log likelihood (N=14260):  -7719.874 Gradient norm:        0.4  
+[13:36:45] < General >   Log likelihood (N=14260):  -7719.874 Gradient norm:       0.06  
+[13:36:45] < General >   Log likelihood (N=14260):  -7719.874 Gradient norm:      3e-05  
+[13:36:45] < General >   Log likelihood (N=14260):  -7719.874 Gradient norm:      3e-05 Hessian norm:       2e+07 BHHH norm:       2e+07
+[13:36:45] < General >   Results saved in file SMTO_Logit_ModeChoice.html
+[13:36:45] < General >   Results saved in file SMTO_Logit_ModeChoice.pickle
+[13:36:45] < General >   Log file created: SMTO_Logit_ModeChoice.log
