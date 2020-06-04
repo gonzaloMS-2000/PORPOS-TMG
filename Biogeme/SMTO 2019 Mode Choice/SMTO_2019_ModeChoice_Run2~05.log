@@ -1,0 +1,25 @@
+*** File created 2020-06-04 09:39:56.927340 ***
+*** Log file from biogeme 3.2.5 [2020-06-04]
+[09:39:54] < General >   Remove 7 unused variables from the database as only 5 are used.
+[09:39:55] < General >   Log likelihood (N=9639):  -15627.38
+[09:39:55] < General >   Minimize with tol 1e-07
+[09:39:55] < General >   Log likelihood (N=9639):  -15627.38 Gradient norm:      7e+05  
+[09:39:55] < General >   Log likelihood (N=9639):   -1501664 Gradient norm:      2e+06  
+[09:39:55] < General >   Log likelihood (N=9639):  -120198.4 Gradient norm:      2e+06  
+[09:39:55] < General >   Log likelihood (N=9639):  -10937.89 Gradient norm:      1e+05  
+[09:39:55] < General >   Log likelihood (N=9639):   -10911.2 Gradient norm:      2e+05  
+[09:39:55] < General >   Log likelihood (N=9639):  -10612.37 Gradient norm:      1e+05  
+[09:39:55] < General >   Log likelihood (N=9639): -2.137094e+18 Gradient norm:      3e+20  
+[09:39:55] < General >   Log likelihood (N=9639):  -10612.37 Gradient norm:      1e+05  
+[09:39:56] < General >   Log likelihood (N=9639):  -10612.37 Gradient norm:      1e+05  
+[09:39:56] < General >   Log likelihood (N=9639): -2.701763e+17 Gradient norm:      3e+20  
+[09:39:56] < General >   Log likelihood (N=9639):  -10514.94 Gradient norm:      9e+04  
+[09:39:56] < General >   Log likelihood (N=9639): -1.784223e+18 Gradient norm:      3e+20  
+[09:39:56] < General >   Log likelihood (N=9639):  -10514.94 Gradient norm:      9e+04  
+[09:39:56] < General >   Log likelihood (N=9639):  -10391.95 Gradient norm:      5e+04  
+[09:39:56] < General >   Log likelihood (N=9639): -1.822301e+18 Gradient norm:      3e+20  
+[09:39:56] < General >   Log likelihood (N=9639):  -10391.95 Gradient norm:      5e+04  
+[09:39:56] < General >   Log likelihood (N=9639):  -10391.95 Gradient norm:      5e+04 Hessian norm:       7e+08 BHHH norm:       1e+09
+[09:39:56] < General >   Results saved in file SMTO_2019_ModeChoice_Run2~05.html
+[09:39:56] < General >   Results saved in file SMTO_2019_ModeChoice_Run2~05.pickle
+[09:39:56] < General >   Log file created: SMTO_2019_ModeChoice_Run2~05.log
