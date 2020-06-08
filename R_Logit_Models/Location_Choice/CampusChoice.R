@@ -1,7 +1,7 @@
 library(data.table)
 library(mlogit)
 
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models")
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Location_Choice")
 
 df <- read.csv("Campus_Choice_Segments.csv")
 df$Campus = as.factor(df$Campus)
