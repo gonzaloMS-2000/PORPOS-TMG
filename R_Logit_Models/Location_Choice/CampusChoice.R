@@ -9,8 +9,7 @@ df$Campus = as.factor(df$Campus)
 num_intercepts = 7L
 num_segments = 7L
 coefs_and_stats = array(numeric(), c(num_intercepts + 2,num_segments))
-log_likelihoods = vector("numeric", num_segments)
-rho_squareds = vector("numeric", num_segments)
+
 for (i in 0:(num_segments-1))
 {
   ml_data = mlogit.data(df, varying=2:8, choice="Campus", shape="wide",
