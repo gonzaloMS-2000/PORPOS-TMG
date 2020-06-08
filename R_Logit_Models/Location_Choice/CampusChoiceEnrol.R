@@ -19,8 +19,11 @@ for (i in 0:(num_segments-1))
   if (i == 0) model = mlogit(Campus ~ Dist + Total | 0, data=ml_data, reflevel="5")
   else if (i < 4) model = mlogit(Campus ~ Dist + UG | 0, data=ml_data, reflevel="5")
   else model = mlogit(Campus ~ Dist + Grad | 0, data=ml_data, reflevel="5")
-
+  
+  model2 = mlogit(Campus ~ Dist, data=ml_data, reflevel="5")
+  
   coefs_and_stats[num_intercepts+1, i+1] = model[[2]][[1]] # Log likelihood
+  print(1 - (model[[2]][[1]]) / (model2[[2]][[1]]))
   for (j in 1:num_intercepts)
   {
     coefs_and_stats[j, i+1] = model[[1]][[j]]
