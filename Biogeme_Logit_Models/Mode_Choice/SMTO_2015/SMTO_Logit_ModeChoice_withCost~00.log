@@ -1,0 +1,12 @@
+*** File created 2020-06-08 16:55:01.714293 ***
+*** Log file from biogeme 3.2.5 [2020-06-08]
+[16:55:00] < General >   Remove 9 unused variables from the database as only 7 are used.
+[16:55:01] < General >   Log likelihood (N=14260):  -17861.58
+[16:55:01] < General >   Minimize with tol 1e-07
+[16:55:01] < General >   Log likelihood (N=14260):  -17861.58 Gradient norm:      5e+05  
+[16:55:01] < General >   Log likelihood (N=14260): -1.797693e+308 Gradient norm:        inf  
+[16:55:01] < General >   Log likelihood (N=14260):  -17861.58 Gradient norm:      5e+05  
+[16:55:01] < General >   Log likelihood (N=14260):  -17861.58 Gradient norm:      5e+05 Hessian norm:       1e+07 BHHH norm:       4e+07
+[16:55:01] < General >   Results saved in file SMTO_Logit_ModeChoice_withCost~00.html
+[16:55:01] < General >   Results saved in file SMTO_Logit_ModeChoice_withCost~00.pickle
+[16:55:01] < General >   Log file created: SMTO_Logit_ModeChoice_withCost~00.log
