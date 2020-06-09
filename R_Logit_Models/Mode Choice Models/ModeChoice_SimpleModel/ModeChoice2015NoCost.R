@@ -4,23 +4,14 @@ library(data.table)
 # Read ModeChoice_input.csv
 df <- read.csv("C:/Users/gonza/Desktop/ModeChoice_Input.csv")
 df$Mode = as.factor(df$Mode)
-#str(df)
+str(df)
 
 dim(df)
 
 # # # Plot original densities
-modes = c("Time.Active", "Time.Transit", "Time.Auto")
-for (i in modes)
-{
-   d <- density(df_mode$i)
-  # plot(d, main="Density of" + i + "Times")
-  # polygon(d, col="red", border="blue")
-  print(i)
-}
-
-# d <- density(df_mode$Time.Auto)
-# plot(d, main="Density of Transit Times")
-# polygon(d, col="red", border="blue")
+d <- density(df_mode$Time.Auto)
+plot(d, main="Density of Transit Times")
+polygon(d, col="red", border="blue")
 
 df_mode <- df[!(df$Time.Active > 600),]
 df_mode <- df_mode[!(df_mode$Time.Transit > 200),]

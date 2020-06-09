@@ -2,25 +2,16 @@ library(mlogit)
 library(data.table)
 
 # Read ModeChoice_input.csv
-df <- read.csv("C:/Users/gonza/Desktop/ModeChoice_Input.csv")
+df <- read.csv("C:/Users/gonza/Desktop/ModeChoice_2019Input_withoutCost.csv")
 df$Mode = as.factor(df$Mode)
-#str(df)
+str(df)
 
 dim(df)
 
 # # # Plot original densities
-modes = c("Time.Active", "Time.Transit", "Time.Auto")
-for (i in modes)
-{
-   d <- density(df_mode$i)
-  # plot(d, main="Density of" + i + "Times")
-  # polygon(d, col="red", border="blue")
-  print(i)
-}
-
-# d <- density(df_mode$Time.Auto)
-# plot(d, main="Density of Transit Times")
-# polygon(d, col="red", border="blue")
+d <- density(df_mode$Time.Auto)
+plot(d, main="Density of Transit Times")
+polygon(d, col="red", border="blue")
 
 df_mode <- df[!(df$Time.Active > 600),]
 df_mode <- df_mode[!(df_mode$Time.Transit > 200),]
@@ -52,5 +43,5 @@ coefs_and_stats[8,1] = x[[20]][[1]]
 
 d = as.data.frame(coefs_and_stats)
 setnames(d, old = c('V1','V2', 'V3', 'V4'), new = c("Estimate","p-value","z-value","Std. Error"))
-write.csv(d, "ModeChoice_noCost_output.csv", row.names = c(
+write.csv(d, "ModeChoice_noCost_output_2019.csv", row.names = c(
   "ASC_Active", "ASC_Transit", "B_Auto", "B_Active", "B_Transit", "","LOG_LHOOD", "MCF_R^2"))
