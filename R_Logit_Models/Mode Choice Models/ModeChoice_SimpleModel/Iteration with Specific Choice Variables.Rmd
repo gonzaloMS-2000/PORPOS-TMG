@@ -1,3 +1,11 @@
+---
+title: "Iteration of Choice Specific Variables"
+output: html_notebook
+---
+
+In this notebook we iterate through a simple multinomial __Mode Choice model__, where each run contains a different choice specific variable. Each run also looks at two different reference modes (Auto and Active).
+
+```{r}
 library(mlogit)
 library(data.table)
 
@@ -12,8 +20,10 @@ df$Work = as.factor(df$Work)
 df$Family = as.factor(df$Family)
 df$Level = as.factor(df$Level)
 
+head(df)
 str(df)
 
+# Remove outliers
 df_mode <- df[!(df$Time.Active > 600),]
 df_mode <- df_mode[!(df_mode$Time.Transit > 200),]
 df_mode <- df_mode[!(df_mode$Time.Auto > 150),]
@@ -22,6 +32,7 @@ df_mode <- df_mode[!(df_mode$Time.Auto > 150),]
 mldf = mlogit.data(df_mode, varying = 12:14, choice = "Mode", shape = "wide")
 head(mldf)
 
+# Headers of choice specific variables
 df_headers = df
 df_headers$Time.Auto = NULL
 df_headers$Time.Active = NULL
@@ -32,28 +43,15 @@ for (i in headers)
 {
   # Run MNL model
   model = mlogit(Mode ~ 0|get(i)|Time, data = mldf, reflevel = "Auto")
+  print(paste("CHOICE SPECIFIC VARIABLE: ",i))
+  cat("\n\n---------------------------------------------------------------\n")
+  cat("Referece: AUTO\n")
   print(summary(model))
   model = mlogit(Mode ~ 0|get(i)|Time, data = mldf, reflevel = "Active")
+  cat("\n---------------------------------------------------------------\n")
+  cat("Referece: ACTIVE\n")
   print(summary(model))
+  cat("\n\n---------------------------------------------------------------\n---------------------------------------------------------------\n")
 }
+```
 
-
-# # Write results to .csv file:
-# coefs_and_stats = array(numeric(), c(8,4))
-# x = summary(model)
-# for (i in 1:5)
-# {
-#   coefs_and_stats[i,1] = x[[18]][[i]]
-#   coefs_and_stats[i,2] = x[[18]][[i+15]]
-#   coefs_and_stats[i,3] = x[[18]][[i+10]]
-#   coefs_and_stats[i,4] = x[[18]][[i+5]]
-# }
-# 
-# coefs_and_stats[7,1] = x[[2]][[1]]
-# coefs_and_stats[8,1] = x[[20]][[1]]
-# 
-# 
-# d = as.data.frame(coefs_and_stats)
-# setnames(d, old = c('V1','V2', 'V3', 'V4'), new = c("Estimate","p-value","z-value","Std. Error"))
-# write.csv(d, "ModeChoice_noCost_output.csv", row.names = c(
-#   "ASC_Active", "ASC_Transit", "B_Auto", "B_Active", "B_Transit", "","LOG_LHOOD", "MCF_R^2"))
