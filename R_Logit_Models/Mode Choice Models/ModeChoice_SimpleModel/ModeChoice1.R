@@ -3,11 +3,17 @@ library(data.table)
 library(dfidx)
 
 # Read ModeChoice_input.csv
-df <- read.csv("C:/Users/gonza/Desktop/MChInput_2015_withIncome.csv")
+df <- read.csv("C:/Users/gonza/Desktop/MChInput_2015_withColumns.csv")
 df$Mode = as.factor(df$Mode)
 df$Income = as.factor(df$Income)
+df$Status = as.factor(df$Status)
+df$Gender = as.factor(df$Gender)
+df$Licence = as.factor(df$Licence)
+df$Work = as.factor(df$Work)
+df$Family = as.factor(df$Family)
+df$Level = as.factor(df$Level)
 str(df)
-
+table(df$Family)
 #dim(df)
 
 # # # Plot original densities
@@ -29,13 +35,12 @@ df_mode <- df_mode[!(df_mode$Time.Transit > 200),]
 df_mode <- df_mode[!(df_mode$Time.Auto > 150),]
 
 # Transform dataframe from wide to long
-mldf = mlogit.data(df_mode, varying = 4:6, choice = "Mode", shape = "wide")
+mldf = mlogit.data(df_mode, varying = 11:13, choice = "Mode", shape = "wide")
 head(mldf)
 
 # Run MNL model
-model = mlogit(Mode ~ 0|Income|Time, data = mldf, reflevel = "Auto")
+model = mlogit(Mode ~ 0|Level + Gender + Cars + Family + Children + Adults + Work + Income + Licence|Time, data = mldf, reflevel = "Auto")
 summary(model)
-x = summary(model)
 
 # # Write results to .csv file:
 # coefs_and_stats = array(numeric(), c(8,4))
