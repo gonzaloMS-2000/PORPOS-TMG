@@ -28,15 +28,17 @@ df_headers$Time.Active = NULL
 df_headers$Time.Transit = NULL
 headers = colnames(df_headers)
 
-for (i in headers)
-{
-  # Run MNL model
-  model = mlogit(Mode ~ 0|get(i)|Time, data = mldf, reflevel = "Auto")
-  print(summary(model))
-  model = mlogit(Mode ~ 0|get(i)|Time, data = mldf, reflevel = "Active")
-  print(summary(model))
-}
+# for (i in headers)
+# {
+#   # Run MNL model
+#   model = mlogit(Mode ~ 0|get(i)|Time, data = mldf, reflevel = "Auto")
+#   print(summary(model))
+#   model = mlogit(Mode ~ 0|get(i)|Time, data = mldf, reflevel = "Active")
+#   print(summary(model))
+# }
 
+model = mlogit(Mode ~ 0|1|Time, data = mldf, reflevel = "Auto")
+print(summary(model))
 
 # # Write results to .csv file:
 # coefs_and_stats = array(numeric(), c(8,4))

@@ -1749,72 +1749,103 @@ summary {
 
 
 <!-- rnb-text-begin -->
-<p>In this notebook we iterate through a simple multinomial <strong>Mode Choice model</strong>, where each run contains a different choice specific variable. Each run also looks at two different reference modes (Auto and Active).</p>
+<p>In this notebook we iterate through a simple multinomial <strong>Mode Choice</strong> model, where each run contains a different choice specific variable. Each run also looks at two different reference modes (Auto and Active).</p>
+<p><strong>Choice Specific Variables:</strong></p>
+<ul>
+<li><strong>Education Level</strong>: (UG/Grad/Other)</li>
+<li><strong>Education Status</strong>: (FT/PT/Other)</li>
+<li><strong>Gender</strong>: (Male/Female/Other)</li>
+<li><strong>Work</strong>: (FT/PT/Other)</li>
+<li><strong>Living with Family</strong>: (0 - No, 1 - Yes)</li>
+<li><strong>Car Ownership</strong>: (0 - No, 1 - Yes)</li>
+<li><strong>Car Availability</strong>: (0 - No, 1 - Yes)</li>
+<li><strong>License</strong>: (0 - No, 1 - Yes)</li>
+<li><strong>Number of Children in Household</strong></li>
+<li><strong>Number of Adults in Household</strong></li>
+<li><strong>Income</strong>: (Low/High/Unknown)</li>
+</ul>
+<p>For each of the choice specific variables that contain factor options, the package <code>mlogit</code> sets one of the factors to be the reference by default. However, in order to make our analysis simpler we will set our own reference factors to be the ones listed below:</p>
+<p><strong>Reference Factors</strong>:</p>
+<ul>
+<li><strong>Education Level</strong>: “Other”</li>
+<li><strong>Education Status</strong>: “Other”</li>
+<li><strong>Gender</strong>: “Other”</li>
+<li><strong>Work</strong>: “Other”</li>
+<li><strong>Living with Family</strong>: 0</li>
+<li><strong>Car Ownership</strong>: 0</li>
+<li><strong>Car Availability</strong>: 0</li>
+<li><strong>License</strong>: 0</li>
+<li><strong>Income</strong>: “Unknown”</li>
+</ul>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShtbG9naXQpXG5saWJyYXJ5KGRhdGEudGFibGUpXG5cbiMgUmVhZCBNb2RlQ2hvaWNlX2lucHV0LmNzdlxuZGYgPC0gcmVhZC5jc3YoXCJDOi9Vc2Vycy9nb256YS9EZXNrdG9wL01DaElucHV0XzIwMTVfd2l0aENvbHVtbnMuY3N2XCIpXG5kZiRNb2RlID0gYXMuZmFjdG9yKGRmJE1vZGUpXG5kZiRJbmNvbWUgPSBhcy5mYWN0b3IoZGYkSW5jb21lKVxuZGYkU3RhdHVzID0gYXMuZmFjdG9yKGRmJFN0YXR1cylcbmRmJEdlbmRlciA9IGFzLmZhY3RvcihkZiRHZW5kZXIpXG5kZiRMaWNlbmNlID0gYXMuZmFjdG9yKGRmJExpY2VuY2UpXG5kZiRXb3JrID0gYXMuZmFjdG9yKGRmJFdvcmspXG5kZiRGYW1pbHkgPSBhcy5mYWN0b3IoZGYkRmFtaWx5KVxuZGYkTGV2ZWwgPSBhcy5mYWN0b3IoZGYkTGV2ZWwpXG5cbmhlYWQoZGYpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShtbG9naXQpXG5saWJyYXJ5KGRhdGEudGFibGUpXG5cbiMgUmVhZCBNb2RlQ2hvaWNlX2lucHV0LmNzdlxuZGYgPC0gcmVhZC5jc3YoXCJDOi9Vc2Vycy9nb256YS9EZXNrdG9wL01DaElucHV0XzIwMTVfd2l0aENvbHVtbnNfMi4xLmNzdlwiKVxuZGYkTW9kZSA9IGFzLmZhY3RvcihkZiRNb2RlKVxuZGYkSW5jb21lID0gcmVsZXZlbChhcy5mYWN0b3IoZGYkSW5jb21lKSwgXCJVbmtub3duXCIpXG5kZiRTdGF0dXMgPSByZWxldmVsKGFzLmZhY3RvcihkZiRTdGF0dXMpLCBcIk90aGVyXCIpXG5kZiRHZW5kZXIgPSByZWxldmVsKGFzLmZhY3RvcihkZiRHZW5kZXIpLCBcIk90aGVyXCIpXG5kZiRMaWNlbmNlID0gYXMuZmFjdG9yKGRmJExpY2VuY2UpXG5kZiRXb3JrID0gcmVsZXZlbChhcy5mYWN0b3IoZGYkV29yayksIFwiT3RoZXJcIilcbmRmJEZhbWlseSA9IGFzLmZhY3RvcihkZiRGYW1pbHkpXG5kZiRMZXZlbCA9IHJlbGV2ZWwoYXMuZmFjdG9yKGRmJExldmVsKSwgXCJPdGhlclwiKVxuZGYkQ2FyX0F2YWlsID0gYXMuZmFjdG9yKGRmJENhcl9BdmFpbClcbmRmJENhcnMgPSBhcy5mYWN0b3IoZGYkQ2FycylcblxuXG5oZWFkKGRmKVxuYGBgIn0= -->
 <pre class="r"><code>library(mlogit)
 library(data.table)
 
 # Read ModeChoice_input.csv
-df &lt;- read.csv(&quot;C:/Users/gonza/Desktop/MChInput_2015_withColumns.csv&quot;)
+df &lt;- read.csv(&quot;C:/Users/gonza/Desktop/MChInput_2015_withColumns_2.1.csv&quot;)
 df$Mode = as.factor(df$Mode)
-df$Income = as.factor(df$Income)
-df$Status = as.factor(df$Status)
-df$Gender = as.factor(df$Gender)
+df$Income = relevel(as.factor(df$Income), &quot;Unknown&quot;)
+df$Status = relevel(as.factor(df$Status), &quot;Other&quot;)
+df$Gender = relevel(as.factor(df$Gender), &quot;Other&quot;)
 df$Licence = as.factor(df$Licence)
-df$Work = as.factor(df$Work)
+df$Work = relevel(as.factor(df$Work), &quot;Other&quot;)
 df$Family = as.factor(df$Family)
-df$Level = as.factor(df$Level)
+df$Level = relevel(as.factor(df$Level), &quot;Other&quot;)
+df$Car_Avail = as.factor(df$Car_Avail)
+df$Cars = as.factor(df$Cars)
+
 
 head(df)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6MTR9LCJyZGYiOiJINHNJQUFBQUFBQUFCcDFXVFd3VFJ4VGVyTmVieENGdVFwU0lXMGRSSktDTjNkMTFRbUlSTllOU0pTQ1pRdHBRMGhPYTJoTzhaRDBUZHNkeGN1RlBPYUVjT0NEMUhpRk9TRlhGQVFrSkpDanFvWWNLSVlFNHRHcWJXOVZVRlFkVWlVcEpaNzB6Ni9WQ0JPWXducmZ2ZSs5OWI5N01tL0VYbjgzblV2TXBSVkVTaXViL0p2bVBvaytkTksxUlMxRTBsWCsxY2FUVG4xYzQzc2VGTkorN2ZiTzZtMi9RUENkaWpycURsN0hqY2FsSEVQbGFiY1pGSlNFblQ3QXlkc1dIZW1vbUZpQlpkSkFuL2NPb0M2aklxTXVsN1VnK2JaR1JhTWgrT0hVbmxvRTZQZmRHL3BOemdVTmlweVhLQ0oyaTdrS3BIeWt5ZXhuTEVoeXBNaXJrOWprWEVjOW03MFV0S09WNE0vVTByaUFucEQ3ZWtNWHFXeVZXMzBLc3luTmpTTUZzaVVNVDhaTVJydmhXNmlKQ3orZDBHQndESlVyMk0xQ2o3cUxRZi9nMTluekFWNEZQd1lnQnlyVHFlbUFKdTZDR3NUUURVYk9jbWRuTjdxT28zUkp5R1dCMkJZTURFMmJjNGFEd0dON0Z3elF6VnFzK2xwbkp2ZTdUYWtrVFlsWWJjMU5KTlJFaFZlQUhGU0NIRW5sTzl0VTFOWnVWd1FLcTJNN3FKenc1VEpnbjhONEc3bWROd283cWF3QXVwWlVLWXRoN2w3d1ZtYmNpdGo4NnF6RmNpZUZLQkU4MEg5UDZTRVRxMGlWR3U4RDhDN0V6VnBjdXVaZ2hZRnJHc0dFWUlBUE1rZnh3UHArUFFLTWhOQmFIeGlWa0dUSElNa01vRjRXNk9EUVNRQi9MSWcrQm5EUWVqZHB5NEpBRXhxUEEzaUdRRDVNeUEwUUptT3NkODhQRzVwVmJtMnNiREN3U1dwTk9CZXg1Z0pVUkFaSlFYbFNuaUc5SDNta0QwNzRHZHF6ZnYvSFhyem1vUGZ6ajF1bk5TWmk2MWdIT3ZIZ09vWGZ4OTZ2LzNJYWFzV1VPREY2R0UzZCsvTytKOXpUMHk5OTdlWFRyK1MvdzhNTE9nLzdmTUp4MHovY1A5TjZGc3dQYTA5bG42M0Q4d3BpMjJyVUd2NXI4OXZZSDZ6ajBHL3Q3OWZITjVVRTQ5dk9BYXhYVzRNUzl4Ni9tLzkwTHo5MzQvcEgxMHp5Y1dPbE45VjBjaDVVLzhmWHZUblRIWHh1Q0tsaStObW1wTFBodm1Gempsd3l4cWp6MjJuRmFraTJpejJCU0NzOTllOEV1WWxJTTc5elRqWXRKbjY1M2tFU21rQ3ZEZFV5VmJhZkUreXA4TWtwVkord3gvUmdwMG9xTTJEbkhMNFpzNUJYWlUxZklwMFFjb3NBb2VIaWFsOXJwMGxwV0x0ZHZCdlZTMERqNkxydWJLaUdHc2dzdWR3bDJ1Q2xjTzExaU5pVThtT3IvVDBqR25OdmNtS0tuU256eVVxWllycExGakdtSTFwTlBXcmVZOVlpY0RqZzFtVmxTRmdhVHMzWjRWU1VkOUUyNFhXbSt5dm9pczB1dVRXUlpVbHpyWlJsbFNOcWxpdFNSbXVENGJ2OFBBbHZ2WUNBSkFBQT0ifQ== -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6MTV9LCJyZGYiOiJINHNJQUFBQUFBQUFCczFXVFdnVFFSVGVKcnViSnJhbUtIalFpNGdJRlJyN2cyaTl1Q0dsUDlCaWFWTXNlQWpUM1VteVpETWJaeWVKUmNUaVNkU0xkejBwOWVLcEp6MW9vVGN2SWoxNWFNV0Q2TUcvZXZEVTJqaWIzWmxPbDhTMlFzWEE3cno5M3YrYm1mY3lNVERkRjV1T1NaSVVsbVQzcmRDWHBLYkdlM3JQOWtxU0hLSmZMWlFUZGRkcmxIK1lFbkc2dHJ0aWRUVkpDdm1yUUc5VFZDMVlnWlpEcVE3ZmtZc3FsMGdlWXY5REhzTEE4T25RMUZEQWdLSmJ3R0g2M0dvVzZNVEdsTm9VNGdrMWZseHpvZHFmSWdnTnBoazFudllVd3JWZHVRelhKYlpXLzJub1VrM3F4S3hBbG5XeVRHeWZqcVF4UUk1Sjl1UmF6RkxZZ1oyelZRZGhFVmc4ampHWDNvdmpsZ1psRm5QK3hqSFBTdHlBV1lneE5ESU93U2JLQmRqeURIQ2dqN1g3NWpzOGx4eHpWOG5uTVJuSms5bGo0TUVudkwvbmc3a1I2dFNvVm5MTlc1WGFQeWtFaTBTSTZLK2pDdTUyV3hXRFVzWkVCT1lnYnFMZnZrTldZbHliLzF1bWFqUFpmYzlLRXJ0T294L2p5NzQzV2FERERXNndjQW1hZHEzSUZDb2d1NHJZYlIwMmMzbWZEby9hMVYzRmZkQkZ0SjdaN1BYTXNUVXRraDFiT3Ixd1JSczVJblgrS0J5NnVQYXE3MmpyNGhMSFcrKzlmUHg1dFkvclRheXUzejNWUDY2ZFA3NzY2VWxxWHRPdlBqb3pjTDlUNjM2NmNldkJyMldPOTcvNE9memw3UXJYSzN4OHQzejdkVW5yM3JndytlekRjNjI4OHZERzR2Q2Nkbkw5NXZzNzN4YzRmdTdyN0p2NXlvbmczRUdnQ05uY2lUTncxSjFtTE1kSkFralo0WDNVTmxoUFZZY2dNbmozaUl5YU9rUTZiN2lYYlZ6dzZXZ0s0RXl5QWt4dWN4QVVUV3VXaVZJMnM5K2F5cHVXZ1NIYkNEVnBsQzNDdU9vSTB1MGljeEZObTBXWUVBWk1XeDFnVThiRERuaEMza3phbm5zVTI5VUV5NzkrZE9lOEE2WTIyZTZZQVFoSVpERlYyVHJNbkJ1eFM4UzBFVFVXY3Y5Q0tBSGxGaHdBNG1Ya09qZTY5SHdaRmJwNlhRZkNhV1gzUmhYb3VPY3l3Z0pUV0YwZ3lwbUkxVVd4d0F6ZnZvTTB5WHFPaVJLZFNxd3FNWW82Q1dJVHdPUml1bTB4eER2T203OEI1SlhrUURvSkFBQT0ifQ== -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Level"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["Status"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Mode"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["Gender"],"name":[4],"type":["fctr"],"align":["left"]},{"label":["Licence"],"name":[5],"type":["fctr"],"align":["left"]},{"label":["Work"],"name":[6],"type":["fctr"],"align":["left"]},{"label":["Family"],"name":[7],"type":["fctr"],"align":["left"]},{"label":["Cars"],"name":[8],"type":["int"],"align":["right"]},{"label":["Children"],"name":[9],"type":["int"],"align":["right"]},{"label":["Adults"],"name":[10],"type":["int"],"align":["right"]},{"label":["Income"],"name":[11],"type":["fctr"],"align":["left"]},{"label":["Time.Auto"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["Time.Transit"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["Time.Active"],"name":[14],"type":["dbl"],"align":["right"]}],"data":[{"1":"UG","2":"FT","3":"Active","4":"Female","5":"0","6":"Yes, I work part time (<10 hours per week)","7":"Live with roommates","8":"0","9":"0","10":"3","11":"Unknown","12":"3.068723","13":"25.74202","14":"23.92764","_rn_":"1"},{"1":"Grad","2":"FT","3":"Active","4":"Female","5":"1","6":"No, I don't work","7":"Live with partner","8":"1","9":"0","10":"2","11":"Unknown","12":"2.595157","13":"27.40234","14":"23.80503","_rn_":"2"},{"1":"UG","2":"FT","3":"Transit","4":"Female","5":"0","6":"Yes, I work part time (11-20 hours per week)","7":"Live with roommates","8":"0","9":"0","10":"2","11":"$ 60,000 - 89,999","12":"3.320328","13":"31.44704","14":"28.74147","_rn_":"3"},{"1":"Grad","2":"PT","3":"Active","4":"Male","5":"1","6":"Yes, I work > 40 hours per week","7":"Live with family/parents","8":"1","9":"1","10":"2","11":"$ 150,000 - 179,999","12":"32.902340","13":"68.34404","14":"213.14670","_rn_":"4"},{"1":"UG","2":"FT","3":"Active","4":"Male","5":"1","6":"No, I don't work","7":"Live with roommates","8":"0","9":"0","10":"2","11":"Less than $ 30,000","12":"2.523888","13":"24.49303","14":"28.46901","_rn_":"5"},{"1":"UG","2":"FT","3":"Auto","4":"Male","5":"1","6":"No, I don't work","7":"Live with family/parents","8":"2","9":"0","10":"3","11":"I donÃ¢â‚¬â„¢t know","12":"28.717880","13":"88.99363","14":"239.29365","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10],"total":[14]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Level"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["Status"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Mode"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["Gender"],"name":[4],"type":["fctr"],"align":["left"]},{"label":["Licence"],"name":[5],"type":["fctr"],"align":["left"]},{"label":["Work"],"name":[6],"type":["fctr"],"align":["left"]},{"label":["Car_Avail"],"name":[7],"type":["fctr"],"align":["left"]},{"label":["Family"],"name":[8],"type":["fctr"],"align":["left"]},{"label":["Cars"],"name":[9],"type":["fctr"],"align":["left"]},{"label":["Children"],"name":[10],"type":["int"],"align":["right"]},{"label":["Adults"],"name":[11],"type":["int"],"align":["right"]},{"label":["Income"],"name":[12],"type":["fctr"],"align":["left"]},{"label":["Time.Auto"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["Time.Transit"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["Time.Active"],"name":[15],"type":["dbl"],"align":["right"]}],"data":[{"1":"UG","2":"FT","3":"Transit","4":"Female","5":"0","6":"Other","7":"0","8":"1","9":"1","10":"3","11":"4","12":"Unknown","13":"17.474220","14":"75.46848","15":"223.21470","_rn_":"1"},{"1":"Grad","2":"FT","3":"Active","4":"Female","5":"1","6":"Other","7":"0","8":"0","9":"0","10":"0","11":"2","12":"High","13":"2.924953","14":"24.12839","15":"16.98527","_rn_":"2"},{"1":"UG","2":"FT","3":"Transit","4":"Female","5":"1","6":"Other","7":"1","8":"1","9":"1","10":"0","11":"4","12":"Unknown","13":"50.171880","14":"155.55117","15":"349.78845","_rn_":"3"},{"1":"UG","2":"FT","3":"Active","4":"Male","5":"1","6":"Other","7":"1","8":"0","9":"0","10":"0","11":"4","12":"Unknown","13":"1.049121","14":"16.67573","15":"10.49121","_rn_":"4"},{"1":"Grad","2":"FT","3":"Active","4":"Male","5":"1","6":"Other","7":"0","8":"0","9":"0","10":"0","11":"2","12":"Low","13":"2.924953","14":"24.12839","15":"16.98527","_rn_":"5"},{"1":"UG","2":"FT","3":"Active","4":"Female","5":"0","6":"PT","7":"0","8":"0","9":"0","10":"0","11":"3","12":"Unknown","13":"3.068723","14":"25.74202","15":"23.92764","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10],"total":[15]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
   </script>
 </div>
 <!-- rnb-frame-end -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RyKGRmKVxuYGBgIn0= -->
 <pre class="r"><code>str(df)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiJ2RhdGEuZnJhbWUnOlx0MzQxMCBvYnMuIG9mICAxNCB2YXJpYWJsZXM6XG4gJCBMZXZlbCAgICAgICA6IEZhY3RvciB3LyAzIGxldmVscyBcIkdyYWRcIixcIk90aGVyXCIsLi46IDMgMSAzIDEgMyAzIDMgMyAzIDEgLi4uXG4gJCBTdGF0dXMgICAgICA6IEZhY3RvciB3LyAzIGxldmVscyBcIkZUXCIsXCJPdGhlclwiLFwiUFRcIjogMSAxIDEgMyAxIDEgMSAxIDEgMSAuLi5cbiAkIE1vZGUgICAgICAgIDogRmFjdG9yIHcvIDMgbGV2ZWxzIFwiQWN0aXZlXCIsXCJBdXRvXCIsLi46IDEgMSAzIDEgMSAyIDEgMiAxIDEgLi4uXG4gJCBHZW5kZXIgICAgICA6IEZhY3RvciB3LyAzIGxldmVscyBcIkZlbWFsZVwiLFwiTWFsZVwiLC4uOiAxIDEgMSAyIDIgMiAxIDIgMSAyIC4uLlxuICQgTGljZW5jZSAgICAgOiBGYWN0b3Igdy8gMiBsZXZlbHMgXCIwXCIsXCIxXCI6IDEgMiAxIDIgMiAyIDEgMiAyIDIgLi4uXG4gJCBXb3JrICAgICAgICA6IEZhY3RvciB3LyA2IGxldmVscyBcIk5vLCBJIGRvbid0IHdvcmtcIiwuLjogNCAxIDUgMiAxIDEgMSAxIDUgNCAuLi5cbiAkIEZhbWlseSAgICAgIDogRmFjdG9yIHcvIDQgbGV2ZWxzIFwiTGl2ZSBhbG9uZVwiLFwiTGl2ZSB3aXRoIGZhbWlseS9wYXJlbnRzXCIsLi46IDQgMyA0IDIgNCAyIDQgMiAyIDQgLi4uXG4gJCBDYXJzICAgICAgICA6IGludCAgMCAxIDAgMSAwIDIgMCAyIDAgMCAuLi5cbiAkIENoaWxkcmVuICAgIDogaW50ICAwIDAgMCAxIDAgMCAwIDEgMCAwIC4uLlxuICQgQWR1bHRzICAgICAgOiBpbnQgIDMgMiAyIDIgMiAzIDYgMiAzIDQgLi4uXG4gJCBJbmNvbWUgICAgICA6IEZhY3RvciB3LyAxMSBsZXZlbHMgXCIkIDEyMCwwMDAgLSAxNDksOTk5XCIsLi46IDExIDExIDcgMiAxMCA5IDExIDcgMTEgMTEgLi4uXG4gJCBUaW1lLkF1dG8gICA6IG51bSAgMy4wNyAyLjYgMy4zMiAzMi45IDIuNTIgLi4uXG4gJCBUaW1lLlRyYW5zaXQ6IG51bSAgMjUuNyAyNy40IDMxLjQgNjguMyAyNC41IC4uLlxuICQgVGltZS5BY3RpdmUgOiBudW0gIDIzLjkgMjMuOCAyOC43IDIxMy4xIDI4LjUgLi4uXG4ifQ== -->
-<pre><code>&#39;data.frame&#39;:   3410 obs. of  14 variables:
- $ Level       : Factor w/ 3 levels &quot;Grad&quot;,&quot;Other&quot;,..: 3 1 3 1 3 3 3 3 3 1 ...
- $ Status      : Factor w/ 3 levels &quot;FT&quot;,&quot;Other&quot;,&quot;PT&quot;: 1 1 1 3 1 1 1 1 1 1 ...
- $ Mode        : Factor w/ 3 levels &quot;Active&quot;,&quot;Auto&quot;,..: 1 1 3 1 1 2 1 2 1 1 ...
- $ Gender      : Factor w/ 3 levels &quot;Female&quot;,&quot;Male&quot;,..: 1 1 1 2 2 2 1 2 1 2 ...
- $ Licence     : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 2 1 2 2 2 1 2 2 2 ...
- $ Work        : Factor w/ 6 levels &quot;No, I don&#39;t work&quot;,..: 4 1 5 2 1 1 1 1 5 4 ...
- $ Family      : Factor w/ 4 levels &quot;Live alone&quot;,&quot;Live with family/parents&quot;,..: 4 3 4 2 4 2 4 2 2 4 ...
- $ Cars        : int  0 1 0 1 0 2 0 2 0 0 ...
- $ Children    : int  0 0 0 1 0 0 0 1 0 0 ...
- $ Adults      : int  3 2 2 2 2 3 6 2 3 4 ...
- $ Income      : Factor w/ 11 levels &quot;$ 120,000 - 149,999&quot;,..: 11 11 7 2 10 9 11 7 11 11 ...
- $ Time.Auto   : num  3.07 2.6 3.32 32.9 2.52 ...
- $ Time.Transit: num  25.7 27.4 31.4 68.3 24.5 ...
- $ Time.Active : num  23.9 23.8 28.7 213.1 28.5 ...</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiJ2RhdGEuZnJhbWUnOlx0MTQ4Mzkgb2JzLiBvZiAgMTUgdmFyaWFibGVzOlxuICQgTGV2ZWwgICAgICAgOiBGYWN0b3Igdy8gMyBsZXZlbHMgXCJPdGhlclwiLFwiR3JhZFwiLC4uOiAzIDIgMyAzIDIgMyAzIDMgMiAyIC4uLlxuICQgU3RhdHVzICAgICAgOiBGYWN0b3Igdy8gMyBsZXZlbHMgXCJPdGhlclwiLFwiRlRcIixcIlBUXCI6IDIgMiAyIDIgMiAyIDIgMiAyIDIgLi4uXG4gJCBNb2RlICAgICAgICA6IEZhY3RvciB3LyAzIGxldmVscyBcIkFjdGl2ZVwiLFwiQXV0b1wiLC4uOiAzIDEgMyAxIDEgMSAzIDIgMSAzIC4uLlxuICQgR2VuZGVyICAgICAgOiBGYWN0b3Igdy8gMyBsZXZlbHMgXCJPdGhlclwiLFwiRmVtYWxlXCIsLi46IDIgMiAyIDMgMyAyIDIgMiAyIDIgLi4uXG4gJCBMaWNlbmNlICAgICA6IEZhY3RvciB3LyAyIGxldmVscyBcIjBcIixcIjFcIjogMSAyIDIgMiAyIDEgMSAyIDIgMiAuLi5cbiAkIFdvcmsgICAgICAgIDogRmFjdG9yIHcvIDMgbGV2ZWxzIFwiT3RoZXJcIixcIkZUXCIsXCJQVFwiOiAxIDEgMSAxIDEgMyAxIDEgMSAxIC4uLlxuICQgQ2FyX0F2YWlsICAgOiBGYWN0b3Igdy8gMiBsZXZlbHMgXCIwXCIsXCIxXCI6IDEgMSAyIDIgMSAxIDEgMSAxIDEgLi4uXG4gJCBGYW1pbHkgICAgICA6IEZhY3RvciB3LyAyIGxldmVscyBcIjBcIixcIjFcIjogMiAxIDIgMSAxIDEgMiAyIDEgMSAuLi5cbiAkIENhcnMgICAgICAgIDogRmFjdG9yIHcvIDIgbGV2ZWxzIFwiMFwiLFwiMVwiOiAyIDEgMiAxIDEgMSAyIDIgMiAyIC4uLlxuICQgQ2hpbGRyZW4gICAgOiBpbnQgIDMgMCAwIDAgMCAwIDEgMCAwIDAgLi4uXG4gJCBBZHVsdHMgICAgICA6IGludCAgNCAyIDQgNCAyIDMgNCA1IDIgMiAuLi5cbiAkIEluY29tZSAgICAgIDogRmFjdG9yIHcvIDMgbGV2ZWxzIFwiVW5rbm93blwiLFwiSGlnaFwiLC4uOiAxIDIgMSAxIDMgMSAxIDMgMSAxIC4uLlxuICQgVGltZS5BdXRvICAgOiBudW0gIDE3LjQ3IDIuOTIgNTAuMTcgMS4wNSAyLjkyIC4uLlxuICQgVGltZS5UcmFuc2l0OiBudW0gIDc1LjUgMjQuMSAxNTUuNiAxNi43IDI0LjEgLi4uXG4gJCBUaW1lLkFjdGl2ZSA6IG51bSAgMjIzLjIgMTcgMzQ5LjggMTAuNSAxNyAuLi5cbiJ9 -->
+<pre><code>&#39;data.frame&#39;:   14839 obs. of  15 variables:
+ $ Level       : Factor w/ 3 levels &quot;Other&quot;,&quot;Grad&quot;,..: 3 2 3 3 2 3 3 3 2 2 ...
+ $ Status      : Factor w/ 3 levels &quot;Other&quot;,&quot;FT&quot;,&quot;PT&quot;: 2 2 2 2 2 2 2 2 2 2 ...
+ $ Mode        : Factor w/ 3 levels &quot;Active&quot;,&quot;Auto&quot;,..: 3 1 3 1 1 1 3 2 1 3 ...
+ $ Gender      : Factor w/ 3 levels &quot;Other&quot;,&quot;Female&quot;,..: 2 2 2 3 3 2 2 2 2 2 ...
+ $ Licence     : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 2 2 2 2 1 1 2 2 2 ...
+ $ Work        : Factor w/ 3 levels &quot;Other&quot;,&quot;FT&quot;,&quot;PT&quot;: 1 1 1 1 1 3 1 1 1 1 ...
+ $ Car_Avail   : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 2 2 1 1 1 1 1 1 ...
+ $ Family      : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 2 1 2 1 1 1 2 2 1 1 ...
+ $ Cars        : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 2 1 2 1 1 1 2 2 2 2 ...
+ $ Children    : int  3 0 0 0 0 0 1 0 0 0 ...
+ $ Adults      : int  4 2 4 4 2 3 4 5 2 2 ...
+ $ Income      : Factor w/ 3 levels &quot;Unknown&quot;,&quot;High&quot;,..: 1 2 1 1 3 1 1 3 1 1 ...
+ $ Time.Auto   : num  17.47 2.92 50.17 1.05 2.92 ...
+ $ Time.Transit: num  75.5 24.1 155.6 16.7 24.1 ...
+ $ Time.Active : num  223.2 17 349.8 10.5 17 ...</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBSZW1vdmUgb3V0bGllcnNcbmRmX21vZGUgPC0gZGZbIShkZiRUaW1lLkFjdGl2ZSA+IDYwMCksXVxuZGZfbW9kZSA8LSBkZl9tb2RlWyEoZGZfbW9kZSRUaW1lLlRyYW5zaXQgPiAyMDApLF1cbmRmX21vZGUgPC0gZGZfbW9kZVshKGRmX21vZGUkVGltZS5BdXRvID4gMTUwKSxdXG5cbiMgVHJhbnNmb3JtIGRhdGFmcmFtZSBmcm9tIHdpZGUgdG8gbG9uZ1xubWxkZiA9IG1sb2dpdC5kYXRhKGRmX21vZGUsIHZhcnlpbmcgPSAxMjoxNCwgY2hvaWNlID0gXCJNb2RlXCIsIHNoYXBlID0gXCJ3aWRlXCIpXG5oZWFkKG1sZGYpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBSZW1vdmUgb3V0bGllcnNcbmRmX21vZGUgPC0gZGZbIShkZiRUaW1lLkFjdGl2ZSA+IDYwMCksXVxuZGZfbW9kZSA8LSBkZl9tb2RlWyEoZGZfbW9kZSRUaW1lLlRyYW5zaXQgPiAyMDApLF1cbmRmX21vZGUgPC0gZGZfbW9kZVshKGRmX21vZGUkVGltZS5BdXRvID4gMTUwKSxdXG5cbiMgVHJhbnNmb3JtIGRhdGFmcmFtZSBmcm9tIHdpZGUgdG8gbG9uZ1xubWxkZiA9IG1sb2dpdC5kYXRhKGRmX21vZGUsIHZhcnlpbmcgPSAxMzoxNSwgY2hvaWNlID0gXCJNb2RlXCIsIHNoYXBlID0gXCJ3aWRlXCIpXG5oZWFkKG1sZGYpXG5gYGAifQ== -->
 <pre class="r"><code># Remove outliers
 df_mode &lt;- df[!(df$Time.Active &gt; 600),]
 df_mode &lt;- df_mode[!(df_mode$Time.Transit &gt; 200),]
 df_mode &lt;- df_mode[!(df_mode$Time.Auto &gt; 150),]
 
 # Transform dataframe from wide to long
-mldf = mlogit.data(df_mode, varying = 12:14, choice = &quot;Mode&quot;, shape = &quot;wide&quot;)
+mldf = mlogit.data(df_mode, varying = 13:15, choice = &quot;Mode&quot;, shape = &quot;wide&quot;)
 head(mldf)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoifn5+fn5+flxuIGZpcnN0IDEwIG9ic2VydmF0aW9ucyBvdXQgb2YgOTQzMiBcbn5+fn5+fn5cbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoifn5+fn5+flxuIGZpcnN0IDEwIG9ic2VydmF0aW9ucyBvdXQgb2YgNDEwMzEgXG5+fn5+fn5+XG4ifQ== -->
 <pre><code>~~~~~~~
- first 10 observations out of 9432 
+ first 10 observations out of 41031 
 ~~~~~~~</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiLCJtbG9naXQuZGF0YSJdLCJucm93IjoxMCwibmNvbCI6MTV9LCJyZGYiOiJINHNJQUFBQUFBQUFCczFXelc4YlJSUmZyOWQyNHRBbWJkU3FOMFlvRWwreDhkb0pxZFdLYkJXVVVNbUZDbEkxbk5Dd080bVhyR2ZjM2JIZDNDclVJd2YraHFyaTFBdFhwQ0x4Y2VLQWV1d0JoTWdWa09DQWtEZzB6SDY4OWV6RUd6azlzZEo0eCsvMzNwdmZ2SG52emI3LzlrNnJ1bFBWTksyb0dlRnZTZnhvNVkyYlpuTzFxV21HTHY0VkJESWJ2dThLZkZGTTVzWDdqSGpIWnVOUmtJWWl6emdxZTJSSXZFRE1GcEtGUTZteDVXTW5tWmZlNDEzaUozLzBXMXVLZzVMdDRRRHNVNis3Mk9iTUY3Tm5Fci9DRktNWXU5ZVBGRWI2NXZaRVBqZTNZNFBpMFVrVW91V0JBanp5WEpZVlRrbFp6NkZjM2lROTdCRUk2WTN4UE5uQ0ZNUW5FdEdsY1JJUkhaS2xBUlB6VkdzYTBwRFhLVWxEWGJPY2VGeDRseTJqNjhoaDlHV09Sc3pmVCtRdmZraUNFQWhGNkMyMDBrQmROdkFEMUNjK0doRUNha2hXYTVtMVBMM1haTDArOWpuaWJvK2dWNjZhcXNHcmljVnlqb1ZwMXBxbnRXbWF0ZFp4bStjTnNWeW1zbHdOc1pGNHJIYmNJVUhZWXhUeTZsSWtHYm04aTNaeHovVU8zaEJrQ2VWQmdwOGI0K0V1YUZwR2kyUEFaNnpYdzV3RVU5VVY3R05DRFIycnIwS09mdDRqNjh1eDBmTkhHdGU1bkZHUmhoclhPUWpHRWpLYmplVkdvNEZxeUZ4cEw3ZmJiUWxhVGFFMUZib01VTE9oUUUwemhWb3lOQ2VnbFJoNkhRNXBDYlZBZVZYV0ZjQ2JBRnlXZ2ZOTHFKMlNNbU5FaTFlT0t2QzdCNGVmUGpxOC80Q2pmY3BHWU5RaFFZQjRGMU1FQ3laSTVSWU45ZWlwKzVPdWplK2VuUG5rUm5uTjVpTC9vRkZlRzNBR1ZMWjlUQU9YVDVXTFowTXExdG9mQjArK0dMNWt6WHoyOWNQZmZtNVo3Y2Qvdi9QNzA1K3N0Ujh2K3MzT2ZjdjQ5dGRIdHcvWHJTdTdSOTljK0lWWVZ4OC8rWGZubi9OVzlmTVo5TkZmVDYxMS84NkZpK2Urc2o1NStPWDN6UjkycEJ6TWE4RkszVWJYc3Y0Y2R2K2ZVR1l2ZUlwN0JDNTR1RklNdSt2Q0IwSVJlMXl4S2JwT2tKeUl2djZuRmoyV0JrOUdkZFpub3pvc0VZWkF2eGRyVlJXbSt0ajNYZWlBRHVhNHZ1c0w2ekZ4QXd6bVlRT2Q4Qk1IOXZrQngzd0FEZEc0d1J3SVZubUxVQ2Z0aUpXT2F4TnFwNUc4UGI3Q3lwdFJid1ZrQS92Z2JtYWo2M3FPNkxqcGFUZ0RMKzIrNWV2VVpqMGlSeTF4c2UybTRreGd3NTFtb3pYbms2Q0wrNlRENko0SXlXS2NPdEc3b0tUQ2JPaTFMbVhBQzVFQTBpRHhGeXZGU1pNTlh5SERMa3VqTXF6TFdYR1NhaW04S285OVgwNUt6R3dHeHpVOXdYdFdGb1VyS3h2bm82RmVtWlVoOWc5Y0VUcGxHd2xWMXhFNFlDSHY4Ty94aWlqYlhTYXlRNlVTNVZLa1dUNmFNcGZsQkU0T3BPZXhQWmZYUTJEQzBoWFc1eTZqUVhMbUpZVkR3VmNFQ3dNYTd0Q3AyZDBCM2ErWkRTM2JrODRrNzZvMG4xZUNWNEp0RTdybnB0OGFKUTkvbkZiVldWSEVVU1RyZmQrbGNKUlZJUTNxbkhFTWVsV2JlU0NKRC9qWmY5SEFMQTcyREFBQSJ9 -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiLCJtbG9naXQuZGF0YSJdLCJucm93IjoxMCwibmNvbCI6MTZ9LCJyZGYiOiJINHNJQUFBQUFBQUFCdFZWejJ2VVFCVE9KdG1zamJZV0MxNjhlQkNoUW1OYkVkU0xLVnY2QTdaWTJpMFdQSlF4eWU0T201MVprOWx0aTRnOWlwNzhBendKZXU5SlQ0Si9nQWZQVmp5SUhxMW5wWFVteWNzbWNidmRGZ29hZUptWE4yL2VmTys5YnpKTDA2dlg5RlZka2lSRlVzVTd6MStTVmx5Y21MdytLVW1xekw5eWZHWkFqQnQ4Zm9Rcnczd2M1R080ckNOeVFwUzBwQUpwcnROMlhEK01GR3dzclBrN3JPWjQwWWM2NnlFNzB1V1YyVXlBdk9VaUg5YkhVU3ZJWXRUajJsNENuOXlmaVBEeWZpOUU4a3dadE1WeXVFRFo3d1VoMkY0SVBMbElzazlrUHhKa3BSL0kyb3pUUUs0REpWMFFlaC9BWXlDNWhQUmJPeG5JTWc3S3hMSDM3Q0VuMEs5RElaeGsyc25ZQisyWlRmcy8ybFBxOXJ2bzlZQy9tcEFrTGpVdGgxSzJIL29VVmtpZDBIVUM1MlVPVjJ1UnJwVG8rcEU1QkwvQkhucFhITnFVeFhBN1ByWlRMVVlCWWRsRHhNZXNyNUlQQ1NobS9kdm5qMDgrTk0ySnpjckR0UXU3NXRMT3IyZVhieTZhNDc5dkxiLzUrdFlzVkJiZVg5bStaOTY0dVBQOWRmR1YyZnIwNHRHN3VTMXovcncwK3JOK3pyUWV2THc2L1h6VXZQVHI4WmVuUDdZVHJUbW8xTWtXcTlHTklSOWozYjlUeXZUZFExRERnYnNIam9OcTFUQmNWd3B5V1dhTmdtMC82b2g4ZXpka3VCbHpQZVU2NE5GMUE3WVFKWkMzUWk4OWcxVHV4TjZJVk4xR0RCa1ZqNi91QUZkaHdUQWtVQkszTCtTNXpCQnIrZkVWUVcwb2xqYnJFRHYrbXhaSzJIS0lGVmZ5THZYcWdMaUl2TFdwTnNKeHpCblV3TzRtdVBKcGlIK3FXTU91N1Rra2JvL2RjaG5NYXZQRW9nMG5XY1lvUkJuSDVsU2xSZXJwOHAzMkhMK0dtazZKa2lxdjBVaklwV0RNWmJneElLSWFDVXFjQ1F6QWl5aGU2QlN5S0YzUFhBcGRHa2FoYlNScDBzczF6M0RIRWJCMVpXcWEwdUVoN3hJOWJRdktsYloxQ0Jybm9zYTRrYmVKZWVreWFVUlFzYzNuWVU3Z0ZwOS9IeEhOcWxGT2x5eVVnRnlCcDdiZko3bVRqSTRhMG5CcEZUTkRUSFRadWtDYkRGUGlSejNQWnpEa3ZJemhiSXVJRE8weHE5WWk5YkZKS2YyUEdveEdQYUVQWjJxWGg2d2RVc1VFY09aZGREOCtaVVA4VUFlRk5Kb2VKdEJKblZ0OWcxR0d3RSszcUF1V3NMOTdmd0RvQWlzcm9Rc0FBQT09In0= -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Level"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["Status"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Mode"],"name":[3],"type":["lgl"],"align":["right"]},{"label":["Gender"],"name":[4],"type":["fctr"],"align":["left"]},{"label":["Licence"],"name":[5],"type":["fctr"],"align":["left"]},{"label":["Work"],"name":[6],"type":["fctr"],"align":["left"]},{"label":["Family"],"name":[7],"type":["fctr"],"align":["left"]},{"label":["Cars"],"name":[8],"type":["int"],"align":["right"]},{"label":["Children"],"name":[9],"type":["int"],"align":["right"]},{"label":["Adults"],"name":[10],"type":["int"],"align":["right"]},{"label":["Income"],"name":[11],"type":["fctr"],"align":["left"]},{"label":["alt"],"name":[12],"type":["fctr"],"align":["left"]},{"label":["Time"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["chid"],"name":[14],"type":["int"],"align":["right"]},{"label":["idx"],"name":[15],"type":["S3: idx"],"align":["right"]}],"data":[{"1":"UG","2":"FT","3":"TRUE","4":"Female","5":"0","6":"Yes, I work part time (<10 hours per week)","7":"Live with roommates","8":"0","9":"0","10":"3","11":"Unknown","12":"Active","13":"23.927640","14":"1","15":"<S3: idx>","_rn_":"1"},{"1":"UG","2":"FT","3":"FALSE","4":"Female","5":"0","6":"Yes, I work part time (<10 hours per week)","7":"Live with roommates","8":"0","9":"0","10":"3","11":"Unknown","12":"Auto","13":"3.068723","14":"1","15":"<S3: idx>","_rn_":"2"},{"1":"UG","2":"FT","3":"FALSE","4":"Female","5":"0","6":"Yes, I work part time (<10 hours per week)","7":"Live with roommates","8":"0","9":"0","10":"3","11":"Unknown","12":"Transit","13":"25.742024","14":"1","15":"<S3: idx>","_rn_":"3"},{"1":"Grad","2":"FT","3":"TRUE","4":"Female","5":"1","6":"No, I don't work","7":"Live with partner","8":"1","9":"0","10":"2","11":"Unknown","12":"Active","13":"23.805030","14":"2","15":"<S3: idx>","_rn_":"4"},{"1":"Grad","2":"FT","3":"FALSE","4":"Female","5":"1","6":"No, I don't work","7":"Live with partner","8":"1","9":"0","10":"2","11":"Unknown","12":"Auto","13":"2.595157","14":"2","15":"<S3: idx>","_rn_":"5"},{"1":"Grad","2":"FT","3":"FALSE","4":"Female","5":"1","6":"No, I don't work","7":"Live with partner","8":"1","9":"0","10":"2","11":"Unknown","12":"Transit","13":"27.402340","14":"2","15":"<S3: idx>","_rn_":"6"},{"1":"UG","2":"FT","3":"FALSE","4":"Female","5":"0","6":"Yes, I work part time (11-20 hours per week)","7":"Live with roommates","8":"0","9":"0","10":"2","11":"$ 60,000 - 89,999","12":"Active","13":"28.741470","14":"3","15":"<S3: idx>","_rn_":"7"},{"1":"UG","2":"FT","3":"FALSE","4":"Female","5":"0","6":"Yes, I work part time (11-20 hours per week)","7":"Live with roommates","8":"0","9":"0","10":"2","11":"$ 60,000 - 89,999","12":"Auto","13":"3.320328","14":"3","15":"<S3: idx>","_rn_":"8"},{"1":"UG","2":"FT","3":"TRUE","4":"Female","5":"0","6":"Yes, I work part time (11-20 hours per week)","7":"Live with roommates","8":"0","9":"0","10":"2","11":"$ 60,000 - 89,999","12":"Transit","13":"31.447038","14":"3","15":"<S3: idx>","_rn_":"9"},{"1":"Grad","2":"PT","3":"TRUE","4":"Male","5":"1","6":"Yes, I work > 40 hours per week","7":"Live with family/parents","8":"1","9":"1","10":"2","11":"$ 150,000 - 179,999","12":"Active","13":"213.146700","14":"4","15":"<S3: idx>","_rn_":"10"}],"options":{"columns":{"min":{},"max":[10],"total":[15]},"rows":{"min":[10],"max":[10],"total":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Level"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["Status"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["Mode"],"name":[3],"type":["lgl"],"align":["right"]},{"label":["Gender"],"name":[4],"type":["fctr"],"align":["left"]},{"label":["Licence"],"name":[5],"type":["fctr"],"align":["left"]},{"label":["Work"],"name":[6],"type":["fctr"],"align":["left"]},{"label":["Car_Avail"],"name":[7],"type":["fctr"],"align":["left"]},{"label":["Family"],"name":[8],"type":["fctr"],"align":["left"]},{"label":["Cars"],"name":[9],"type":["fctr"],"align":["left"]},{"label":["Children"],"name":[10],"type":["int"],"align":["right"]},{"label":["Adults"],"name":[11],"type":["int"],"align":["right"]},{"label":["Income"],"name":[12],"type":["fctr"],"align":["left"]},{"label":["alt"],"name":[13],"type":["fctr"],"align":["left"]},{"label":["Time"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["chid"],"name":[15],"type":["int"],"align":["right"]},{"label":["idx"],"name":[16],"type":["S3: idx"],"align":["right"]}],"data":[{"1":"UG","2":"FT","3":"FALSE","4":"Female","5":"0","6":"Other","7":"0","8":"1","9":"1","10":"3","11":"4","12":"Unknown","13":"Active","14":"223.214700","15":"1","16":"<S3: idx>","_rn_":"1"},{"1":"UG","2":"FT","3":"FALSE","4":"Female","5":"0","6":"Other","7":"0","8":"1","9":"1","10":"3","11":"4","12":"Unknown","13":"Auto","14":"17.474220","15":"1","16":"<S3: idx>","_rn_":"2"},{"1":"UG","2":"FT","3":"TRUE","4":"Female","5":"0","6":"Other","7":"0","8":"1","9":"1","10":"3","11":"4","12":"Unknown","13":"Transit","14":"75.468478","15":"1","16":"<S3: idx>","_rn_":"3"},{"1":"Grad","2":"FT","3":"TRUE","4":"Female","5":"1","6":"Other","7":"0","8":"0","9":"0","10":"0","11":"2","12":"High","13":"Active","14":"16.985265","15":"2","16":"<S3: idx>","_rn_":"4"},{"1":"Grad","2":"FT","3":"FALSE","4":"Female","5":"1","6":"Other","7":"0","8":"0","9":"0","10":"0","11":"2","12":"High","13":"Auto","14":"2.924953","15":"2","16":"<S3: idx>","_rn_":"5"},{"1":"Grad","2":"FT","3":"FALSE","4":"Female","5":"1","6":"Other","7":"0","8":"0","9":"0","10":"0","11":"2","12":"High","13":"Transit","14":"24.128386","15":"2","16":"<S3: idx>","_rn_":"6"},{"1":"UG","2":"FT","3":"FALSE","4":"Female","5":"1","6":"Other","7":"1","8":"1","9":"1","10":"0","11":"4","12":"Unknown","13":"Active","14":"349.788450","15":"3","16":"<S3: idx>","_rn_":"7"},{"1":"UG","2":"FT","3":"FALSE","4":"Female","5":"1","6":"Other","7":"1","8":"1","9":"1","10":"0","11":"4","12":"Unknown","13":"Auto","14":"50.171880","15":"3","16":"<S3: idx>","_rn_":"8"},{"1":"UG","2":"FT","3":"TRUE","4":"Female","5":"1","6":"Other","7":"1","8":"1","9":"1","10":"0","11":"4","12":"Unknown","13":"Transit","14":"155.551170","15":"3","16":"<S3: idx>","_rn_":"9"},{"1":"UG","2":"FT","3":"TRUE","4":"Male","5":"1","6":"Other","7":"1","8":"0","9":"0","10":"0","11":"4","12":"Unknown","13":"Active","14":"10.491210","15":"4","16":"<S3: idx>","_rn_":"10"}],"options":{"columns":{"min":{},"max":[10],"total":[16]},"rows":{"min":[10],"max":[10],"total":[10]},"pages":{}}}
   </script>
 </div>
 <!-- rnb-frame-end -->
@@ -1822,7 +1853,7 @@ head(mldf)</code></pre>
 <pre><code>
 ~~~ indexes ~~~~</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MTAsIm5jb2wiOjJ9LCJyZGYiOiJINHNJQUFBQUFBQUFCbjFSelU0RElSQ21zTnVtSkcyYStCemQyQnJQMnVnREdPT2hWMlNwSlNJMExGczkrc2crUVhYWU1uWkxqQ1FEMzh4ODg4YzgzcSt2K0pvVFFoZ3A0bDNDUllaM0Q0dmw5WktRZ29JMkFNODR2aC9ndndBUWpSTVEzamxQUW52Q2VnS0pXWitQL24vd1dlR2hVWHRsR2tDejFHaG5YY21nOXlwcHhhb05MdUhSa3hlMjBTRkxVMG9qR3N6eW0zc2paSEFlMENHblcvR21rRTZ4ak56cU9tRW1URjZDNlRwR1RHUEV6UmZwemkzQmMwWWRlL2RlWVluNE8vVHp5T0pISXZ2T091VzFDS0xhZUFqNW85dVIyd1h0TENTamNVVmxGanp3bVdIVzJsaThuc3R0YTEvbmk4dHNuNVAwOGg2bXg1b0ZkbGJpSHlyN29pMXVvalRpV1pta1RHSEtic2hxNTdVTk9BcFlteXE0SUpESHBUTm82WVlqaHgrZjhaQUltd0lBQUE9PSJ9 -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MTAsIm5jb2wiOjJ9LCJyZGYiOiJINHNJQUFBQUFBQUFCbjFSelU0RElSQ21zTnVtSkswbVBrYzNjWTFuYmZRQmpQSFFLN0xVRWhFYWxsYVBQckpQVUIxMkdic2xScEtCYjJhKytXTWU3MWRYZk1VSklZd1U4UzdoSXVPN2g4djZ1aWFrb0tDTndET043d2Y0THdCRTR3eUVkODZqMElHd2dVQmlOdVNqL3g5OFVuaHMxRjZaRnRCNWFyU3pMbVhRZTVXMFlya0xMdUhKa3hlMjFTRkxVMG9qV3N6eW0zc3RaSEFlMENHblcvR21rRTZ4ak56b0ptRW1URjZDNlNaR3pHUEV6UmZwemkzQmMwS2RldmRlWVluNE8vU3paL0dleUw2elRua2pncWpXSGtMKzZIYml0a0U3Qzhsb1hGR1pCWTk4WmpqYjJWaThXY2pOenI0dTZteWRzL1R5QWFaOXlRSWJLL0VMbFgzUkZoZFJHdkdzVEZMbU1HUTNZN1gxMmdhY0JLeHRGVndReU9QU0diUjBzNUhERDRJeEd4S2FBZ0FBIn0= -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["chid"],"name":[1],"type":["int"],"align":["right"]},{"label":["alt"],"name":[2],"type":["fctr"],"align":["left"]}],"data":[{"1":"1","2":"Active","_rn_":"1"},{"1":"1","2":"Auto","_rn_":"2"},{"1":"1","2":"Transit","_rn_":"3"},{"1":"2","2":"Active","_rn_":"4"},{"1":"2","2":"Auto","_rn_":"5"},{"1":"2","2":"Transit","_rn_":"6"},{"1":"3","2":"Active","_rn_":"7"},{"1":"3","2":"Auto","_rn_":"8"},{"1":"3","2":"Transit","_rn_":"9"},{"1":"4","2":"Active","_rn_":"10"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":[10]},"pages":{}}}
@@ -1832,66 +1863,73 @@ head(mldf)</code></pre>
 <!-- rnb-output-begin eyJkYXRhIjoiaW5kZXhlczogIDEsIDIgXG4ifQ== -->
 <pre><code>indexes:  1, 2 </code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBIZWFkZXJzIG9mIGNob2ljZSBzcGVjaWZpYyB2YXJpYWJsZXNcbmRmX2hlYWRlcnMgPSBkZlxuZGZfaGVhZGVycyRUaW1lLkF1dG8gPSBOVUxMXG5kZl9oZWFkZXJzJFRpbWUuQWN0aXZlID0gTlVMTFxuZGZfaGVhZGVycyRUaW1lLlRyYW5zaXQgPSBOVUxMXG5oZWFkZXJzID0gY29sbmFtZXMoZGZfaGVhZGVycylcblxuZm9yIChpIGluIGhlYWRlcnMpXG57XG4gICMgUnVuIE1OTCBtb2RlbFxuICBtb2RlbCA9IG1sb2dpdChNb2RlIH4gMHxnZXQoaSl8VGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBdXRvXCIpXG4gIHByaW50KHBhc3RlKFwiQ0hPSUNFIFNQRUNJRklDIFZBUklBQkxFOiBcIixpKSlcbiAgY2F0KFwiXFxuXFxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXFxuXCIpXG4gIGNhdChcIlJlZmVyZWNlOiBBVVRPXFxuXCIpXG4gIHByaW50KHN1bW1hcnkobW9kZWwpKVxuICBtb2RlbCA9IG1sb2dpdChNb2RlIH4gMHxnZXQoaSl8VGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBY3RpdmVcIilcbiAgY2F0KFwiXFxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXFxuXCIpXG4gIGNhdChcIlJlZmVyZWNlOiBBQ1RJVkVcXG5cIilcbiAgcHJpbnQoc3VtbWFyeShtb2RlbCkpXG4gIGNhdChcIlxcblxcbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxcbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxcblwiKVxufVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBIZWFkZXJzIG9mIGNob2ljZSBzcGVjaWZpYyB2YXJpYWJsZXNcbmRmX2hlYWRlcnMgPSBkZlxuZGZfaGVhZGVycyRUaW1lLkF1dG8gPSBOVUxMXG5kZl9oZWFkZXJzJFRpbWUuQWN0aXZlID0gTlVMTFxuZGZfaGVhZGVycyRUaW1lLlRyYW5zaXQgPSBOVUxMXG5kZl9oZWFkZXJzJE1vZGUgPSBOVUxMXG5cbmhlYWRlcnMgPSBjb2xuYW1lcyhkZl9oZWFkZXJzKVxuXG5mb3IgKGkgaW4gaGVhZGVycylcbntcbiAgIyBSdW4gTU5MIG1vZGVsXG4gIG1vZGVsID0gbWxvZ2l0KE1vZGUgfiAwfGdldChpKXxUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIilcbiAgY2F0KFwiXFxuXFxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXFxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXFxuXCIpXG4gIHByaW50KHBhc3RlKFwiQ0hPSUNFIFNQRUNJRklDIFZBUklBQkxFOiBcIixpKSlcbiAgY2F0KFwiXFxuXFxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXFxuXCIpXG4gIGNhdChcIlJlZmVyZW5jZTogQVVUT1xcblwiKVxuICBwcmludChzdW1tYXJ5KG1vZGVsKSlcbiAgbW9kZWwgPSBtbG9naXQoTW9kZSB+IDB8Z2V0KGkpfFRpbWUsIGRhdGEgPSBtbGRmLCByZWZsZXZlbCA9IFwiQWN0aXZlXCIpXG4gIGNhdChcIlxcbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxcblwiKVxuICBjYXQoXCJSZWZlcmVjZTogQUNUSVZFXFxuXCIpXG4gIHByaW50KHN1bW1hcnkobW9kZWwpKVxuICBcbn1cbmBgYCJ9 -->
 <pre class="r"><code># Headers of choice specific variables
 df_headers = df
 df_headers$Time.Auto = NULL
 df_headers$Time.Active = NULL
 df_headers$Time.Transit = NULL
+df_headers$Mode = NULL
+
 headers = colnames(df_headers)
 
 for (i in headers)
 {
   # Run MNL model
   model = mlogit(Mode ~ 0|get(i)|Time, data = mldf, reflevel = &quot;Auto&quot;)
+  cat(&quot;\n\n---------------------------------------------------------------\n---------------------------------------------------------------\n&quot;)
   print(paste(&quot;CHOICE SPECIFIC VARIABLE: &quot;,i))
   cat(&quot;\n\n---------------------------------------------------------------\n&quot;)
-  cat(&quot;Referece: AUTO\n&quot;)
+  cat(&quot;Reference: AUTO\n&quot;)
   print(summary(model))
   model = mlogit(Mode ~ 0|get(i)|Time, data = mldf, reflevel = &quot;Active&quot;)
   cat(&quot;\n---------------------------------------------------------------\n&quot;)
   cat(&quot;Referece: ACTIVE\n&quot;)
   print(summary(model))
-  cat(&quot;\n\n---------------------------------------------------------------\n---------------------------------------------------------------\n&quot;)
+  
 }</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiQ0hPSUNFIFNQRUNJRklDIFZBUklBQkxFOiAgTGV2ZWxcIlxuXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICBBdXRvICBBY3RpdmUgVHJhbnNpdCBcbjAuMTA4NDYgMC4yNjQzMSAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MHMgXG5nJygtSCleLTFnID0gMy43MUUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkFjdGl2ZSAgIDQuMDQzODU3OSAgMC4xOTMyNjgyICAyMC45MjM2IDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgIDEuNjY4NzgwMiAgMC4xNzQyMzM3ICAgOS41Nzc4IDwgMi4yZS0xNiAqKipcbmdldChpKU90aGVyOkFjdGl2ZSAgLTEuNzM4OTUxNCAgMC41MjIwMDk1ICAtMy4zMzEzIDAuMDAwODY0NSAqKipcbmdldChpKU90aGVyOlRyYW5zaXQgLTAuNzE0NDM5NiAgMC4zNzQyOTg4ICAtMS45MDg3IDAuMDU2Mjk1NCAuICBcbmdldChpKVVHOkFjdGl2ZSAgICAgLTAuNjMxNTY0NCAgMC4xODEwNDU0ICAtMy40ODg0IDAuMDAwNDg1OSAqKipcbmdldChpKVVHOlRyYW5zaXQgICAgLTAuMDE2MDY3MyAgMC4xNDk0NzUxICAtMC4xMDc1IDAuOTE0Mzk4OSAgICBcblRpbWU6QXV0byAgICAgICAgICAgLTAuMDEzMjUxMiAgMC4wMDQ3NDQxICAtMi43OTMyIDAuMDA1MjE4NiAqKiBcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDMyNDk0OSAgMC4wMDE1NDUwIC0yMS4wMzE5IDwgMi4yZS0xNiAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDAyOTczOSAgMC4wMDE4MjEwICAtMS42MzMyIDAuMTAyNDM1OSAgICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTE4MTAuMlxuTWNGYWRkZW4gUl4yOiAgMC4zNDk1NyBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gMTk0NS44IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVjZTogQUNUSVZFXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBY3RpdmVcIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gQWN0aXZlICAgIEF1dG8gVHJhbnNpdCBcbjAuMjY0MzEgMC4xMDg0NiAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MHMgXG5nJygtSCleLTFnID0gMy43MUUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkF1dG8gICAgLTQuMDQzODU3OSAgMC4xOTMyNjgyIC0yMC45MjM2IDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgLTIuMzc1MDc3NyAgMC4xNDA4MzA1IC0xNi44NjQ4IDwgMi4yZS0xNiAqKipcbmdldChpKU90aGVyOkF1dG8gICAgIDEuNzM4OTUxNCAgMC41MjIwMDk1ICAgMy4zMzEzIDAuMDAwODY0NSAqKipcbmdldChpKU90aGVyOlRyYW5zaXQgIDEuMDI0NTExOCAgMC40NTQ2MDQyICAgMi4yNTM2IDAuMDI0MjE5MiAqICBcbmdldChpKVVHOkF1dG8gICAgICAgIDAuNjMxNTY0NCAgMC4xODEwNDU0ICAgMy40ODg0IDAuMDAwNDg1OSAqKipcbmdldChpKVVHOlRyYW5zaXQgICAgIDAuNjE1NDk3MSAgMC4xMzI1NTQ0ICAgNC42NDM0IDMuNDI4ZS0wNiAqKipcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDMyNDk0OSAgMC4wMDE1NDUwIC0yMS4wMzE5IDwgMi4yZS0xNiAqKipcblRpbWU6QXV0byAgICAgICAgICAgLTAuMDEzMjUxMiAgMC4wMDQ3NDQxICAtMi43OTMyIDAuMDA1MjE4NiAqKiBcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDAyOTczOSAgMC4wMDE4MjEwICAtMS42MzMyIDAuMTAyNDM1OSAgICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTE4MTAuMlxuTWNGYWRkZW4gUl4yOiAgMC4zNDk1NyBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gMTk0NS44IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuWzFdIFwiQ0hPSUNFIFNQRUNJRklDIFZBUklBQkxFOiAgU3RhdHVzXCJcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblJlZmVyZWNlOiBBVVRPXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBdXRvXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuICAgQXV0byAgQWN0aXZlIFRyYW5zaXQgXG4wLjEwODQ2IDAuMjY0MzEgMC42MjcyMyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjBzIFxuZycoLUgpXi0xZyA9IDIuMzlFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBY3RpdmUgICAzLjczMjA3OTAgIDAuMTQzNTU2NCAgMjUuOTk3MyA8IDIuMmUtMTYgKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0ICAxLjc4MzQyNjUgIDAuMTM1NjY3MSAgMTMuMTQ1NiA8IDIuMmUtMTYgKioqXG5nZXQoaSlPdGhlcjpBY3RpdmUgIC0xLjQzOTc3MTggIDAuNTA0OTY2MSAgLTIuODUxMiAwLjAwNDM1NTEgKiogXG5nZXQoaSlPdGhlcjpUcmFuc2l0IC0wLjg0MjY5NzQgIDAuMzU1NzY0MyAgLTIuMzY4NyAwLjAxNzg1MDkgKiAgXG5nZXQoaSlQVDpBY3RpdmUgICAgIC0wLjkxNTUwNDAgIDAuMjU4NjY3MCAgLTMuNTM5MyAwLjAwMDQwMTIgKioqXG5nZXQoaSlQVDpUcmFuc2l0ICAgIC0xLjA5OTA3NjcgIDAuMTYzNDAyNyAgLTYuNzI2MiAxLjc0MmUtMTEgKioqXG5UaW1lOkF1dG8gICAgICAgICAgIC0wLjAxMzY2MzcgIDAuMDA0Nzc3NSAgLTIuODYwMCAwLjAwNDIzNjUgKiogXG5UaW1lOkFjdGl2ZSAgICAgICAgIC0wLjAzMjQzOTMgIDAuMDAxNTI5OCAtMjEuMjA1NCA8IDIuMmUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwMjk1NTQgIDAuMDAxODI0OCAgLTEuNjE5NiAwLjEwNTMyNDAgICAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC0xODAxLjVcbk1jRmFkZGVuIFJeMjogIDAuMzUyNzEgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDE5NjMuMiAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFDVElWRVxuXG5DYWxsOlxubWxvZ2l0KGZvcm11bGEgPSBNb2RlIH4gMCB8IGdldChpKSB8IFRpbWUsIGRhdGEgPSBtbGRmLCByZWZsZXZlbCA9IFwiQWN0aXZlXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuIEFjdGl2ZSAgICBBdXRvIFRyYW5zaXQgXG4wLjI2NDMxIDAuMTA4NDYgMC42MjcyMyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjBzIFxuZycoLUgpXi0xZyA9IDIuMzlFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBdXRvICAgIC0zLjczMjA3OTAgIDAuMTQzNTU2NCAtMjUuOTk3MyA8IDIuMmUtMTYgKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0IC0xLjk0ODY1MjUgIDAuMTAzNzQyMyAtMTguNzgzNiA8IDIuMmUtMTYgKioqXG5nZXQoaSlPdGhlcjpBdXRvICAgICAxLjQzOTc3MTggIDAuNTA0OTY2MSAgIDIuODUxMiAwLjAwNDM1NTEgKiogXG5nZXQoaSlPdGhlcjpUcmFuc2l0ICAwLjU5NzA3NDQgIDAuNDQ1Njg5MyAgIDEuMzM5NyAwLjE4MDM1NDMgICAgXG5nZXQoaSlQVDpBdXRvICAgICAgICAwLjkxNTUwNDAgIDAuMjU4NjY3MCAgIDMuNTM5MyAwLjAwMDQwMTIgKioqXG5nZXQoaSlQVDpUcmFuc2l0ICAgIC0wLjE4MzU3MjcgIDAuMjM3NTg3MiAgLTAuNzcyNyAwLjQzOTcyNzEgICAgXG5UaW1lOkFjdGl2ZSAgICAgICAgIC0wLjAzMjQzOTMgIDAuMDAxNTI5OCAtMjEuMjA1NCA8IDIuMmUtMTYgKioqXG5UaW1lOkF1dG8gICAgICAgICAgIC0wLjAxMzY2MzcgIDAuMDA0Nzc3NSAgLTIuODYwMCAwLjAwNDIzNjUgKiogXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwMjk1NTQgIDAuMDAxODI0OCAgLTEuNjE5NiAwLjEwNTMyNDAgICAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC0xODAxLjVcbk1jRmFkZGVuIFJeMjogIDAuMzUyNzEgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDE5NjMuMiAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblsxXSBcIkNIT0lDRSBTUEVDSUZJQyBWQVJJQUJMRTogIE1vZGVcIlxuXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICBBdXRvICBBY3RpdmUgVHJhbnNpdCBcbjAuMTA4NDYgMC4yNjQzMSAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjIzIGl0ZXJhdGlvbnMsIDBoOjBtOjBzIFxuZycoLUgpXi0xZyA9IDQuNDNFLTA3IFxuZ3JhZGllbnQgY2xvc2UgdG8gemVybyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgIFN0ZC4gRXJyb3Igei12YWx1ZSBQcig+fHp8KVxuKEludGVyY2VwdCk6QWN0aXZlICAtMi4yNzA4ZSswMSAgOC4wNzg0ZSswMyAtMC4wMDI4ICAgMC45OTc4XG4oSW50ZXJjZXB0KTpUcmFuc2l0IC0yLjI3NDJlKzAxICA4LjQ1MDBlKzAzIC0wLjAwMjcgICAwLjk5NzlcbmdldChpKVRSVUU6QWN0aXZlICAgIDQuNjg4NGUrMDEgIDkuNTkwMmUrMDMgIDAuMDA0OSAgIDAuOTk2MVxuZ2V0KGkpVFJVRTpUcmFuc2l0ICAgNC43NjQ0ZSswMSAgNy44OTU2ZSswMyAgMC4wMDYwICAgMC45OTUyXG5UaW1lOkF1dG8gICAgICAgICAgIC00Ljk4NzZlLTA0ICAyLjQwMDRlKzAyICAwLjAwMDAgICAxLjAwMDBcblRpbWU6QWN0aXZlICAgICAgICAgIDIuMTU4N2UtMDQgIDMuODQ1NmUrMDEgIDAuMDAwMCAgIDEuMDAwMFxuVGltZTpUcmFuc2l0ICAgICAgICAtNy41MTQyZS0wMyAgMS4wMDI4ZSswMiAtMC4wMDAxICAgMC45OTk5XG5cbkxvZy1MaWtlbGlob29kOiAtMS42MzA4ZS0wN1xuTWNGYWRkZW4gUl4yOiAgMSBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gNTU2Ni4xIChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVjZTogQUNUSVZFXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBY3RpdmVcIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gQWN0aXZlICAgIEF1dG8gVHJhbnNpdCBcbjAuMjY0MzEgMC4xMDg0NiAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjIzIGl0ZXJhdGlvbnMsIDBoOjBtOjBzIFxuZycoLUgpXi0xZyA9IDQuMjJFLTA3IFxuZ3JhZGllbnQgY2xvc2UgdG8gemVybyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgIFN0ZC4gRXJyb3Igei12YWx1ZSBQcig+fHp8KVxuKEludGVyY2VwdCk6QXV0byAgICAtMi4zOTY1ZSswMSAgNS4xOTIyZSswMyAtMC4wMDQ2ICAgMC45OTYzXG4oSW50ZXJjZXB0KTpUcmFuc2l0IC0yLjQzNThlKzAxICA3LjA4MDRlKzAzIC0wLjAwMzQgICAwLjk5NzNcbmdldChpKVRSVUU6QXV0byAgICAgIDQuNjcwNGUrMDEgIDkuOTIwNGUrMDMgIDAuMDA0NyAgIDAuOTk2MlxuZ2V0KGkpVFJVRTpUcmFuc2l0ICAgNC44MDU2ZSswMSAgOS4wMzk1ZSswMyAgMC4wMDUzICAgMC45OTU4XG5UaW1lOkFjdGl2ZSAgICAgICAgIC0xLjQ3MjllLTAzICA0LjY0ODNlKzAxICAwLjAwMDAgICAxLjAwMDBcblRpbWU6QXV0byAgICAgICAgICAgIDUuNjYyNWUtMDIgIDMuODkyMWUrMDIgIDAuMDAwMSAgIDAuOTk5OVxuVGltZTpUcmFuc2l0ICAgICAgICAgMi4wNzE5ZS0wMyAgMS40ODE4ZSswMiAgMC4wMDAwICAgMS4wMDAwXG5cbkxvZy1MaWtlbGlob29kOiAtMS41NTI2ZS0wN1xuTWNGYWRkZW4gUl4yOiAgMSBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gNTU2Ni4xIChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuWzFdIFwiQ0hPSUNFIFNQRUNJRklDIFZBUklBQkxFOiAgR2VuZGVyXCJcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblJlZmVyZWNlOiBBVVRPXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBdXRvXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuICAgQXV0byAgQWN0aXZlIFRyYW5zaXQgXG4wLjEwODQ2IDAuMjY0MzEgMC42MjcyMyBcblxubnIgbWV0aG9kXG4xNyBpdGVyYXRpb25zLCAwaDowbToxcyBcbmcnKC1IKV4tMWcgPSA2LjQ2RS0wNyBcbmdyYWRpZW50IGNsb3NlIHRvIHplcm8gXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlICBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkFjdGl2ZSAgIDMuNDY2NWUrMDAgIDEuNDkwMWUtMDEgIDIzLjI2NDIgPCAyLjJlLTE2ICoqKlxuKEludGVyY2VwdCk6VHJhbnNpdCAgMS42NzY4ZSswMCAgMS4zODI3ZS0wMSAgMTIuMTI3MCA8IDIuMmUtMTYgKioqXG5nZXQoaSlNYWxlOkFjdGl2ZSAgICAzLjM1ODhlLTAxICAxLjYzOThlLTAxICAgMi4wNDgzICAwLjA0MDUzNCAqICBcbmdldChpKU1hbGU6VHJhbnNpdCAgLTEuNDIzNWUtMDEgIDEuMjUxM2UtMDEgIC0xLjEzNzYgIDAuMjU1Mjc1ICAgIFxuZ2V0KGkpT3RoZXI6QWN0aXZlICAgMS42MjQ1ZSswMSAgMi4wNTA2ZSswMyAgIDAuMDA3OSAgMC45OTM2NzkgICAgXG5nZXQoaSlPdGhlcjpUcmFuc2l0ICAxLjYxMzRlKzAxICAyLjA1MDZlKzAzICAgMC4wMDc5ICAwLjk5MzcyMiAgICBcblRpbWU6QXV0byAgICAgICAgICAgLTEuMzM2MWUtMDIgIDQuNzM0MWUtMDMgIC0yLjgyMjMgIDAuMDA0NzY4ICoqIFxuVGltZTpBY3RpdmUgICAgICAgICAtMy4yNjIzZS0wMiAgMS41MzUxZS0wMyAtMjEuMjUxNSA8IDIuMmUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0zLjAwMzZlLTAzICAxLjgxMjdlLTAzICAtMS42NTcwICAwLjA5NzUxOSAuICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTE4MTUuNVxuTWNGYWRkZW4gUl4yOiAgMC4zNDc2NSBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gMTkzNS4xIChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVjZTogQUNUSVZFXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBY3RpdmVcIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gQWN0aXZlICAgIEF1dG8gVHJhbnNpdCBcbjAuMjY0MzEgMC4xMDg0NiAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjE3IGl0ZXJhdGlvbnMsIDBoOjBtOjBzIFxuZycoLUgpXi0xZyA9IDYuNDZFLTA3IFxuZ3JhZGllbnQgY2xvc2UgdG8gemVybyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgIFN0ZC4gRXJyb3IgIHotdmFsdWUgIFByKD58enwpICAgIFxuKEludGVyY2VwdCk6QXV0byAgICAtMy40NjY1ZSswMCAgMS40OTAxZS0wMSAtMjMuMjY0MiA8IDIuMmUtMTYgKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0IC0xLjc4OTZlKzAwICAxLjEwMzVlLTAxIC0xNi4yMTc2IDwgMi4yZS0xNiAqKipcbmdldChpKU1hbGU6QXV0byAgICAgLTMuMzU4OGUtMDEgIDEuNjM5OGUtMDEgIC0yLjA0ODMgMC4wNDA1MzQwICogIFxuZ2V0KGkpTWFsZTpUcmFuc2l0ICAtNC43ODI0ZS0wMSAgMS4yODkxZS0wMSAgLTMuNzEwMCAwLjAwMDIwNzMgKioqXG5nZXQoaSlPdGhlcjpBdXRvICAgIC0xLjYyNDVlKzAxICAyLjA1MDZlKzAzICAtMC4wMDc5IDAuOTkzNjc5MiAgICBcbmdldChpKU90aGVyOlRyYW5zaXQgLTEuMTEwOGUtMDEgIDUuNDk5M2UtMDEgIC0wLjIwMjAgMC44Mzk5MzAwICAgIFxuVGltZTpBY3RpdmUgICAgICAgICAtMy4yNjIzZS0wMiAgMS41MzUxZS0wMyAtMjEuMjUxNSA8IDIuMmUtMTYgKioqXG5UaW1lOkF1dG8gICAgICAgICAgIC0xLjMzNjFlLTAyICA0LjczNDFlLTAzICAtMi44MjIzIDAuMDA0NzY4MCAqKiBcblRpbWU6VHJhbnNpdCAgICAgICAgLTMuMDAzNmUtMDMgIDEuODEyN2UtMDMgIC0xLjY1NzAgMC4wOTc1MTk1IC4gIFxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbkxvZy1MaWtlbGlob29kOiAtMTgxNS41XG5NY0ZhZGRlbiBSXjI6ICAwLjM0NzY1IFxuTGlrZWxpaG9vZCByYXRpbyB0ZXN0IDogY2hpc3EgPSAxOTM1LjEgKHAudmFsdWUgPSA8IDIuMjJlLTE2KVxuXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5bMV0gXCJDSE9JQ0UgU1BFQ0lGSUMgVkFSSUFCTEU6ICBMaWNlbmNlXCJcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblJlZmVyZWNlOiBBVVRPXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBdXRvXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuICAgQXV0byAgQWN0aXZlIFRyYW5zaXQgXG4wLjEwODQ2IDAuMjY0MzEgMC42MjcyMyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjBzIFxuZycoLUgpXi0xZyA9IDIuNDNFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBY3RpdmUgICA0LjM3NjM4ODggIDAuMjAxNjY2OCAgMjEuNzAxMSA8IDIuMmUtMTYgKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0ICAyLjcwNzU3NzUgIDAuMTg0NDA0MyAgMTQuNjgyOCA8IDIuMmUtMTYgKioqXG5nZXQoaSkxOkFjdGl2ZSAgICAgIC0xLjExMzA5NDcgIDAuMTkwOTI1NCAgLTUuODMwMCA1LjU0M2UtMDkgKioqXG5nZXQoaSkxOlRyYW5zaXQgICAgIC0xLjYzNTE4MzAgIDAuMTYxNTY3NiAtMTAuMTIwNyA8IDIuMmUtMTYgKioqXG5UaW1lOkF1dG8gICAgICAgICAgIC0wLjAxNTk3NTEgIDAuMDA0ODQ0MiAgLTMuMjk3OCAwLjAwMDk3NDYgKioqXG5UaW1lOkFjdGl2ZSAgICAgICAgIC0wLjAzMjQ1NjMgIDAuMDAxNTMyOSAtMjEuMTcyNyA8IDIuMmUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwMjY2ODAgIDAuMDAxODU0NiAgLTEuNDM4NiAwLjE1MDI2OTggICAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC0xNzU0LjVcbk1jRmFkZGVuIFJeMjogIDAuMzY5NTkgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDIwNTcuMiAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFDVElWRVxuXG5DYWxsOlxubWxvZ2l0KGZvcm11bGEgPSBNb2RlIH4gMCB8IGdldChpKSB8IFRpbWUsIGRhdGEgPSBtbGRmLCByZWZsZXZlbCA9IFwiQWN0aXZlXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuIEFjdGl2ZSAgICBBdXRvIFRyYW5zaXQgXG4wLjI2NDMxIDAuMTA4NDYgMC42MjcyMyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjBzIFxuZycoLUgpXi0xZyA9IDIuNDNFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBdXRvICAgIC00LjM3NjM4ODggIDAuMjAxNjY2OCAtMjEuNzAxMSA8IDIuMmUtMTYgKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0IC0xLjY2ODgxMTMgIDAuMTIzMDAxOCAtMTMuNTY3NCA8IDIuMmUtMTYgKioqXG5nZXQoaSkxOkF1dG8gICAgICAgICAxLjExMzA5NDcgIDAuMTkwOTI1NCAgIDUuODMwMCA1LjU0M2UtMDkgKioqXG5nZXQoaSkxOlRyYW5zaXQgICAgIC0wLjUyMjA4ODMgIDAuMTI0ODU1MSAgLTQuMTgxNiAyLjg5NWUtMDUgKioqXG5UaW1lOkFjdGl2ZSAgICAgICAgIC0wLjAzMjQ1NjMgIDAuMDAxNTMyOSAtMjEuMTcyNyA8IDIuMmUtMTYgKioqXG5UaW1lOkF1dG8gICAgICAgICAgIC0wLjAxNTk3NTEgIDAuMDA0ODQ0MiAgLTMuMjk3OCAwLjAwMDk3NDYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwMjY2ODAgIDAuMDAxODU0NiAgLTEuNDM4NiAwLjE1MDI2OTggICAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC0xNzU0LjVcbk1jRmFkZGVuIFJeMjogIDAuMzY5NTkgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDIwNTcuMiAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblsxXSBcIkNIT0lDRSBTUEVDSUZJQyBWQVJJQUJMRTogIFdvcmtcIlxuXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICBBdXRvICBBY3RpdmUgVHJhbnNpdCBcbjAuMTA4NDYgMC4yNjQzMSAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MHMgXG5nJygtSCleLTFnID0gMi41NUUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yICB6LXZhbHVlXG4oSW50ZXJjZXB0KTpBY3RpdmUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAzLjg0NzcyMDUgIDAuMTYzOTMxOCAgMjMuNDcxNVxuKEludGVyY2VwdCk6VHJhbnNpdCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMS44MzQ0MjY2ICAwLjE0OTYyNzUgIDEyLjI2MDBcbmdldChpKVllcywgSSB3b3JrID4gNDAgaG91cnMgcGVyIHdlZWs6QWN0aXZlICAgICAgICAgICAgICAgLTAuNjI1MTA0MCAgMC40MjUyNjkwICAtMS40Njk5XG5nZXQoaSlZZXMsIEkgd29yayA+IDQwIGhvdXJzIHBlciB3ZWVrOlRyYW5zaXQgICAgICAgICAgICAgIC0xLjM2NDUwNzIgIDAuMjY2NTYxOSAgLTUuMTE4OVxuZ2V0KGkpWWVzLCBJIHdvcmsgMzEtNDAgaG91cnMgcGVyIHdlZWs6QWN0aXZlICAgICAgICAgICAgICAtMS4yNjMyMTgzICAwLjMzNzg5NTEgIC0zLjczODVcbmdldChpKVllcywgSSB3b3JrIDMxLTQwIGhvdXJzIHBlciB3ZWVrOlRyYW5zaXQgICAgICAgICAgICAgLTEuMzU1OTE2MSAgMC4yMzA2ODc1ICAtNS44Nzc3XG5nZXQoaSlZZXMsIEkgd29yayBwYXJ0IHRpbWUgKDwxMCBob3VycyBwZXIgd2Vlayk6QWN0aXZlICAgIC0wLjAzOTkwMTQgIDAuMjE1OTAxOSAgLTAuMTg0OFxuZ2V0KGkpWWVzLCBJIHdvcmsgcGFydCB0aW1lICg8MTAgaG91cnMgcGVyIHdlZWspOlRyYW5zaXQgICAtMC4wMTMzNjk4ICAwLjE3MTg1NTMgIC0wLjA3NzhcbmdldChpKVllcywgSSB3b3JrIHBhcnQgdGltZSAoMTEtMjAgaG91cnMgcGVyIHdlZWspOkFjdGl2ZSAgLTAuNTI0MTAzMiAgMC4yMTcyMzI1ICAtMi40MTI2XG5nZXQoaSlZZXMsIEkgd29yayBwYXJ0IHRpbWUgKDExLTIwIGhvdXJzIHBlciB3ZWVrKTpUcmFuc2l0IC0wLjIyNTQyMzcgIDAuMTYyNzIzMCAgLTEuMzg1M1xuZ2V0KGkpWWVzLCBJIHdvcmsgcGFydCB0aW1lICgyMS0zMCBob3VycyBwZXIgd2Vlayk6QWN0aXZlICAtMS4wNDI5NjEwICAwLjMyMTEwNjkgIC0zLjI0ODBcbmdldChpKVllcywgSSB3b3JrIHBhcnQgdGltZSAoMjEtMzAgaG91cnMgcGVyIHdlZWspOlRyYW5zaXQgLTAuNTY5OTA0OSAgMC4yMTQ2Mjg2ICAtMi42NTUzXG5UaW1lOkF1dG8gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0wLjAxNDg1ODkgIDAuMDA0ODExMCAgLTMuMDg4NVxuVGltZTpBY3RpdmUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtMC4wMzI0MDIyICAwLjAwMTUzMjkgLTIxLjEzNzVcblRpbWU6VHJhbnNpdCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLTAuMDAyOTEwOSAgMC4wMDE4MzQxICAtMS41ODcxXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkFjdGl2ZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPCAyLjJlLTE2ICoqKlxuKEludGVyY2VwdCk6VHJhbnNpdCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8IDIuMmUtMTYgKioqXG5nZXQoaSlZZXMsIEkgd29yayA+IDQwIGhvdXJzIHBlciB3ZWVrOkFjdGl2ZSAgICAgICAgICAgICAgIDAuMTQxNTg4MiAgICBcbmdldChpKVllcywgSSB3b3JrID4gNDAgaG91cnMgcGVyIHdlZWs6VHJhbnNpdCAgICAgICAgICAgICAgMy4wNzNlLTA3ICoqKlxuZ2V0KGkpWWVzLCBJIHdvcmsgMzEtNDAgaG91cnMgcGVyIHdlZWs6QWN0aXZlICAgICAgICAgICAgICAwLjAwMDE4NTEgKioqXG5nZXQoaSlZZXMsIEkgd29yayAzMS00MCBob3VycyBwZXIgd2VlazpUcmFuc2l0ICAgICAgICAgICAgIDQuMTYwZS0wOSAqKipcbmdldChpKVllcywgSSB3b3JrIHBhcnQgdGltZSAoPDEwIGhvdXJzIHBlciB3ZWVrKTpBY3RpdmUgICAgMC44NTMzNzYxICAgIFxuZ2V0KGkpWWVzLCBJIHdvcmsgcGFydCB0aW1lICg8MTAgaG91cnMgcGVyIHdlZWspOlRyYW5zaXQgICAwLjkzNzk4OTcgICAgXG5nZXQoaSlZZXMsIEkgd29yayBwYXJ0IHRpbWUgKDExLTIwIGhvdXJzIHBlciB3ZWVrKTpBY3RpdmUgIDAuMDE1ODM3NiAqICBcbmdldChpKVllcywgSSB3b3JrIHBhcnQgdGltZSAoMTEtMjAgaG91cnMgcGVyIHdlZWspOlRyYW5zaXQgMC4xNjU5NTQyICAgIFxuZ2V0KGkpWWVzLCBJIHdvcmsgcGFydCB0aW1lICgyMS0zMCBob3VycyBwZXIgd2Vlayk6QWN0aXZlICAwLjAwMTE2MjEgKiogXG5nZXQoaSlZZXMsIEkgd29yayBwYXJ0IHRpbWUgKDIxLTMwIGhvdXJzIHBlciB3ZWVrKTpUcmFuc2l0IDAuMDA3OTIzNiAqKiBcblRpbWU6QXV0byAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMC4wMDIwMTE3ICoqIFxuVGltZTpBY3RpdmUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8IDIuMmUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDAuMTEyNDg3MiAgICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTE3OTMuMVxuTWNGYWRkZW4gUl4yOiAgMC4zNTU3MSBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gMTk3OS45IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVjZTogQUNUSVZFXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBY3RpdmVcIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gQWN0aXZlICAgIEF1dG8gVHJhbnNpdCBcbjAuMjY0MzEgMC4xMDg0NiAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MHMgXG5nJygtSCleLTFnID0gMi41NUUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yICB6LXZhbHVlXG4oSW50ZXJjZXB0KTpBdXRvICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0zLjg0NzcyMDUgIDAuMTYzOTMxOCAtMjMuNDcxNVxuKEludGVyY2VwdCk6VHJhbnNpdCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtMi4wMTMyOTM5ICAwLjExNzY3MjUgLTE3LjEwOTNcbmdldChpKVllcywgSSB3b3JrID4gNDAgaG91cnMgcGVyIHdlZWs6QXV0byAgICAgICAgICAgICAgICAgIDAuNjI1MTA0MCAgMC40MjUyNjkwICAgMS40Njk5XG5nZXQoaSlZZXMsIEkgd29yayA+IDQwIGhvdXJzIHBlciB3ZWVrOlRyYW5zaXQgICAgICAgICAgICAgIC0wLjczOTQwMzIgIDAuMzk5MzUxNiAgLTEuODUxNVxuZ2V0KGkpWWVzLCBJIHdvcmsgMzEtNDAgaG91cnMgcGVyIHdlZWs6QXV0byAgICAgICAgICAgICAgICAgMS4yNjMyMTgzICAwLjMzNzg5NTEgICAzLjczODVcbmdldChpKVllcywgSSB3b3JrIDMxLTQwIGhvdXJzIHBlciB3ZWVrOlRyYW5zaXQgICAgICAgICAgICAgLTAuMDkyNjk3OCAgMC4zMTEzNTQ1ICAtMC4yOTc3XG5nZXQoaSlZZXMsIEkgd29yayBwYXJ0IHRpbWUgKDwxMCBob3VycyBwZXIgd2Vlayk6QXV0byAgICAgICAwLjAzOTkwMTQgIDAuMjE1OTAxOSAgIDAuMTg0OFxuZ2V0KGkpWWVzLCBJIHdvcmsgcGFydCB0aW1lICg8MTAgaG91cnMgcGVyIHdlZWspOlRyYW5zaXQgICAgMC4wMjY1MzE2ICAwLjE1ODkyNDQgICAwLjE2NjlcbmdldChpKVllcywgSSB3b3JrIHBhcnQgdGltZSAoMTEtMjAgaG91cnMgcGVyIHdlZWspOkF1dG8gICAgIDAuNTI0MTAzMiAgMC4yMTcyMzI1ICAgMi40MTI2XG5nZXQoaSlZZXMsIEkgd29yayBwYXJ0IHRpbWUgKDExLTIwIGhvdXJzIHBlciB3ZWVrKTpUcmFuc2l0ICAwLjI5ODY3OTUgIDAuMTcwMzQ5NSAgIDEuNzUzM1xuZ2V0KGkpWWVzLCBJIHdvcmsgcGFydCB0aW1lICgyMS0zMCBob3VycyBwZXIgd2Vlayk6QXV0byAgICAgMS4wNDI5NjEwICAwLjMyMTEwNjkgICAzLjI0ODBcbmdldChpKVllcywgSSB3b3JrIHBhcnQgdGltZSAoMjEtMzAgaG91cnMgcGVyIHdlZWspOlRyYW5zaXQgIDAuNDczMDU2MSAgMC4yNzUzMDQwICAgMS43MTgzXG5UaW1lOkFjdGl2ZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0wLjAzMjQwMjIgIDAuMDAxNTMyOSAtMjEuMTM3NVxuVGltZTpBdXRvICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtMC4wMTQ4NTg5ICAwLjAwNDgxMTAgIC0zLjA4ODVcblRpbWU6VHJhbnNpdCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLTAuMDAyOTEwOSAgMC4wMDE4MzQxICAtMS41ODcxXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkF1dG8gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPCAyLjJlLTE2ICoqKlxuKEludGVyY2VwdCk6VHJhbnNpdCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8IDIuMmUtMTYgKioqXG5nZXQoaSlZZXMsIEkgd29yayA+IDQwIGhvdXJzIHBlciB3ZWVrOkF1dG8gICAgICAgICAgICAgICAgIDAuMTQxNTg4MiAgICBcbmdldChpKVllcywgSSB3b3JrID4gNDAgaG91cnMgcGVyIHdlZWs6VHJhbnNpdCAgICAgICAgICAgICAgMC4wNjQwOTYzIC4gIFxuZ2V0KGkpWWVzLCBJIHdvcmsgMzEtNDAgaG91cnMgcGVyIHdlZWs6QXV0byAgICAgICAgICAgICAgICAwLjAwMDE4NTEgKioqXG5nZXQoaSlZZXMsIEkgd29yayAzMS00MCBob3VycyBwZXIgd2VlazpUcmFuc2l0ICAgICAgICAgICAgIDAuNzY1OTEzNiAgICBcbmdldChpKVllcywgSSB3b3JrIHBhcnQgdGltZSAoPDEwIGhvdXJzIHBlciB3ZWVrKTpBdXRvICAgICAgMC44NTMzNzYxICAgIFxuZ2V0KGkpWWVzLCBJIHdvcmsgcGFydCB0aW1lICg8MTAgaG91cnMgcGVyIHdlZWspOlRyYW5zaXQgICAwLjg2NzQxMzUgICAgXG5nZXQoaSlZZXMsIEkgd29yayBwYXJ0IHRpbWUgKDExLTIwIGhvdXJzIHBlciB3ZWVrKTpBdXRvICAgIDAuMDE1ODM3NiAqICBcbmdldChpKVllcywgSSB3b3JrIHBhcnQgdGltZSAoMTEtMjAgaG91cnMgcGVyIHdlZWspOlRyYW5zaXQgMC4wNzk1NDQ4IC4gIFxuZ2V0KGkpWWVzLCBJIHdvcmsgcGFydCB0aW1lICgyMS0zMCBob3VycyBwZXIgd2Vlayk6QXV0byAgICAwLjAwMTE2MjEgKiogXG5nZXQoaSlZZXMsIEkgd29yayBwYXJ0IHRpbWUgKDIxLTMwIGhvdXJzIHBlciB3ZWVrKTpUcmFuc2l0IDAuMDg1NzQxMSAuICBcblRpbWU6QWN0aXZlICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPCAyLjJlLTE2ICoqKlxuVGltZTpBdXRvICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAwLjAwMjAxMTcgKiogXG5UaW1lOlRyYW5zaXQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDAuMTEyNDg3MiAgICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTE3OTMuMVxuTWNGYWRkZW4gUl4yOiAgMC4zNTU3MSBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gMTk3OS45IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuWzFdIFwiQ0hPSUNFIFNQRUNJRklDIFZBUklBQkxFOiAgRmFtaWx5XCJcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblJlZmVyZWNlOiBBVVRPXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBdXRvXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuICAgQXV0byAgQWN0aXZlIFRyYW5zaXQgXG4wLjEwODQ2IDAuMjY0MzEgMC42MjcyMyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjBzIFxuZycoLUgpXi0xZyA9IDQuMDJFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIFN0ZC4gRXJyb3IgIHotdmFsdWUgIFByKD58enwpICAgIFxuKEludGVyY2VwdCk6QWN0aXZlICAgICAgICAgICAgICAgICAgICAgIDMuNjM0MDk3MiAgMC4yMzI2OTg4ICAxNS42MTcyIDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgICAgICAgICAgICAgICAgICAgICAxLjQyNjExNzEgIDAuMjE5ODkyNiAgIDYuNDg1NSA4Ljg0M2UtMTEgKioqXG5nZXQoaSlMaXZlIHdpdGggZmFtaWx5L3BhcmVudHM6QWN0aXZlICAtMS44MTAyNjcwICAwLjI1NzA5MzEgIC03LjA0MTMgMS45MDVlLTEyICoqKlxuZ2V0KGkpTGl2ZSB3aXRoIGZhbWlseS9wYXJlbnRzOlRyYW5zaXQgIDAuMDQ1OTgwMCAgMC4yMTAxNTk0ICAgMC4yMTg4ICAwLjgyNjgxNiAgICBcbmdldChpKUxpdmUgd2l0aCBwYXJ0bmVyOkFjdGl2ZSAgICAgICAgIC0wLjE2NzI3MTggIDAuMjkzNTA4MyAgLTAuNTY5OSAgMC41Njg3NDIgICAgXG5nZXQoaSlMaXZlIHdpdGggcGFydG5lcjpUcmFuc2l0ICAgICAgICAgMC4wNDU5MDM4ICAwLjI1OTk2MDAgICAwLjE3NjYgIDAuODU5ODM4ICAgIFxuZ2V0KGkpTGl2ZSB3aXRoIHJvb21tYXRlczpBY3RpdmUgICAgICAgIDEuMDcwMTM3MyAgMC4zMzA4MzkzICAgMy4yMzQ2ICAwLjAwMTIxOCAqKiBcbmdldChpKUxpdmUgd2l0aCByb29tbWF0ZXM6VHJhbnNpdCAgICAgICAxLjA1MjA0NTggIDAuMzE4OTQ3MyAgIDMuMjk4NSAgMC4wMDA5NzIgKioqXG5UaW1lOkF1dG8gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtMC4wMTU2NTIyICAwLjAwNDkwMDMgIC0zLjE5NDEgIDAuMDAxNDAzICoqIFxuVGltZTpBY3RpdmUgICAgICAgICAgICAgICAgICAgICAgICAgICAgLTAuMDI3NzA1OSAgMC4wMDE1NTc3IC0xNy43ODY1IDwgMi4yZS0xNiAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgICAgICAgICAgICAgICAgICAgIC0wLjAwMjcwNjEgIDAuMDAxODQ1MiAgLTEuNDY2NiAgMC4xNDI0OTQgICAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC0xNzI5Ljlcbk1jRmFkZGVuIFJeMjogIDAuMzc4NDIgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDIxMDYuMyAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFDVElWRVxuXG5DYWxsOlxubWxvZ2l0KGZvcm11bGEgPSBNb2RlIH4gMCB8IGdldChpKSB8IFRpbWUsIGRhdGEgPSBtbGRmLCByZWZsZXZlbCA9IFwiQWN0aXZlXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuIEFjdGl2ZSAgICBBdXRvIFRyYW5zaXQgXG4wLjI2NDMxIDAuMTA4NDYgMC42MjcyMyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjBzIFxuZycoLUgpXi0xZyA9IDQuMDJFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIFN0ZC4gRXJyb3IgIHotdmFsdWUgIFByKD58enwpICAgIFxuKEludGVyY2VwdCk6QXV0byAgICAgICAgICAgICAgICAgICAgICAgLTMuNjM0MDk3MiAgMC4yMzI2OTg4IC0xNS42MTcyIDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgICAgICAgICAgICAgICAgICAgIC0yLjIwNzk4MDEgIDAuMTY0MDY5MiAtMTMuNDU3NiA8IDIuMmUtMTYgKioqXG5nZXQoaSlMaXZlIHdpdGggZmFtaWx5L3BhcmVudHM6QXV0byAgICAgMS44MTAyNjcwICAwLjI1NzA5MzEgICA3LjA0MTMgMS45MDVlLTEyICoqKlxuZ2V0KGkpTGl2ZSB3aXRoIGZhbWlseS9wYXJlbnRzOlRyYW5zaXQgIDEuODU2MjQ3MCAgMC4xOTY2NTgxICAgOS40MzkwIDwgMi4yZS0xNiAqKipcbmdldChpKUxpdmUgd2l0aCBwYXJ0bmVyOkF1dG8gICAgICAgICAgICAwLjE2NzI3MTggIDAuMjkzNTA4MyAgIDAuNTY5OSAgMC41Njg3NDIgICAgXG5nZXQoaSlMaXZlIHdpdGggcGFydG5lcjpUcmFuc2l0ICAgICAgICAgMC4yMTMxNzU2ICAwLjIwOTA0NTEgICAxLjAxOTggIDAuMzA3ODQzICAgIFxuZ2V0KGkpTGl2ZSB3aXRoIHJvb21tYXRlczpBdXRvICAgICAgICAgLTEuMDcwMTM3MyAgMC4zMzA4MzkzICAtMy4yMzQ2ICAwLjAwMTIxOCAqKiBcbmdldChpKUxpdmUgd2l0aCByb29tbWF0ZXM6VHJhbnNpdCAgICAgIC0wLjAxODA5MTUgIDAuMTc5MzA4NiAgLTAuMTAwOSAgMC45MTk2MzMgICAgXG5UaW1lOkFjdGl2ZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAtMC4wMjc3MDU5ICAwLjAwMTU1NzcgLTE3Ljc4NjUgPCAyLjJlLTE2ICoqKlxuVGltZTpBdXRvICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLTAuMDE1NjUyMiAgMC4wMDQ5MDAzICAtMy4xOTQxICAwLjAwMTQwMyAqKiBcblRpbWU6VHJhbnNpdCAgICAgICAgICAgICAgICAgICAgICAgICAgIC0wLjAwMjcwNjEgIDAuMDAxODQ1MiAgLTEuNDY2NiAgMC4xNDI0OTQgICAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC0xNzI5Ljlcbk1jRmFkZGVuIFJeMjogIDAuMzc4NDIgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDIxMDYuMyAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblsxXSBcIkNIT0lDRSBTUEVDSUZJQyBWQVJJQUJMRTogIENhcnNcIlxuXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICBBdXRvICBBY3RpdmUgVHJhbnNpdCBcbjAuMTA4NDYgMC4yNjQzMSAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MHMgXG5nJygtSCleLTFnID0gNS4yMUUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkFjdGl2ZSAgIDQuNzQzNDY2OCAgMC4xNzU0MDcyICAyNy4wNDI2IDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgIDIuNTMxNDQ5OCAgMC4xNjEyOTQyICAxNS42OTQ2IDwgMi4yZS0xNiAqKipcbmdldChpKTpBY3RpdmUgICAgICAgLTEuNDY5ODkxNyAgMC4wOTcwODIxIC0xNS4xNDA3IDwgMi4yZS0xNiAqKipcbmdldChpKTpUcmFuc2l0ICAgICAgLTAuODIyMjcxMSAgMC4wNjQwNDMxIC0xMi44MzkzIDwgMi4yZS0xNiAqKipcblRpbWU6QXV0byAgICAgICAgICAgLTAuMDMwNjI1NiAgMC4wMDUzMTk4ICAtNS43NTY5IDguNTY4ZS0wOSAqKipcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDMwOTA0OSAgMC4wMDE1ODE0IC0xOS41NDMyIDwgMi4yZS0xNiAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDAzOTk5MSAgMC4wMDE5NzQ5ICAtMi4wMjUwICAgMC4wNDI4NyAqICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTE2ODAuOFxuTWNGYWRkZW4gUl4yOiAgMC4zOTYwNiBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gMjIwNC41IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVjZTogQUNUSVZFXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBY3RpdmVcIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gQWN0aXZlICAgIEF1dG8gVHJhbnNpdCBcbjAuMjY0MzEgMC4xMDg0NiAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MHMgXG5nJygtSCleLTFnID0gNS4yMUUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkF1dG8gICAgLTQuNzQzNDY2OCAgMC4xNzU0MDcyIC0yNy4wNDI2IDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgLTIuMjEyMDE3MCAgMC4xMTQ0NzM2IC0xOS4zMjM0IDwgMi4yZS0xNiAqKipcbmdldChpKTpBdXRvICAgICAgICAgIDEuNDY5ODkxNyAgMC4wOTcwODIxICAxNS4xNDA3IDwgMi4yZS0xNiAqKipcbmdldChpKTpUcmFuc2l0ICAgICAgIDAuNjQ3NjIwNSAgMC4wODIwNDczICAgNy44OTMzIDIuODg3ZS0xNSAqKipcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDMwOTA0OSAgMC4wMDE1ODE0IC0xOS41NDMyIDwgMi4yZS0xNiAqKipcblRpbWU6QXV0byAgICAgICAgICAgLTAuMDMwNjI1NiAgMC4wMDUzMTk4ICAtNS43NTY5IDguNTY4ZS0wOSAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDAzOTk5MSAgMC4wMDE5NzQ5ICAtMi4wMjUwICAgMC4wNDI4NyAqICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTE2ODAuOFxuTWNGYWRkZW4gUl4yOiAgMC4zOTYwNiBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gMjIwNC41IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuWzFdIFwiQ0hPSUNFIFNQRUNJRklDIFZBUklBQkxFOiAgQ2hpbGRyZW5cIlxuXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICBBdXRvICBBY3RpdmUgVHJhbnNpdCBcbjAuMTA4NDYgMC4yNjQzMSAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MHMgXG5nJygtSCleLTFnID0gMy4wM0UtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkFjdGl2ZSAgIDMuNzExNzAxNSAgMC4xNDI4OTE3ICAyNS45NzU2IDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgIDEuNjY2NzYzOSAgMC4xMzQxNzQ2ICAxMi40MjI0IDwgMi4yZS0xNiAqKipcbmdldChpKTpBY3RpdmUgICAgICAgLTAuNjIxNDA1NCAgMC4xMjMyNDQ3ICAtNS4wNDIwIDQuNjA2ZS0wNyAqKipcbmdldChpKTpUcmFuc2l0ICAgICAgLTAuMDgxNjMzNSAgMC4wNjI1Njc3ICAtMS4zMDQ3ICAwLjE5MTk4NyAgICBcblRpbWU6QXV0byAgICAgICAgICAgLTAuMDEzMDY5MiAgMC4wMDQ3NDE2ICAtMi43NTYzICAwLjAwNTg0NiAqKiBcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDMyMDEzMyAgMC4wMDE1MzQwIC0yMC44Njk2IDwgMi4yZS0xNiAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDAyODExMCAgMC4wMDE4MTk2ICAtMS41NDQ4ICAwLjEyMjM5NCAgICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTE4MDkuOVxuTWNGYWRkZW4gUl4yOiAgMC4zNDk2OCBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gMTk0Ni40IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVjZTogQUNUSVZFXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBY3RpdmVcIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gQWN0aXZlICAgIEF1dG8gVHJhbnNpdCBcbjAuMjY0MzEgMC4xMDg0NiAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MHMgXG5nJygtSCleLTFnID0gMy4wM0UtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkF1dG8gICAgLTMuNzExNzAxNSAgMC4xNDI4OTE3IC0yNS45NzU2IDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgLTIuMDQ0OTM3NiAgMC4xMDYwMjkzIC0xOS4yODY1IDwgMi4yZS0xNiAqKipcbmdldChpKTpBdXRvICAgICAgICAgIDAuNjIxNDA1NCAgMC4xMjMyNDQ3ICAgNS4wNDIwIDQuNjA2ZS0wNyAqKipcbmdldChpKTpUcmFuc2l0ICAgICAgIDAuNTM5NzcxOSAgMC4xMTI2NDI2ICAgNC43OTE5IDEuNjUyZS0wNiAqKipcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDMyMDEzMyAgMC4wMDE1MzQwIC0yMC44Njk2IDwgMi4yZS0xNiAqKipcblRpbWU6QXV0byAgICAgICAgICAgLTAuMDEzMDY5MiAgMC4wMDQ3NDE2ICAtMi43NTYzICAwLjAwNTg0NiAqKiBcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDAyODExMCAgMC4wMDE4MTk2ICAtMS41NDQ4ICAwLjEyMjM5NCAgICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTE4MDkuOVxuTWNGYWRkZW4gUl4yOiAgMC4zNDk2OCBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gMTk0Ni40IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuWzFdIFwiQ0hPSUNFIFNQRUNJRklDIFZBUklBQkxFOiAgQWR1bHRzXCJcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblJlZmVyZWNlOiBBVVRPXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBdXRvXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuICAgQXV0byAgQWN0aXZlIFRyYW5zaXQgXG4wLjEwODQ2IDAuMjY0MzEgMC42MjcyMyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjBzIFxuZycoLUgpXi0xZyA9IDIuMzRFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBY3RpdmUgICAzLjY2MTE3MzEgIDAuMTk3ODA2NiAgMTguNTA4OSA8IDIuMmUtMTYgKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0ICAxLjQ2MTM0NzIgIDAuMTc3MjY5MiAgIDguMjQzNyAgMi4yMmUtMTYgKioqXG5nZXQoaSk6QWN0aXZlICAgICAgIC0wLjAzMTgyOTUgIDAuMDU1NDYxNSAgLTAuNTczOSAgIDAuNTY2MDMgICAgXG5nZXQoaSk6VHJhbnNpdCAgICAgICAwLjA2Njg5ODEgIDAuMDQ1MzQ5NyAgIDEuNDc1MiAgIDAuMTQwMTcgICAgXG5UaW1lOkF1dG8gICAgICAgICAgIC0wLjAxMjIwOTQgIDAuMDA0NzczNiAgLTIuNTU3NyAgIDAuMDEwNTQgKiAgXG5UaW1lOkFjdGl2ZSAgICAgICAgIC0wLjAzMjE3NzMgIDAuMDAxNTI2MSAtMjEuMDg1MyA8IDIuMmUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwMjk3MzAgIDAuMDAxODA3NCAgLTEuNjQ0OSAgIDAuMDk5OTkgLiAgXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC0xODIxLjRcbk1jRmFkZGVuIFJeMjogIDAuMzQ1NTUgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDE5MjMuNCAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFDVElWRVxuXG5DYWxsOlxubWxvZ2l0KGZvcm11bGEgPSBNb2RlIH4gMCB8IGdldChpKSB8IFRpbWUsIGRhdGEgPSBtbGRmLCByZWZsZXZlbCA9IFwiQWN0aXZlXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuIEFjdGl2ZSAgICBBdXRvIFRyYW5zaXQgXG4wLjI2NDMxIDAuMTA4NDYgMC42MjcyMyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjBzIFxuZycoLUgpXi0xZyA9IDIuMzRFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgU3RkLiBFcnJvciAgei12YWx1ZSBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkF1dG8gICAgLTMuNjYxMTczMSAgMC4xOTc4MDY2IC0xOC41MDg5ICA8IDJlLTE2ICoqKlxuKEludGVyY2VwdCk6VHJhbnNpdCAtMi4xOTk4MjU5ICAwLjE0NjQzNDAgLTE1LjAyMjYgIDwgMmUtMTYgKioqXG5nZXQoaSk6QXV0byAgICAgICAgICAwLjAzMTgyOTUgIDAuMDU1NDYxNSAgIDAuNTczOSAgMC41NjYwMyAgICBcbmdldChpKTpUcmFuc2l0ICAgICAgIDAuMDk4NzI3NiAgMC4wNDAxMDI5ICAgMi40NjE5ICAwLjAxMzgyICogIFxuVGltZTpBY3RpdmUgICAgICAgICAtMC4wMzIxNzczICAwLjAwMTUyNjEgLTIxLjA4NTMgIDwgMmUtMTYgKioqXG5UaW1lOkF1dG8gICAgICAgICAgIC0wLjAxMjIwOTQgIDAuMDA0NzczNiAgLTIuNTU3NyAgMC4wMTA1NCAqICBcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDAyOTczMCAgMC4wMDE4MDc0ICAtMS42NDQ5ICAwLjA5OTk5IC4gIFxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbkxvZy1MaWtlbGlob29kOiAtMTgyMS40XG5NY0ZhZGRlbiBSXjI6ICAwLjM0NTU1IFxuTGlrZWxpaG9vZCByYXRpbyB0ZXN0IDogY2hpc3EgPSAxOTIzLjQgKHAudmFsdWUgPSA8IDIuMjJlLTE2KVxuXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5bMV0gXCJDSE9JQ0UgU1BFQ0lGSUMgVkFSSUFCTEU6ICBJbmNvbWVcIlxuXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICBBdXRvICBBY3RpdmUgVHJhbnNpdCBcbjAuMTA4NDYgMC4yNjQzMSAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MXMgXG5nJygtSCleLTFnID0gMi40OEUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIFN0ZC4gRXJyb3IgIHotdmFsdWUgIFByKD58enwpICAgIFxuKEludGVyY2VwdCk6QWN0aXZlICAgICAgICAgICAgICAgICAyLjYyMjgwODAgIDAuNDkwMDI2MyAgIDUuMzUyNCA4LjY4MGUtMDggKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0ICAgICAgICAgICAgICAgIDEuMjA0NjQzMiAgMC4zMjQ1NjQ0ICAgMy43MTE2IDAuMDAwMjA2MCAqKipcbmdldChpKSQgMTUwLDAwMCAtIDE3OSw5OTk6QWN0aXZlICAgMS40NTA3NDQwICAwLjg3ODY2OTkgICAxLjY1MTEgMC4wOTg3MjQ2IC4gIFxuZ2V0KGkpJCAxNTAsMDAwIC0gMTc5LDk5OTpUcmFuc2l0IC0wLjk4MTczODcgIDAuNDgwMTIxMiAgLTIuMDQ0OCAwLjA0MDg3NzMgKiAgXG5nZXQoaSkkIDE4MCwwMDAgLSAyMDksOTk5OkFjdGl2ZSAgIDAuMzU3NzUzMSAgMC44MDg5MTMxICAgMC40NDIzIDAuNjU4Mjk4MiAgICBcbmdldChpKSQgMTgwLDAwMCAtIDIwOSw5OTk6VHJhbnNpdCAtMC42Mzg1MDAyICAwLjU0NzAzMzYgIC0xLjE2NzIgMC4yNDMxMjc3ICAgIFxuZ2V0KGkpJCAyMTAsMDAwIC0gMjM5LDk5OTpBY3RpdmUgIC0xLjQ1MDgzMzAgIDEuNDgwNTQzNCAgLTAuOTc5OSAwLjMyNzExOTMgICAgXG5nZXQoaSkkIDIxMCwwMDAgLSAyMzksOTk5OlRyYW5zaXQgLTAuNTg5NDU1NiAgMC43NTcyNjI0ICAtMC43Nzg0IDAuNDM2MzMxMyAgICBcbmdldChpKSQgMjQwLDAwMCArOkFjdGl2ZSAgICAgICAgICAgMC44MDk2NjgyICAwLjc3ODY1MTQgICAxLjAzOTggMC4yOTg0MTcwICAgIFxuZ2V0KGkpJCAyNDAsMDAwICs6VHJhbnNpdCAgICAgICAgIC0wLjIxNjY3MjQgIDAuNTk4NTI1MyAgLTAuMzYyMCAwLjcxNzM0NDIgICAgXG5nZXQoaSkkIDMwLDAwMCAtIDU5LDk5OTpBY3RpdmUgICAgIDEuMDY0NjMyOCAgMC41NjA3NDEwICAgMS44OTg2IDAuMDU3NjE0OCAuICBcbmdldChpKSQgMzAsMDAwIC0gNTksOTk5OlRyYW5zaXQgICAgMC43Njg3Njc3ICAwLjM3MzA0MzEgICAyLjA2MDggMC4wMzkzMjIwICogIFxuZ2V0KGkpJCA2MCwwMDAgLSA4OSw5OTk6QWN0aXZlICAgICAwLjI0NTg0ODUgIDAuNTYyNTI4OCAgIDAuNDM3MCAwLjY2MjA4MTIgICAgXG5nZXQoaSkkIDYwLDAwMCAtIDg5LDk5OTpUcmFuc2l0ICAgIDAuMTQ3NzQ1MiAgMC4zNTg3MzU4ICAgMC40MTE4IDAuNjgwNDQ5NyAgICBcbmdldChpKSQgOTAsMDAwIC0gMTE5LDk5OTpBY3RpdmUgICAgMC4yNzc5MDU4ICAwLjYxMzIyOTAgICAwLjQ1MzIgMC42NTA0MTYwICAgIFxuZ2V0KGkpJCA5MCwwMDAgLSAxMTksOTk5OlRyYW5zaXQgIC0wLjM3OTczNDggIDAuMzY5MTU1NCAgLTEuMDI4NyAwLjMwMzY0MDMgICAgXG5nZXQoaSlJIGRvbsODwqLDouKAmsKsw6LigJ7ConQga25vdzpBY3RpdmUgICAxLjEwNDcxNzIgIDAuNTIxMDAzMCAgIDIuMTIwNCAwLjAzMzk3NTIgKiAgXG5nZXQoaSlJIGRvbsODwqLDouKAmsKsw6LigJ7ConQga25vdzpUcmFuc2l0ICAwLjQxNjAxOTYgIDAuMzQyMTY1NSAgIDEuMjE1OCAwLjIyNDA0NDYgICAgXG5nZXQoaSlMZXNzIHRoYW4gJCAzMCwwMDA6QWN0aXZlICAgIDIuMjM2ODg3MSAgMC41NDYzMDM0ICAgNC4wOTQ2IDQuMjI5ZS0wNSAqKipcbmdldChpKUxlc3MgdGhhbiAkIDMwLDAwMDpUcmFuc2l0ICAgMS4zNjg0MzY1ICAwLjM4NzE3NDYgICAzLjUzNDQgMC4wMDA0MDg3ICoqKlxuZ2V0KGkpVW5rbm93bjpBY3RpdmUgICAgICAgICAgICAgICAwLjc3ODYwMDUgIDAuNDkwMjgxMiAgIDEuNTg4MSAwLjExMjI3MDcgICAgXG5nZXQoaSlVbmtub3duOlRyYW5zaXQgICAgICAgICAgICAgIDAuNDE3NTM4NiAgMC4zMTMyMDk4ICAgMS4zMzMxIDAuMTgyNTAwNSAgICBcblRpbWU6QXV0byAgICAgICAgICAgICAgICAgICAgICAgICAtMC4wMTU4ODI2ICAwLjAwNDg3MzcgIC0zLjI1ODkgMC4wMDExMTg2ICoqIFxuVGltZTpBY3RpdmUgICAgICAgICAgICAgICAgICAgICAgIC0wLjAzMjQyOTcgIDAuMDAxNTQwMCAtMjEuMDU3OSA8IDIuMmUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgICAgICAgICAgICAgICAgLTAuMDAzMzA3OCAgMC4wMDE4NTgwICAtMS43ODAzIDAuMDc1MDI0NCAuICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTE3ODEuOVxuTWNGYWRkZW4gUl4yOiAgMC4zNTk3NSBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gMjAwMi40IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVjZTogQUNUSVZFXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBY3RpdmVcIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gQWN0aXZlICAgIEF1dG8gVHJhbnNpdCBcbjAuMjY0MzEgMC4xMDg0NiAwLjYyNzIzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MHMgXG5nJygtSCleLTFnID0gMi40OEUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlIFN0ZC4gRXJyb3IgIHotdmFsdWUgIFByKD58enwpICAgIFxuKEludGVyY2VwdCk6QXV0byAgICAgICAgICAgICAgICAgIC0yLjYyMjgwODAgIDAuNDkwMDI2MyAgLTUuMzUyNCA4LjY4MGUtMDggKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0ICAgICAgICAgICAgICAgLTEuNDE4MTY0OCAgMC40MzEwMzAxICAtMy4yOTAyICAwLjAwMTAwMSAqKiBcbmdldChpKSQgMTUwLDAwMCAtIDE3OSw5OTk6QXV0byAgICAtMS40NTA3NDQwICAwLjg3ODY2OTkgIC0xLjY1MTEgIDAuMDk4NzI1IC4gIFxuZ2V0KGkpJCAxNTAsMDAwIC0gMTc5LDk5OTpUcmFuc2l0IC0yLjQzMjQ4MjggIDAuODM5MjA1NyAgLTIuODk4NiAgMC4wMDM3NDkgKiogXG5nZXQoaSkkIDE4MCwwMDAgLSAyMDksOTk5OkF1dG8gICAgLTAuMzU3NzUzMSAgMC44MDg5MTMxICAtMC40NDIzICAwLjY1ODI5OCAgICBcbmdldChpKSQgMTgwLDAwMCAtIDIwOSw5OTk6VHJhbnNpdCAtMC45OTYyNTMzICAwLjczODUyOTUgIC0xLjM0OTAgIDAuMTc3MzQ3ICAgIFxuZ2V0KGkpJCAyMTAsMDAwIC0gMjM5LDk5OTpBdXRvICAgICAxLjQ1MDgzMzAgIDEuNDgwNTQzNCAgIDAuOTc5OSAgMC4zMjcxMTkgICAgXG5nZXQoaSkkIDIxMCwwMDAgLSAyMzksOTk5OlRyYW5zaXQgIDAuODYxMzc3MyAgMS40MTUzNzM4ICAgMC42MDg2ICAwLjU0Mjc5OSAgICBcbmdldChpKSQgMjQwLDAwMCArOkF1dG8gICAgICAgICAgICAtMC44MDk2NjgyICAwLjc3ODY1MTQgIC0xLjAzOTggIDAuMjk4NDE3ICAgIFxuZ2V0KGkpJCAyNDAsMDAwICs6VHJhbnNpdCAgICAgICAgIC0xLjAyNjM0MDYgIDAuNjU5OTA3MCAgLTEuNTU1MyAgMC4xMTk4NzkgICAgXG5nZXQoaSkkIDMwLDAwMCAtIDU5LDk5OTpBdXRvICAgICAgLTEuMDY0NjMyOCAgMC41NjA3NDEwICAtMS44OTg2ICAwLjA1NzYxNSAuICBcbmdldChpKSQgMzAsMDAwIC0gNTksOTk5OlRyYW5zaXQgICAtMC4yOTU4NjUxICAwLjQ3ODA2NDMgIC0wLjYxODkgIDAuNTM1OTk0ICAgIFxuZ2V0KGkpJCA2MCwwMDAgLSA4OSw5OTk6QXV0byAgICAgIC0wLjI0NTg0ODUgIDAuNTYyNTI4OCAgLTAuNDM3MCAgMC42NjIwODEgICAgXG5nZXQoaSkkIDYwLDAwMCAtIDg5LDk5OTpUcmFuc2l0ICAgLTAuMDk4MTAzMyAgMC40OTQ5OTY1ICAtMC4xOTgyICAwLjg0Mjg5NyAgICBcbmdldChpKSQgOTAsMDAwIC0gMTE5LDk5OTpBdXRvICAgICAtMC4yNzc5MDU4ICAwLjYxMzIyOTAgIC0wLjQ1MzIgIDAuNjUwNDE2ICAgIFxuZ2V0KGkpJCA5MCwwMDAgLSAxMTksOTk5OlRyYW5zaXQgIC0wLjY1NzY0MDUgIDAuNTU1ODE0NiAgLTEuMTgzMiAgMC4yMzY3MjkgICAgXG5nZXQoaSlJIGRvbsODwqLDouKAmsKsw6LigJ7ConQga25vdzpBdXRvICAgIC0xLjEwNDcxNzIgIDAuNTIxMDAzMCAgLTIuMTIwNCAgMC4wMzM5NzUgKiAgXG5nZXQoaSlJIGRvbsODwqLDouKAmsKsw6LigJ7ConQga25vdzpUcmFuc2l0IC0wLjY4ODY5NzYgIDAuNDUyNDA0MiAgLTEuNTIyMyAgMC4xMjc5MzIgICAgXG5nZXQoaSlMZXNzIHRoYW4gJCAzMCwwMDA6QXV0byAgICAgLTIuMjM2ODg3MSAgMC41NDYzMDM0ICAtNC4wOTQ2IDQuMjI5ZS0wNSAqKipcbmdldChpKUxlc3MgdGhhbiAkIDMwLDAwMDpUcmFuc2l0ICAtMC44Njg0NTA1ICAwLjQ0NTY5NzkgIC0xLjk0ODUgIDAuMDUxMzUzIC4gIFxuZ2V0KGkpVW5rbm93bjpBdXRvICAgICAgICAgICAgICAgIC0wLjc3ODYwMDUgIDAuNDkwMjgxMiAgLTEuNTg4MSAgMC4xMTIyNzEgICAgXG5nZXQoaSlVbmtub3duOlRyYW5zaXQgICAgICAgICAgICAgLTAuMzYxMDYxOSAgMC40MzE2ODkzICAtMC44MzY0ICAwLjQwMjkzNCAgICBcblRpbWU6QWN0aXZlICAgICAgICAgICAgICAgICAgICAgICAtMC4wMzI0Mjk3ICAwLjAwMTU0MDAgLTIxLjA1NzkgPCAyLjJlLTE2ICoqKlxuVGltZTpBdXRvICAgICAgICAgICAgICAgICAgICAgICAgIC0wLjAxNTg4MjYgIDAuMDA0ODczNyAgLTMuMjU4OSAgMC4wMDExMTkgKiogXG5UaW1lOlRyYW5zaXQgICAgICAgICAgICAgICAgICAgICAgLTAuMDAzMzA3OCAgMC4wMDE4NTgwICAtMS43ODAzICAwLjA3NTAyNCAuICBcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTE3ODEuOVxuTWNGYWRkZW4gUl4yOiAgMC4zNTk3NSBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gMjAwMi40IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuIn0= -->
-<pre><code>[1] &quot;CHOICE SPECIFIC VARIABLE:  Level&quot;
+<!-- rnb-output-begin eyJkYXRhIjoiXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5bMV0gXCJDSE9JQ0UgU1BFQ0lGSUMgVkFSSUFCTEU6ICBMZXZlbFwiXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVuY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICAgQXV0byAgIEFjdGl2ZSAgVHJhbnNpdCBcbjAuMDkxMjQ4IDAuMjgzNDY5IDAuNjI1MjgzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MXMgXG5nJygtSCleLTFnID0gOC40NkUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgIFN0ZC4gRXJyb3IgIHotdmFsdWUgIFByKD58enwpICAgIFxuKEludGVyY2VwdCk6QWN0aXZlICAgMy4yMzQ0NDM4MSAgMC4yNDI5MDUzOCAgMTMuMzE1NyA8IDIuMmUtMTYgKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0ICAxLjU2OTY1ODk5ICAwLjE5OTc3Mjk0ICAgNy44NTcyIDMuOTk3ZS0xNSAqKipcbmdldChpKUdyYWQ6QWN0aXZlICAgIDAuOTQwNTExOTYgIDAuMjUwNTY3ODIgICAzLjc1MzUgMC4wMDAxNzQ0ICoqKlxuZ2V0KGkpR3JhZDpUcmFuc2l0ICAgMC4zNTQ0NDA3OSAgMC4yMDU3NTI5NiAgIDEuNzIyNyAwLjA4NDk1MTQgLiAgXG5nZXQoaSlVRzpBY3RpdmUgICAgICAwLjI1ODMwMDA5ICAwLjI0MTUzMzUwICAgMS4wNjk0IDAuMjg0ODgxNyAgICBcbmdldChpKVVHOlRyYW5zaXQgICAgIDAuMTk2MjYwODEgIDAuMTk2MDAyMjYgICAxLjAwMTMgMC4zMTY2NzI1ICAgIFxuVGltZTpBdXRvICAgICAgICAgICAtMC4wMjA0MjYyNyAgMC4wMDI0OTYxMyAgLTguMTgzMiAyLjIyMGUtMTYgKioqXG5UaW1lOkFjdGl2ZSAgICAgICAgIC0wLjAzMjQzMDI0ICAwLjAwMDc0NDEyIC00My41ODE3IDwgMi4yZS0xNiAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDA1MzIzODIgIDAuMDAwOTc0MjkgIC01LjQ2NDMgNC42NDdlLTA4ICoqKlxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbkxvZy1MaWtlbGlob29kOiAtNzU4NC40XG5NY0ZhZGRlbiBSXjI6ICAwLjM2MjE4IFxuTGlrZWxpaG9vZCByYXRpbyB0ZXN0IDogY2hpc3EgPSA4NjEzLjMgKHAudmFsdWUgPSA8IDIuMjJlLTE2KVxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblJlZmVyZWNlOiBBQ1RJVkVcblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkFjdGl2ZVwiLCBcbiAgICBtZXRob2QgPSBcIm5yXCIpXG5cbkZyZXF1ZW5jaWVzIG9mIGFsdGVybmF0aXZlczpjaG9pY2VcbiAgQWN0aXZlICAgICBBdXRvICBUcmFuc2l0IFxuMC4yODM0NjkgMC4wOTEyNDggMC42MjUyODMgXG5cbm5yIG1ldGhvZFxuOCBpdGVyYXRpb25zLCAwaDowbToxcyBcbmcnKC1IKV4tMWcgPSA4LjQ2RS0wNiBcbnN1Y2Nlc3NpdmUgZnVuY3Rpb24gdmFsdWVzIHdpdGhpbiB0b2xlcmFuY2UgbGltaXRzIFxuXG5Db2VmZmljaWVudHMgOlxuICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSAgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBdXRvICAgIC0zLjIzNDQ0MzgxICAwLjI0MjkwNTM4IC0xMy4zMTU3IDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgLTEuNjY0Nzg0ODIgIDAuMTgzOTY4NDIgIC05LjA0OTMgPCAyLjJlLTE2ICoqKlxuZ2V0KGkpR3JhZDpBdXRvICAgICAtMC45NDA1MTE5NiAgMC4yNTA1Njc4MiAgLTMuNzUzNSAwLjAwMDE3NDQgKioqXG5nZXQoaSlHcmFkOlRyYW5zaXQgIC0wLjU4NjA3MTE4ICAwLjE4Njk0NTYzICAtMy4xMzUwIDAuMDAxNzE4NiAqKiBcbmdldChpKVVHOkF1dG8gICAgICAgLTAuMjU4MzAwMDkgIDAuMjQxNTMzNTAgIC0xLjA2OTQgMC4yODQ4ODE3ICAgIFxuZ2V0KGkpVUc6VHJhbnNpdCAgICAtMC4wNjIwMzkyNyAgMC4xODI4MzE1MCAgLTAuMzM5MyAwLjczNDM2NTAgICAgXG5UaW1lOkFjdGl2ZSAgICAgICAgIC0wLjAzMjQzMDI0ICAwLjAwMDc0NDEyIC00My41ODE3IDwgMi4yZS0xNiAqKipcblRpbWU6QXV0byAgICAgICAgICAgLTAuMDIwNDI2MjcgIDAuMDAyNDk2MTMgIC04LjE4MzIgMi4yMjBlLTE2ICoqKlxuVGltZTpUcmFuc2l0ICAgICAgICAtMC4wMDUzMjM4MiAgMC4wMDA5NzQyOSAgLTUuNDY0MyA0LjY0N2UtMDggKioqXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC03NTg0LjRcbk1jRmFkZGVuIFJeMjogIDAuMzYyMTggXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDg2MTMuMyAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblsxXSBcIkNIT0lDRSBTUEVDSUZJQyBWQVJJQUJMRTogIFN0YXR1c1wiXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVuY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICAgQXV0byAgIEFjdGl2ZSAgVHJhbnNpdCBcbjAuMDkxMjQ4IDAuMjgzNDY5IDAuNjI1MjgzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MXMgXG5nJygtSCleLTFnID0gNS4yMkUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgIFN0ZC4gRXJyb3IgIHotdmFsdWUgIFByKD58enwpICAgIFxuKEludGVyY2VwdCk6QWN0aXZlICAgMy4yMzEwMDQyMSAgMC4yNDI4MTA1MSAgMTMuMzA2NyA8IDIuMmUtMTYgKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0ICAxLjU3OTQ4MzQ5ICAwLjE5OTg5NzI1ICAgNy45MDE1IDIuNjY1ZS0xNSAqKipcbmdldChpKUZUOkFjdGl2ZSAgICAgIDAuNTY1Mzg1NjMgIDAuMjQwNzcyOTQgICAyLjM0ODIgIDAuMDE4ODY0ICogIFxuZ2V0KGkpRlQ6VHJhbnNpdCAgICAgMC4zMzY1MzEwMiAgMC4xOTU4NjA0NyAgIDEuNzE4MiAgMC4wODU3NTcgLiAgXG5nZXQoaSlQVDpBY3RpdmUgICAgIC0wLjQxMDk5Mzc4ICAwLjI2NjcwNTQwICAtMS41NDEwICAwLjEyMzMxNiAgICBcbmdldChpKVBUOlRyYW5zaXQgICAgLTAuNjU2MzczNTUgIDAuMjEwMTM3ODMgIC0zLjEyMzUgIDAuMDAxNzg3ICoqIFxuVGltZTpBdXRvICAgICAgICAgICAtMC4wMjA0ODE1OCAgMC4wMDI1MDA0MCAgLTguMTkxMyAyLjIyMGUtMTYgKioqXG5UaW1lOkFjdGl2ZSAgICAgICAgIC0wLjAzMjMwMjU3ICAwLjAwMDczNTU4IC00My45MTQ2IDwgMi4yZS0xNiAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDA1NDY5MzAgIDAuMDAwOTcyOTggIC01LjYyMTIgMS44OTdlLTA4ICoqKlxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbkxvZy1MaWtlbGlob29kOiAtNzU3MC44XG5NY0ZhZGRlbiBSXjI6ICAwLjM2MzMyIFxuTGlrZWxpaG9vZCByYXRpbyB0ZXN0IDogY2hpc3EgPSA4NjQwLjYgKHAudmFsdWUgPSA8IDIuMjJlLTE2KVxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblJlZmVyZWNlOiBBQ1RJVkVcblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkFjdGl2ZVwiLCBcbiAgICBtZXRob2QgPSBcIm5yXCIpXG5cbkZyZXF1ZW5jaWVzIG9mIGFsdGVybmF0aXZlczpjaG9pY2VcbiAgQWN0aXZlICAgICBBdXRvICBUcmFuc2l0IFxuMC4yODM0NjkgMC4wOTEyNDggMC42MjUyODMgXG5cbm5yIG1ldGhvZFxuOCBpdGVyYXRpb25zLCAwaDowbToxcyBcbmcnKC1IKV4tMWcgPSA1LjIyRS0wNiBcbnN1Y2Nlc3NpdmUgZnVuY3Rpb24gdmFsdWVzIHdpdGhpbiB0b2xlcmFuY2UgbGltaXRzIFxuXG5Db2VmZmljaWVudHMgOlxuICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSAgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBdXRvICAgIC0zLjIzMTAwNDIxICAwLjI0MjgxMDUxIC0xMy4zMDY3IDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgLTEuNjUxNTIwNzIgIDAuMTgzNjE4NTUgIC04Ljk5NDMgPCAyLjJlLTE2ICoqKlxuZ2V0KGkpRlQ6QXV0byAgICAgICAtMC41NjUzODU2MyAgMC4yNDA3NzI5NCAgLTIuMzQ4MiAgIDAuMDE4ODYgKiAgXG5nZXQoaSlGVDpUcmFuc2l0ICAgIC0wLjIyODg1NDYwICAwLjE4MTY2MTY5ICAtMS4yNTk4ICAgMC4yMDc3NSAgICBcbmdldChpKVBUOkF1dG8gICAgICAgIDAuNDEwOTkzNzggIDAuMjY2NzA1NDAgICAxLjU0MTAgICAwLjEyMzMyICAgIFxuZ2V0KGkpUFQ6VHJhbnNpdCAgICAtMC4yNDUzNzk3NyAgMC4yMTAxNDY3MSAgLTEuMTY3NyAgIDAuMjQyOTQgICAgXG5UaW1lOkFjdGl2ZSAgICAgICAgIC0wLjAzMjMwMjU3ICAwLjAwMDczNTU4IC00My45MTQ2IDwgMi4yZS0xNiAqKipcblRpbWU6QXV0byAgICAgICAgICAgLTAuMDIwNDgxNTggIDAuMDAyNTAwNDAgIC04LjE5MTMgMi4yMjBlLTE2ICoqKlxuVGltZTpUcmFuc2l0ICAgICAgICAtMC4wMDU0NjkzMCAgMC4wMDA5NzI5OCAgLTUuNjIxMiAxLjg5N2UtMDggKioqXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC03NTcwLjhcbk1jRmFkZGVuIFJeMjogIDAuMzYzMzIgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDg2NDAuNiAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblsxXSBcIkNIT0lDRSBTUEVDSUZJQyBWQVJJQUJMRTogIEdlbmRlclwiXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVuY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICAgQXV0byAgIEFjdGl2ZSAgVHJhbnNpdCBcbjAuMDkxMjQ4IDAuMjgzNDY5IDAuNjI1MjgzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MXMgXG5nJygtSCleLTFnID0gNS45OEUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlICBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkFjdGl2ZSAgICA0LjcwNDc3ODMwICAwLjUxOTMzMTY3ICAgOS4wNTkzIDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgICAyLjYzNTc3OTk0ICAwLjQ2Njk2OTE4ICAgNS42NDQ0IDEuNjU3ZS0wOCAqKipcbmdldChpKUZlbWFsZTpBY3RpdmUgIC0xLjEyMDExOTMyICAwLjUxODAxOTU1ICAtMi4xNjIzICAgMC4wMzA1OSAqICBcbmdldChpKUZlbWFsZTpUcmFuc2l0IC0wLjgyMTY3NjIzICAwLjQ2NDMwOTgzICAtMS43Njk3ICAgMC4wNzY3OCAuICBcbmdldChpKU1hbGU6QWN0aXZlICAgIC0wLjg0NjI0MDk1ICAwLjUyMDIyNzc1ICAtMS42MjY3ICAgMC4xMDM4MSAgICBcbmdldChpKU1hbGU6VHJhbnNpdCAgIC0wLjg4OTM2OTM5ICAwLjQ2NTkxNzMwICAtMS45MDg5ICAgMC4wNTYyOCAuICBcblRpbWU6QXV0byAgICAgICAgICAgIC0wLjAyMDU2ODMwICAwLjAwMjQ4NzMyICAtOC4yNjkzIDIuMjIwZS0xNiAqKipcblRpbWU6QWN0aXZlICAgICAgICAgIC0wLjAzMjQ0NTk2ICAwLjAwMDczNzQwIC00NC4wMDAyIDwgMi4yZS0xNiAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgIC0wLjAwNTQ0MTkyICAwLjAwMDk2OTI4ICAtNS42MTQ0IDEuOTczZS0wOCAqKipcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTc2MDkuNVxuTWNGYWRkZW4gUl4yOiAgMC4zNjAwNyBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gODU2My4yIChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVjZTogQUNUSVZFXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBY3RpdmVcIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gIEFjdGl2ZSAgICAgQXV0byAgVHJhbnNpdCBcbjAuMjgzNDY5IDAuMDkxMjQ4IDAuNjI1MjgzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MXMgXG5nJygtSCleLTFnID0gNS45OEUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlICBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkF1dG8gICAgIC00LjcwNDc3ODMwICAwLjUxOTMzMTY3ICAtOS4wNTkzIDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgIC0yLjA2ODk5ODM1ICAwLjI4OTAzMzExICAtNy4xNTgzIDguMTY3ZS0xMyAqKipcbmdldChpKUZlbWFsZTpBdXRvICAgICAxLjEyMDExOTMyICAwLjUxODAxOTU1ICAgMi4xNjIzICAgMC4wMzA1OSAqICBcbmdldChpKUZlbWFsZTpUcmFuc2l0ICAwLjI5ODQ0MzA5ICAwLjI4ODM1MTYxICAgMS4wMzUwICAgMC4zMDA2NyAgICBcbmdldChpKU1hbGU6QXV0byAgICAgICAwLjg0NjI0MDk1ICAwLjUyMDIyNzc1ICAgMS42MjY3ICAgMC4xMDM4MSAgICBcbmdldChpKU1hbGU6VHJhbnNpdCAgIC0wLjA0MzEyODQzICAwLjI5MDU3MDkxICAtMC4xNDg0ICAgMC44ODIwMSAgICBcblRpbWU6QWN0aXZlICAgICAgICAgIC0wLjAzMjQ0NTk2ICAwLjAwMDczNzQwIC00NC4wMDAyIDwgMi4yZS0xNiAqKipcblRpbWU6QXV0byAgICAgICAgICAgIC0wLjAyMDU2ODMwICAwLjAwMjQ4NzMyICAtOC4yNjkzIDIuMjIwZS0xNiAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgIC0wLjAwNTQ0MTkyICAwLjAwMDk2OTI4ICAtNS42MTQ0IDEuOTczZS0wOCAqKipcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTc2MDkuNVxuTWNGYWRkZW4gUl4yOiAgMC4zNjAwNyBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gODU2My4yIChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuWzFdIFwiQ0hPSUNFIFNQRUNJRklDIFZBUklBQkxFOiAgTGljZW5jZVwiXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVuY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICAgQXV0byAgIEFjdGl2ZSAgVHJhbnNpdCBcbjAuMDkxMjQ4IDAuMjgzNDY5IDAuNjI1MjgzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MXMgXG5nJygtSCleLTFnID0gNS42MUUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgIFN0ZC4gRXJyb3IgIHotdmFsdWUgIFByKD58enwpICAgIFxuKEludGVyY2VwdCk6QWN0aXZlICAgNC42MjY5NDY5OCAgMC4xMDM4NzMwNCAgNDQuNTQ0MyA8IDIuMmUtMTYgKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0ICAyLjk3MDQwODkzICAwLjA5NzY4NzI4ICAzMC40MDczIDwgMi4yZS0xNiAqKipcbmdldChpKTE6QWN0aXZlICAgICAgLTEuMzM0NTkxNTMgIDAuMDk4NzQwOTAgLTEzLjUxNjEgPCAyLjJlLTE2ICoqKlxuZ2V0KGkpMTpUcmFuc2l0ICAgICAtMS43NjQwNzYyNSAgMC4wODc0MDkyMiAtMjAuMTgxOCA8IDIuMmUtMTYgKioqXG5UaW1lOkF1dG8gICAgICAgICAgIC0wLjAyMzExMjQzICAwLjAwMjUyMjgzICAtOS4xNjEzIDwgMi4yZS0xNiAqKipcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDMyMzIyODcgIDAuMDAwNzM5NDEgLTQzLjcxNDUgPCAyLjJlLTE2ICoqKlxuVGltZTpUcmFuc2l0ICAgICAgICAtMC4wMDUwNDA5OSAgMC4wMDA5ODg3MiAgLTUuMDk4NSAzLjQyNGUtMDcgKioqXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC03MzM5XG5NY0ZhZGRlbiBSXjI6ICAwLjM4MjgyIFxuTGlrZWxpaG9vZCByYXRpbyB0ZXN0IDogY2hpc3EgPSA5MTA0LjIgKHAudmFsdWUgPSA8IDIuMjJlLTE2KVxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblJlZmVyZWNlOiBBQ1RJVkVcblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkFjdGl2ZVwiLCBcbiAgICBtZXRob2QgPSBcIm5yXCIpXG5cbkZyZXF1ZW5jaWVzIG9mIGFsdGVybmF0aXZlczpjaG9pY2VcbiAgQWN0aXZlICAgICBBdXRvICBUcmFuc2l0IFxuMC4yODM0NjkgMC4wOTEyNDggMC42MjUyODMgXG5cbm5yIG1ldGhvZFxuOCBpdGVyYXRpb25zLCAwaDowbToxcyBcbmcnKC1IKV4tMWcgPSA1LjYxRS0wNiBcbnN1Y2Nlc3NpdmUgZnVuY3Rpb24gdmFsdWVzIHdpdGhpbiB0b2xlcmFuY2UgbGltaXRzIFxuXG5Db2VmZmljaWVudHMgOlxuICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSAgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBdXRvICAgIC00LjYyNjk0Njk4ICAwLjEwMzg3MzA0IC00NC41NDQzIDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgLTEuNjU2NTM4MDUgIDAuMDU3MTY2MjAgLTI4Ljk3NzYgPCAyLjJlLTE2ICoqKlxuZ2V0KGkpMTpBdXRvICAgICAgICAgMS4zMzQ1OTE1MyAgMC4wOTg3NDA5MCAgMTMuNTE2MSA8IDIuMmUtMTYgKioqXG5nZXQoaSkxOlRyYW5zaXQgICAgIC0wLjQyOTQ4NDcyICAwLjA1ODEyMzM5ICAtNy4zODkyIDEuNDc3ZS0xMyAqKipcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDMyMzIyODcgIDAuMDAwNzM5NDEgLTQzLjcxNDUgPCAyLjJlLTE2ICoqKlxuVGltZTpBdXRvICAgICAgICAgICAtMC4wMjMxMTI0MyAgMC4wMDI1MjI4MyAgLTkuMTYxMyA8IDIuMmUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwNTA0MDk5ICAwLjAwMDk4ODcyICAtNS4wOTg1IDMuNDI0ZS0wNyAqKipcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTczMzlcbk1jRmFkZGVuIFJeMjogIDAuMzgyODIgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDkxMDQuMiAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblsxXSBcIkNIT0lDRSBTUEVDSUZJQyBWQVJJQUJMRTogIFdvcmtcIlxuXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlbmNlOiBBVVRPXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBdXRvXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuICAgIEF1dG8gICBBY3RpdmUgIFRyYW5zaXQgXG4wLjA5MTI0OCAwLjI4MzQ2OSAwLjYyNTI4MyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjFzIFxuZycoLUgpXi0xZyA9IDUuMzRFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlICBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkFjdGl2ZSAgIDMuNzMzODk1NzggIDAuMDY5NjE0NzggIDUzLjYzNjUgPCAyLjJlLTE2ICoqKlxuKEludGVyY2VwdCk6VHJhbnNpdCAgMS44NDA2Nzg0NiAgMC4wNjc0NDY0MyAgMjcuMjkxMCA8IDIuMmUtMTYgKioqXG5nZXQoaSlGVDpBY3RpdmUgICAgIC0wLjk2NzMzNzgwICAwLjI1MjExODEwICAtMy44MzY4IDAuMDAwMTI0NiAqKipcbmdldChpKUZUOlRyYW5zaXQgICAgLTEuMzEzNDc2OTMgIDAuMTYzNjI5NjMgIC04LjAyNzEgOC44ODJlLTE2ICoqKlxuZ2V0KGkpUFQ6QWN0aXZlICAgICAtMC4zMTI4OTkzMyAgMC4xMjI0MzUxNCAgLTIuNTU1NiAwLjAxMDU5OTUgKiAgXG5nZXQoaSlQVDpUcmFuc2l0ICAgIC0wLjE1MTgwNzM3ICAwLjA5MjA2OTg1ICAtMS42NDg4IDAuMDk5MTgyOCAuICBcblRpbWU6QXV0byAgICAgICAgICAgLTAuMDIwMjc4MDkgIDAuMDAyNDkxOTYgIC04LjEzNzQgNC40NDFlLTE2ICoqKlxuVGltZTpBY3RpdmUgICAgICAgICAtMC4wMzIyNDk4MCAgMC4wMDA3MzU1NyAtNDMuODQzMiA8IDIuMmUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwNTIxNDk3ICAwLjAwMDk3MTU2ICAtNS4zNjc2IDcuOTc4ZS0wOCAqKipcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTc1OThcbk1jRmFkZGVuIFJeMjogIDAuMzYxMDMgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDg1ODYuMSAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFDVElWRVxuXG5DYWxsOlxubWxvZ2l0KGZvcm11bGEgPSBNb2RlIH4gMCB8IGdldChpKSB8IFRpbWUsIGRhdGEgPSBtbGRmLCByZWZsZXZlbCA9IFwiQWN0aXZlXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuICBBY3RpdmUgICAgIEF1dG8gIFRyYW5zaXQgXG4wLjI4MzQ2OSAwLjA5MTI0OCAwLjYyNTI4MyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjFzIFxuZycoLUgpXi0xZyA9IDUuMzRFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlICBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkF1dG8gICAgLTMuNzMzODk1NzggIDAuMDY5NjE0NzggLTUzLjYzNjUgPCAyLjJlLTE2ICoqKlxuKEludGVyY2VwdCk6VHJhbnNpdCAtMS44OTMyMTczMyAgMC4wNDg4MjI4MCAtMzguNzc3MyA8IDIuMmUtMTYgKioqXG5nZXQoaSlGVDpBdXRvICAgICAgICAwLjk2NzMzNzgwICAwLjI1MjExODEwICAgMy44MzY4IDAuMDAwMTI0NiAqKipcbmdldChpKUZUOlRyYW5zaXQgICAgLTAuMzQ2MTM5MTMgIDAuMjM3NDYzMDMgIC0xLjQ1NzcgMC4xNDQ5MzU3ICAgIFxuZ2V0KGkpUFQ6QXV0byAgICAgICAgMC4zMTI4OTkzMyAgMC4xMjI0MzUxNCAgIDIuNTU1NiAwLjAxMDU5OTUgKiAgXG5nZXQoaSlQVDpUcmFuc2l0ICAgICAwLjE2MTA5MTk2ICAwLjA5NTk0NTYyICAgMS42NzkwIDAuMDkzMTUzNiAuICBcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDMyMjQ5ODAgIDAuMDAwNzM1NTcgLTQzLjg0MzIgPCAyLjJlLTE2ICoqKlxuVGltZTpBdXRvICAgICAgICAgICAtMC4wMjAyNzgwOSAgMC4wMDI0OTE5NiAgLTguMTM3NCA0LjQ0MWUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwNTIxNDk3ICAwLjAwMDk3MTU2ICAtNS4zNjc2IDcuOTc4ZS0wOCAqKipcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTc1OThcbk1jRmFkZGVuIFJeMjogIDAuMzYxMDMgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDg1ODYuMSAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblsxXSBcIkNIT0lDRSBTUEVDSUZJQyBWQVJJQUJMRTogIENhcl9BdmFpbFwiXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVuY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICAgQXV0byAgIEFjdGl2ZSAgVHJhbnNpdCBcbjAuMDkxMjQ4IDAuMjgzNDY5IDAuNjI1MjgzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MXMgXG5nJygtSCleLTFnID0gNS40M0UtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgIFN0ZC4gRXJyb3IgIHotdmFsdWUgIFByKD58enwpICAgIFxuKEludGVyY2VwdCk6QWN0aXZlICAgMy41OTg4MzU4NiAgMC4wNzAwNjM4NiAgNTEuMzY1MSA8IDIuMmUtMTYgKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0ICAxLjc1NjkyOTEwICAwLjA2NzI5NjE2ICAyNi4xMDc0IDwgMi4yZS0xNiAqKipcbmdldChpKTE6QWN0aXZlICAgICAgIDAuNDA0OTY5NzEgIDAuMDkxMDc1NjkgICA0LjQ0NjUgOC43MjdlLTA2ICoqKlxuZ2V0KGkpMTpUcmFuc2l0ICAgICAgMC4yNDUxMzE3NCAgMC4wNzI0NTU4MSAgIDMuMzgzMiAwLjAwMDcxNjUgKioqXG5UaW1lOkF1dG8gICAgICAgICAgIC0wLjAxOTgyODk5ICAwLjAwMjQ4OTI1ICAtNy45NjU4IDEuNTU0ZS0xNSAqKipcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDMyMzY5NDEgIDAuMDAwNzM1MzIgLTQ0LjAyMDggPCAyLjJlLTE2ICoqKlxuVGltZTpUcmFuc2l0ICAgICAgICAtMC4wMDU0MzQwOCAgMC4wMDA5NjcxOSAgLTUuNjE4NCAxLjkyN2UtMDggKioqXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC03NjE3LjZcbk1jRmFkZGVuIFJeMjogIDAuMzU5MzggXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDg1NDYuOSAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFDVElWRVxuXG5DYWxsOlxubWxvZ2l0KGZvcm11bGEgPSBNb2RlIH4gMCB8IGdldChpKSB8IFRpbWUsIGRhdGEgPSBtbGRmLCByZWZsZXZlbCA9IFwiQWN0aXZlXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuICBBY3RpdmUgICAgIEF1dG8gIFRyYW5zaXQgXG4wLjI4MzQ2OSAwLjA5MTI0OCAwLjYyNTI4MyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjFzIFxuZycoLUgpXi0xZyA9IDUuNDNFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlICBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkF1dG8gICAgLTMuNTk4ODM1ODYgIDAuMDcwMDYzODYgLTUxLjM2NTEgPCAyLjJlLTE2ICoqKlxuKEludGVyY2VwdCk6VHJhbnNpdCAtMS44NDE5MDY3NiAgMC4wNTAzMjA2NSAtMzYuNjAzNCA8IDIuMmUtMTYgKioqXG5nZXQoaSkxOkF1dG8gICAgICAgIC0wLjQwNDk2OTcxICAwLjA5MTA3NTY5ICAtNC40NDY1IDguNzI3ZS0wNiAqKipcbmdldChpKTE6VHJhbnNpdCAgICAgLTAuMTU5ODM3OTcgIDAuMDY2MzQ4NDIgIC0yLjQwOTEgICAwLjAxNTk5ICogIFxuVGltZTpBY3RpdmUgICAgICAgICAtMC4wMzIzNjk0MSAgMC4wMDA3MzUzMiAtNDQuMDIwOCA8IDIuMmUtMTYgKioqXG5UaW1lOkF1dG8gICAgICAgICAgIC0wLjAxOTgyODk5ICAwLjAwMjQ4OTI1ICAtNy45NjU4IDEuNTU0ZS0xNSAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDA1NDM0MDggIDAuMDAwOTY3MTkgIC01LjYxODQgMS45MjdlLTA4ICoqKlxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbkxvZy1MaWtlbGlob29kOiAtNzYxNy42XG5NY0ZhZGRlbiBSXjI6ICAwLjM1OTM4IFxuTGlrZWxpaG9vZCByYXRpbyB0ZXN0IDogY2hpc3EgPSA4NTQ2LjkgKHAudmFsdWUgPSA8IDIuMjJlLTE2KVxuXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5bMV0gXCJDSE9JQ0UgU1BFQ0lGSUMgVkFSSUFCTEU6ICBGYW1pbHlcIlxuXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlbmNlOiBBVVRPXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBdXRvXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuICAgIEF1dG8gICBBY3RpdmUgIFRyYW5zaXQgXG4wLjA5MTI0OCAwLjI4MzQ2OSAwLjYyNTI4MyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjFzIFxuZycoLUgpXi0xZyA9IDcuNzZFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlICBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkFjdGl2ZSAgIDMuOTY5NDI1NjggIDAuMDc2NDI0MDAgIDUxLjkzOTUgPCAyLjJlLTE2ICoqKlxuKEludGVyY2VwdCk6VHJhbnNpdCAgMS44NzAwNDUyNCAgMC4wNzQ5MDEwMSAgMjQuOTY2OSA8IDIuMmUtMTYgKioqXG5nZXQoaSkxOkFjdGl2ZSAgICAgIC0xLjkyMjU5MzQwICAwLjA5NDA1MzE3IC0yMC40NDE2IDwgMi4yZS0xNiAqKipcbmdldChpKTE6VHJhbnNpdCAgICAgLTAuMTgwMDczNzYgIDAuMDcxNTcyMjUgIC0yLjUxNjAgICAwLjAxMTg3ICogIFxuVGltZTpBdXRvICAgICAgICAgICAtMC4wMjEwNDM4MiAgMC4wMDI1NzkwNiAgLTguMTU5NSA0LjQ0MWUtMTYgKioqXG5UaW1lOkFjdGl2ZSAgICAgICAgIC0wLjAyNzk2MjM2ICAwLjAwMDc0MzQxIC0zNy42MTM4IDwgMi4yZS0xNiAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDA0OTcwNzMgIDAuMDAwOTc4NzkgIC01LjA3ODUgMy44MDVlLTA3ICoqKlxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbkxvZy1MaWtlbGlob29kOiAtNzI4OS42XG5NY0ZhZGRlbiBSXjI6ICAwLjM4Njk3IFxuTGlrZWxpaG9vZCByYXRpbyB0ZXN0IDogY2hpc3EgPSA5MjAyLjkgKHAudmFsdWUgPSA8IDIuMjJlLTE2KVxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblJlZmVyZWNlOiBBQ1RJVkVcblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkFjdGl2ZVwiLCBcbiAgICBtZXRob2QgPSBcIm5yXCIpXG5cbkZyZXF1ZW5jaWVzIG9mIGFsdGVybmF0aXZlczpjaG9pY2VcbiAgQWN0aXZlICAgICBBdXRvICBUcmFuc2l0IFxuMC4yODM0NjkgMC4wOTEyNDggMC42MjUyODMgXG5cbm5yIG1ldGhvZFxuOCBpdGVyYXRpb25zLCAwaDowbToxcyBcbmcnKC1IKV4tMWcgPSA3Ljc2RS0wNiBcbnN1Y2Nlc3NpdmUgZnVuY3Rpb24gdmFsdWVzIHdpdGhpbiB0b2xlcmFuY2UgbGltaXRzIFxuXG5Db2VmZmljaWVudHMgOlxuICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSAgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBdXRvICAgIC0zLjk2OTQyNTY4ICAwLjA3NjQyNDAwIC01MS45Mzk1IDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgLTIuMDk5MzgwNDQgIDAuMDUwOTA3MzMgLTQxLjIzOTMgPCAyLjJlLTE2ICoqKlxuZ2V0KGkpMTpBdXRvICAgICAgICAgMS45MjI1OTM0MCAgMC4wOTQwNTMxNyAgMjAuNDQxNiA8IDIuMmUtMTYgKioqXG5nZXQoaSkxOlRyYW5zaXQgICAgICAxLjc0MjUxOTY1ICAwLjA3MjMxNTI0ICAyNC4wOTYyIDwgMi4yZS0xNiAqKipcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDI3OTYyMzYgIDAuMDAwNzQzNDEgLTM3LjYxMzggPCAyLjJlLTE2ICoqKlxuVGltZTpBdXRvICAgICAgICAgICAtMC4wMjEwNDM4MiAgMC4wMDI1NzkwNiAgLTguMTU5NSA0LjQ0MWUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwNDk3MDczICAwLjAwMDk3ODc5ICAtNS4wNzg1IDMuODA1ZS0wNyAqKipcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTcyODkuNlxuTWNGYWRkZW4gUl4yOiAgMC4zODY5NyBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gOTIwMi45IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuWzFdIFwiQ0hPSUNFIFNQRUNJRklDIFZBUklBQkxFOiAgQ2Fyc1wiXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVuY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICAgQXV0byAgIEFjdGl2ZSAgVHJhbnNpdCBcbjAuMDkxMjQ4IDAuMjgzNDY5IDAuNjI1MjgzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MXMgXG5nJygtSCleLTFnID0gMC4wMDExOSBcbnN1Y2Nlc3NpdmUgZnVuY3Rpb24gdmFsdWVzIHdpdGhpbiB0b2xlcmFuY2UgbGltaXRzIFxuXG5Db2VmZmljaWVudHMgOlxuICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSAgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBY3RpdmUgICA2LjUzMzg1NDI4ICAwLjIzMDQxMTQyICAyOC4zNTczIDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgIDQuNDMyMjI5NzAgIDAuMjI5NjM2NjcgIDE5LjMwMTEgPCAyLjJlLTE2ICoqKlxuZ2V0KGkpMTpBY3RpdmUgICAgICAtNC4xOTA5NTA0MyAgMC4yMzE1MTM3MCAtMTguMTAyNCA8IDIuMmUtMTYgKioqXG5nZXQoaSkxOlRyYW5zaXQgICAgIC0zLjIzNjUwOTM1ICAwLjIyODAwNjAyIC0xNC4xOTQ4IDwgMi4yZS0xNiAqKipcblRpbWU6QXV0byAgICAgICAgICAgLTAuMDMwNTAzODAgIDAuMDAyNjMwODEgLTExLjU5NDggPCAyLjJlLTE2ICoqKlxuVGltZTpBY3RpdmUgICAgICAgICAtMC4wMjk0Njk4NSAgMC4wMDA3NDcyMSAtMzkuNDQwMCA8IDIuMmUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwNTMwNDA4ICAwLjAwMTAzMDE0ICAtNS4xNDg5IDIuNjIxZS0wNyAqKipcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTcxMjQuNVxuTWNGYWRkZW4gUl4yOiAgMC40MDA4NSBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gOTUzMy4yIChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVjZTogQUNUSVZFXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBY3RpdmVcIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gIEFjdGl2ZSAgICAgQXV0byAgVHJhbnNpdCBcbjAuMjgzNDY5IDAuMDkxMjQ4IDAuNjI1MjgzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MXMgXG5nJygtSCleLTFnID0gMC4wMDExOSBcbnN1Y2Nlc3NpdmUgZnVuY3Rpb24gdmFsdWVzIHdpdGhpbiB0b2xlcmFuY2UgbGltaXRzIFxuXG5Db2VmZmljaWVudHMgOlxuICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSAgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBdXRvICAgIC02LjUzMzg1NDI4ICAwLjIzMDQxMTQyIC0yOC4zNTczIDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgLTIuMTAxNjI0NTcgIDAuMDUyNjkwODEgLTM5Ljg4NjAgPCAyLjJlLTE2ICoqKlxuZ2V0KGkpMTpBdXRvICAgICAgICAgNC4xOTA5NTA0MyAgMC4yMzE1MTM3MCAgMTguMTAyNCA8IDIuMmUtMTYgKioqXG5nZXQoaSkxOlRyYW5zaXQgICAgICAwLjk1NDQ0MTA5ICAwLjA1OTg5MTk0ICAxNS45MzYxIDwgMi4yZS0xNiAqKipcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDI5NDY5ODUgIDAuMDAwNzQ3MjEgLTM5LjQ0MDAgPCAyLjJlLTE2ICoqKlxuVGltZTpBdXRvICAgICAgICAgICAtMC4wMzA1MDM4MCAgMC4wMDI2MzA4MSAtMTEuNTk0OCA8IDIuMmUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwNTMwNDA4ICAwLjAwMTAzMDE0ICAtNS4xNDg5IDIuNjIxZS0wNyAqKipcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTcxMjQuNVxuTWNGYWRkZW4gUl4yOiAgMC40MDA4NSBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gOTUzMy4yIChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuWzFdIFwiQ0hPSUNFIFNQRUNJRklDIFZBUklBQkxFOiAgQ2hpbGRyZW5cIlxuXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlbmNlOiBBVVRPXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBdXRvXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuICAgIEF1dG8gICBBY3RpdmUgIFRyYW5zaXQgXG4wLjA5MTI0OCAwLjI4MzQ2OSAwLjYyNTI4MyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjFzIFxuZycoLUgpXi0xZyA9IDYuNTVFLTA2IFxuc3VjY2Vzc2l2ZSBmdW5jdGlvbiB2YWx1ZXMgd2l0aGluIHRvbGVyYW5jZSBsaW1pdHMgXG5cbkNvZWZmaWNpZW50cyA6XG4gICAgICAgICAgICAgICAgICAgICAgIEVzdGltYXRlICBTdGQuIEVycm9yICB6LXZhbHVlICBQcig+fHp8KSAgICBcbihJbnRlcmNlcHQpOkFjdGl2ZSAgIDMuNzg4MTQ5NzIgIDAuMDY5NzU0MTAgIDU0LjMwNzIgPCAyLjJlLTE2ICoqKlxuKEludGVyY2VwdCk6VHJhbnNpdCAgMS44MjQ5OTIwMiAgMC4wNjc0ODkyMSAgMjcuMDQxMiA8IDIuMmUtMTYgKioqXG5nZXQoaSk6QWN0aXZlICAgICAgIC0wLjU5ODM2MzEyICAwLjA1OTk5NjA2ICAtOS45NzM0IDwgMi4yZS0xNiAqKipcbmdldChpKTpUcmFuc2l0ICAgICAgLTAuMDg3MDE3NTcgIDAuMDM1NjExNDAgIC0yLjQ0MzUgICAwLjAxNDU0ICogIFxuVGltZTpBdXRvICAgICAgICAgICAtMC4wMjAzOTc3MyAgMC4wMDI0ODg0NCAgLTguMTk3MCAyLjIyMGUtMTYgKioqXG5UaW1lOkFjdGl2ZSAgICAgICAgIC0wLjAzMTgwMzU3ICAwLjAwMDczNzA2IC00My4xNDkxIDwgMi4yZS0xNiAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDA1MjQ3NzkgIDAuMDAwOTcwODAgIC01LjQwNTYgNi40NThlLTA4ICoqKlxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbkxvZy1MaWtlbGlob29kOiAtNzU2OC45XG5NY0ZhZGRlbiBSXjI6ICAwLjM2MzQ4IFxuTGlrZWxpaG9vZCByYXRpbyB0ZXN0IDogY2hpc3EgPSA4NjQ0LjQgKHAudmFsdWUgPSA8IDIuMjJlLTE2KVxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblJlZmVyZWNlOiBBQ1RJVkVcblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkFjdGl2ZVwiLCBcbiAgICBtZXRob2QgPSBcIm5yXCIpXG5cbkZyZXF1ZW5jaWVzIG9mIGFsdGVybmF0aXZlczpjaG9pY2VcbiAgQWN0aXZlICAgICBBdXRvICBUcmFuc2l0IFxuMC4yODM0NjkgMC4wOTEyNDggMC42MjUyODMgXG5cbm5yIG1ldGhvZFxuOCBpdGVyYXRpb25zLCAwaDowbToxcyBcbmcnKC1IKV4tMWcgPSA2LjU1RS0wNiBcbnN1Y2Nlc3NpdmUgZnVuY3Rpb24gdmFsdWVzIHdpdGhpbiB0b2xlcmFuY2UgbGltaXRzIFxuXG5Db2VmZmljaWVudHMgOlxuICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSAgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBdXRvICAgIC0zLjc4ODE0OTcyICAwLjA2OTc1NDEwIC01NC4zMDcyIDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgLTEuOTYzMTU3NzEgIDAuMDQ5MjU0ODcgLTM5Ljg1NzEgPCAyLjJlLTE2ICoqKlxuZ2V0KGkpOkF1dG8gICAgICAgICAgMC41OTgzNjMxMiAgMC4wNTk5OTYwNiAgIDkuOTczNCA8IDIuMmUtMTYgKioqXG5nZXQoaSk6VHJhbnNpdCAgICAgICAwLjUxMTM0NTU1ICAwLjA1MjQwMTAwICAgOS43NTgzIDwgMi4yZS0xNiAqKipcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDMxODAzNTcgIDAuMDAwNzM3MDYgLTQzLjE0OTEgPCAyLjJlLTE2ICoqKlxuVGltZTpBdXRvICAgICAgICAgICAtMC4wMjAzOTc3MyAgMC4wMDI0ODg0NCAgLTguMTk3MCAyLjIyMGUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwNTI0Nzc5ICAwLjAwMDk3MDgwICAtNS40MDU2IDYuNDU4ZS0wOCAqKipcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTc1NjguOVxuTWNGYWRkZW4gUl4yOiAgMC4zNjM0OCBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gODY0NC40IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuWzFdIFwiQ0hPSUNFIFNQRUNJRklDIFZBUklBQkxFOiAgQWR1bHRzXCJcblxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblJlZmVyZW5jZTogQVVUT1xuXG5DYWxsOlxubWxvZ2l0KGZvcm11bGEgPSBNb2RlIH4gMCB8IGdldChpKSB8IFRpbWUsIGRhdGEgPSBtbGRmLCByZWZsZXZlbCA9IFwiQXV0b1wiLCBcbiAgICBtZXRob2QgPSBcIm5yXCIpXG5cbkZyZXF1ZW5jaWVzIG9mIGFsdGVybmF0aXZlczpjaG9pY2VcbiAgICBBdXRvICAgQWN0aXZlICBUcmFuc2l0IFxuMC4wOTEyNDggMC4yODM0NjkgMC42MjUyODMgXG5cbm5yIG1ldGhvZFxuOCBpdGVyYXRpb25zLCAwaDowbToxcyBcbmcnKC1IKV4tMWcgPSA1LjYyRS0wNiBcbnN1Y2Nlc3NpdmUgZnVuY3Rpb24gdmFsdWVzIHdpdGhpbiB0b2xlcmFuY2UgbGltaXRzIFxuXG5Db2VmZmljaWVudHMgOlxuICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSAgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBY3RpdmUgICAzLjg4NjQ5ODIzICAwLjA5NzE0ODcyICA0MC4wMDU3IDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgIDEuODMyNTMxNzggIDAuMDkwMTc5MjAgIDIwLjMyMTAgPCAyLjJlLTE2ICoqKlxuZ2V0KGkpOkFjdGl2ZSAgICAgICAtMC4wODA3MTA2MiAgMC4wMjYxNDUxNCAgLTMuMDg3MCAgMC4wMDIwMjIgKiogXG5nZXQoaSk6VHJhbnNpdCAgICAgIC0wLjAxMjU5MjU4ICAwLjAyMjYzMzk1ICAtMC41NTY0ICAwLjU3Nzk2NiAgICBcblRpbWU6QXV0byAgICAgICAgICAgLTAuMDIwNTc3MTQgIDAuMDAyNTA4OTYgIC04LjIwMTUgMi4yMjBlLTE2ICoqKlxuVGltZTpBY3RpdmUgICAgICAgICAtMC4wMzIyMDI4NiAgMC4wMDA3MzcxMyAtNDMuNjg2OCA8IDIuMmUtMTYgKioqXG5UaW1lOlRyYW5zaXQgICAgICAgIC0wLjAwNTM5MjYxICAwLjAwMDk2OTU5ICAtNS41NjE3IDIuNjcxZS0wOCAqKipcbi0tLVxuU2lnbmlmLiBjb2RlczogIDAg4oCYKioq4oCZIDAuMDAxIOKAmCoq4oCZIDAuMDEg4oCYKuKAmSAwLjA1IOKAmC7igJkgMC4xIOKAmCDigJkgMVxuXG5Mb2ctTGlrZWxpaG9vZDogLTc2MjAuMlxuTWNGYWRkZW4gUl4yOiAgMC4zNTkxNyBcbkxpa2VsaWhvb2QgcmF0aW8gdGVzdCA6IGNoaXNxID0gODU0MS44IChwLnZhbHVlID0gPCAyLjIyZS0xNilcblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVjZTogQUNUSVZFXG5cbkNhbGw6XG5tbG9naXQoZm9ybXVsYSA9IE1vZGUgfiAwIHwgZ2V0KGkpIHwgVGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gXCJBY3RpdmVcIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gIEFjdGl2ZSAgICAgQXV0byAgVHJhbnNpdCBcbjAuMjgzNDY5IDAuMDkxMjQ4IDAuNjI1MjgzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MXMgXG5nJygtSCleLTFnID0gNS42MkUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgIFN0ZC4gRXJyb3IgIHotdmFsdWUgIFByKD58enwpICAgIFxuKEludGVyY2VwdCk6QXV0byAgICAtMy44ODY0OTgyMyAgMC4wOTcxNDg3MiAtNDAuMDA1NyA8IDIuMmUtMTYgKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0IC0yLjA1Mzk2NjQ1ICAwLjA2NzMzMDg2IC0zMC41MDU2IDwgMi4yZS0xNiAqKipcbmdldChpKTpBdXRvICAgICAgICAgIDAuMDgwNzEwNjIgIDAuMDI2MTQ1MTQgICAzLjA4NzAgMC4wMDIwMjE3ICoqIFxuZ2V0KGkpOlRyYW5zaXQgICAgICAgMC4wNjgxMTgwNCAgMC4wMTgxMzY2OSAgIDMuNzU1OCAwLjAwMDE3MjggKioqXG5UaW1lOkFjdGl2ZSAgICAgICAgIC0wLjAzMjIwMjg2ICAwLjAwMDczNzEzIC00My42ODY4IDwgMi4yZS0xNiAqKipcblRpbWU6QXV0byAgICAgICAgICAgLTAuMDIwNTc3MTQgIDAuMDAyNTA4OTYgIC04LjIwMTUgMi4yMjBlLTE2ICoqKlxuVGltZTpUcmFuc2l0ICAgICAgICAtMC4wMDUzOTI2MSAgMC4wMDA5Njk1OSAgLTUuNTYxNyAyLjY3MWUtMDggKioqXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC03NjIwLjJcbk1jRmFkZGVuIFJeMjogIDAuMzU5MTcgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDg1NDEuOCAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cblsxXSBcIkNIT0lDRSBTUEVDSUZJQyBWQVJJQUJMRTogIEluY29tZVwiXG5cblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5SZWZlcmVuY2U6IEFVVE9cblxuQ2FsbDpcbm1sb2dpdChmb3JtdWxhID0gTW9kZSB+IDAgfCBnZXQoaSkgfCBUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSBcIkF1dG9cIiwgXG4gICAgbWV0aG9kID0gXCJuclwiKVxuXG5GcmVxdWVuY2llcyBvZiBhbHRlcm5hdGl2ZXM6Y2hvaWNlXG4gICAgQXV0byAgIEFjdGl2ZSAgVHJhbnNpdCBcbjAuMDkxMjQ4IDAuMjgzNDY5IDAuNjI1MjgzIFxuXG5uciBtZXRob2RcbjggaXRlcmF0aW9ucywgMGg6MG06MXMgXG5nJygtSCleLTFnID0gNS45RS0wNiBcbnN1Y2Nlc3NpdmUgZnVuY3Rpb24gdmFsdWVzIHdpdGhpbiB0b2xlcmFuY2UgbGltaXRzIFxuXG5Db2VmZmljaWVudHMgOlxuICAgICAgICAgICAgICAgICAgICAgICBFc3RpbWF0ZSAgU3RkLiBFcnJvciAgei12YWx1ZSAgUHIoPnx6fCkgICAgXG4oSW50ZXJjZXB0KTpBY3RpdmUgICAzLjU2ODU5NjEyICAwLjA3Mzk2MjY3ICA0OC4yNDg2IDwgMi4yZS0xNiAqKipcbihJbnRlcmNlcHQpOlRyYW5zaXQgIDEuNzc1MTIyNTcgIDAuMDcwMjk1NTAgIDI1LjI1MjMgPCAyLjJlLTE2ICoqKlxuZ2V0KGkpSGlnaDpBY3RpdmUgICAtMC41MDU2ODc3MCAgMC4xMTk3MDMxMyAgLTQuMjI0NSAyLjM5NWUtMDUgKioqXG5nZXQoaSlIaWdoOlRyYW5zaXQgIC0wLjU3NjI3NDk0ICAwLjA4NDY1OTc3ICAtNi44MDcwIDkuOTY5ZS0xMiAqKipcbmdldChpKUxvdzpBY3RpdmUgICAgIDAuNjAyOTkwMDIgIDAuMDkwNjgwMzAgICA2LjY0OTYgMi45MzhlLTExICoqKlxuZ2V0KGkpTG93OlRyYW5zaXQgICAgMC4zNTUyMTQ5MyAgMC4wNzU1MjQ4NyAgIDQuNzAzMyAyLjU2MGUtMDYgKioqXG5UaW1lOkF1dG8gICAgICAgICAgIC0wLjAyMTQ5NzUwICAwLjAwMjUwNzQzICAtOC41NzM1IDwgMi4yZS0xNiAqKipcblRpbWU6QWN0aXZlICAgICAgICAgLTAuMDMyNDY3NTMgIDAuMDAwNzM4ODIgLTQzLjk0NTIgPCAyLjJlLTE2ICoqKlxuVGltZTpUcmFuc2l0ICAgICAgICAtMC4wMDU2MTEzMyAgMC4wMDA5NzY5MyAgLTUuNzQzOSA5LjI1NGUtMDkgKioqXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuTG9nLUxpa2VsaWhvb2Q6IC03NTcyLjZcbk1jRmFkZGVuIFJeMjogIDAuMzYzMTcgXG5MaWtlbGlob29kIHJhdGlvIHRlc3QgOiBjaGlzcSA9IDg2MzYuOSAocC52YWx1ZSA9IDwgMi4yMmUtMTYpXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuUmVmZXJlY2U6IEFDVElWRVxuXG5DYWxsOlxubWxvZ2l0KGZvcm11bGEgPSBNb2RlIH4gMCB8IGdldChpKSB8IFRpbWUsIGRhdGEgPSBtbGRmLCByZWZsZXZlbCA9IFwiQWN0aXZlXCIsIFxuICAgIG1ldGhvZCA9IFwibnJcIilcblxuRnJlcXVlbmNpZXMgb2YgYWx0ZXJuYXRpdmVzOmNob2ljZVxuICBBY3RpdmUgICAgIEF1dG8gIFRyYW5zaXQgXG4wLjI4MzQ2OSAwLjA5MTI0OCAwLjYyNTI4MyBcblxubnIgbWV0aG9kXG44IGl0ZXJhdGlvbnMsIDBoOjBtOjFzIFxuZycoLUgpXi0xZyA9IDUuOUUtMDYgXG5zdWNjZXNzaXZlIGZ1bmN0aW9uIHZhbHVlcyB3aXRoaW4gdG9sZXJhbmNlIGxpbWl0cyBcblxuQ29lZmZpY2llbnRzIDpcbiAgICAgICAgICAgICAgICAgICAgICAgRXN0aW1hdGUgIFN0ZC4gRXJyb3IgIHotdmFsdWUgIFByKD58enwpICAgIFxuKEludGVyY2VwdCk6QXV0byAgICAtMy41Njg1OTYxMiAgMC4wNzM5NjI2NyAtNDguMjQ4NiA8IDIuMmUtMTYgKioqXG4oSW50ZXJjZXB0KTpUcmFuc2l0IC0xLjc5MzQ3MzU1ICAwLjA1MjY2NTAxIC0zNC4wNTQ0IDwgMi4yZS0xNiAqKipcbmdldChpKUhpZ2g6QXV0byAgICAgIDAuNTA1Njg3NzAgIDAuMTE5NzAzMTMgICA0LjIyNDUgMi4zOTVlLTA1ICoqKlxuZ2V0KGkpSGlnaDpUcmFuc2l0ICAtMC4wNzA1ODcyNCAgMC4xMDE2MDI0NiAgLTAuNjk0NyAgICAwLjQ4NzIgICAgXG5nZXQoaSlMb3c6QXV0byAgICAgIC0wLjYwMjk5MDAyICAwLjA5MDY4MDMwICAtNi42NDk2IDIuOTM4ZS0xMSAqKipcbmdldChpKUxvdzpUcmFuc2l0ICAgLTAuMjQ3Nzc1MDkgIDAuMDYyNDgzNjMgIC0zLjk2NTQgNy4zMjZlLTA1ICoqKlxuVGltZTpBY3RpdmUgICAgICAgICAtMC4wMzI0Njc1MyAgMC4wMDA3Mzg4MiAtNDMuOTQ1MiA8IDIuMmUtMTYgKioqXG5UaW1lOkF1dG8gICAgICAgICAgIC0wLjAyMTQ5NzUwICAwLjAwMjUwNzQzICAtOC41NzM1IDwgMi4yZS0xNiAqKipcblRpbWU6VHJhbnNpdCAgICAgICAgLTAuMDA1NjExMzMgIDAuMDAwOTc2OTMgIC01Ljc0MzkgOS4yNTRlLTA5ICoqKlxuLS0tXG5TaWduaWYuIGNvZGVzOiAgMCDigJgqKirigJkgMC4wMDEg4oCYKirigJkgMC4wMSDigJgq4oCZIDAuMDUg4oCYLuKAmSAwLjEg4oCYIOKAmSAxXG5cbkxvZy1MaWtlbGlob29kOiAtNzU3Mi42XG5NY0ZhZGRlbiBSXjI6ICAwLjM2MzE3IFxuTGlrZWxpaG9vZCByYXRpbyB0ZXN0IDogY2hpc3EgPSA4NjM2LjkgKHAudmFsdWUgPSA8IDIuMjJlLTE2KVxuIn0= -->
+<pre><code>
+
+---------------------------------------------------------------
+---------------------------------------------------------------
+[1] &quot;CHOICE SPECIFIC VARIABLE:  Level&quot;
 
 
 ---------------------------------------------------------------
-Referece: AUTO
+Reference: AUTO
 
 Call:
 mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Auto&quot;, 
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
-   Auto  Active Transit 
-0.10846 0.26431 0.62723 
+    Auto   Active  Transit 
+0.091248 0.283469 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 3.71E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 8.46E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                      Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Active   4.0438579  0.1932682  20.9236 &lt; 2.2e-16 ***
-(Intercept):Transit  1.6687802  0.1742337   9.5778 &lt; 2.2e-16 ***
-get(i)Other:Active  -1.7389514  0.5220095  -3.3313 0.0008645 ***
-get(i)Other:Transit -0.7144396  0.3742988  -1.9087 0.0562954 .  
-get(i)UG:Active     -0.6315644  0.1810454  -3.4884 0.0004859 ***
-get(i)UG:Transit    -0.0160673  0.1494751  -0.1075 0.9143989    
-Time:Auto           -0.0132512  0.0047441  -2.7932 0.0052186 ** 
-Time:Active         -0.0324949  0.0015450 -21.0319 &lt; 2.2e-16 ***
-Time:Transit        -0.0029739  0.0018210  -1.6332 0.1024359    
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Active   3.23444381  0.24290538  13.3157 &lt; 2.2e-16 ***
+(Intercept):Transit  1.56965899  0.19977294   7.8572 3.997e-15 ***
+get(i)Grad:Active    0.94051196  0.25056782   3.7535 0.0001744 ***
+get(i)Grad:Transit   0.35444079  0.20575296   1.7227 0.0849514 .  
+get(i)UG:Active      0.25830009  0.24153350   1.0694 0.2848817    
+get(i)UG:Transit     0.19626081  0.19600226   1.0013 0.3166725    
+Time:Auto           -0.02042627  0.00249613  -8.1832 2.220e-16 ***
+Time:Active         -0.03243024  0.00074412 -43.5817 &lt; 2.2e-16 ***
+Time:Transit        -0.00532382  0.00097429  -5.4643 4.647e-08 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1810.2
-McFadden R^2:  0.34957 
-Likelihood ratio test : chisq = 1945.8 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7584.4
+McFadden R^2:  0.36218 
+Likelihood ratio test : chisq = 8613.3 (p.value = &lt; 2.22e-16)
 
 ---------------------------------------------------------------
 Referece: ACTIVE
@@ -1901,31 +1939,31 @@ mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Active&
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
- Active    Auto Transit 
-0.26431 0.10846 0.62723 
+  Active     Auto  Transit 
+0.283469 0.091248 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 3.71E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 8.46E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                      Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Auto    -4.0438579  0.1932682 -20.9236 &lt; 2.2e-16 ***
-(Intercept):Transit -2.3750777  0.1408305 -16.8648 &lt; 2.2e-16 ***
-get(i)Other:Auto     1.7389514  0.5220095   3.3313 0.0008645 ***
-get(i)Other:Transit  1.0245118  0.4546042   2.2536 0.0242192 *  
-get(i)UG:Auto        0.6315644  0.1810454   3.4884 0.0004859 ***
-get(i)UG:Transit     0.6154971  0.1325544   4.6434 3.428e-06 ***
-Time:Active         -0.0324949  0.0015450 -21.0319 &lt; 2.2e-16 ***
-Time:Auto           -0.0132512  0.0047441  -2.7932 0.0052186 ** 
-Time:Transit        -0.0029739  0.0018210  -1.6332 0.1024359    
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Auto    -3.23444381  0.24290538 -13.3157 &lt; 2.2e-16 ***
+(Intercept):Transit -1.66478482  0.18396842  -9.0493 &lt; 2.2e-16 ***
+get(i)Grad:Auto     -0.94051196  0.25056782  -3.7535 0.0001744 ***
+get(i)Grad:Transit  -0.58607118  0.18694563  -3.1350 0.0017186 ** 
+get(i)UG:Auto       -0.25830009  0.24153350  -1.0694 0.2848817    
+get(i)UG:Transit    -0.06203927  0.18283150  -0.3393 0.7343650    
+Time:Active         -0.03243024  0.00074412 -43.5817 &lt; 2.2e-16 ***
+Time:Auto           -0.02042627  0.00249613  -8.1832 2.220e-16 ***
+Time:Transit        -0.00532382  0.00097429  -5.4643 4.647e-08 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1810.2
-McFadden R^2:  0.34957 
-Likelihood ratio test : chisq = 1945.8 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7584.4
+McFadden R^2:  0.36218 
+Likelihood ratio test : chisq = 8613.3 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
@@ -1934,38 +1972,38 @@ Likelihood ratio test : chisq = 1945.8 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
-Referece: AUTO
+Reference: AUTO
 
 Call:
 mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Auto&quot;, 
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
-   Auto  Active Transit 
-0.10846 0.26431 0.62723 
+    Auto   Active  Transit 
+0.091248 0.283469 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 2.39E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.22E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                      Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Active   3.7320790  0.1435564  25.9973 &lt; 2.2e-16 ***
-(Intercept):Transit  1.7834265  0.1356671  13.1456 &lt; 2.2e-16 ***
-get(i)Other:Active  -1.4397718  0.5049661  -2.8512 0.0043551 ** 
-get(i)Other:Transit -0.8426974  0.3557643  -2.3687 0.0178509 *  
-get(i)PT:Active     -0.9155040  0.2586670  -3.5393 0.0004012 ***
-get(i)PT:Transit    -1.0990767  0.1634027  -6.7262 1.742e-11 ***
-Time:Auto           -0.0136637  0.0047775  -2.8600 0.0042365 ** 
-Time:Active         -0.0324393  0.0015298 -21.2054 &lt; 2.2e-16 ***
-Time:Transit        -0.0029554  0.0018248  -1.6196 0.1053240    
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Active   3.23100421  0.24281051  13.3067 &lt; 2.2e-16 ***
+(Intercept):Transit  1.57948349  0.19989725   7.9015 2.665e-15 ***
+get(i)FT:Active      0.56538563  0.24077294   2.3482  0.018864 *  
+get(i)FT:Transit     0.33653102  0.19586047   1.7182  0.085757 .  
+get(i)PT:Active     -0.41099378  0.26670540  -1.5410  0.123316    
+get(i)PT:Transit    -0.65637355  0.21013783  -3.1235  0.001787 ** 
+Time:Auto           -0.02048158  0.00250040  -8.1913 2.220e-16 ***
+Time:Active         -0.03230257  0.00073558 -43.9146 &lt; 2.2e-16 ***
+Time:Transit        -0.00546930  0.00097298  -5.6212 1.897e-08 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1801.5
-McFadden R^2:  0.35271 
-Likelihood ratio test : chisq = 1963.2 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7570.8
+McFadden R^2:  0.36332 
+Likelihood ratio test : chisq = 8640.6 (p.value = &lt; 2.22e-16)
 
 ---------------------------------------------------------------
 Referece: ACTIVE
@@ -1975,97 +2013,31 @@ mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Active&
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
- Active    Auto Transit 
-0.26431 0.10846 0.62723 
+  Active     Auto  Transit 
+0.283469 0.091248 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 2.39E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.22E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                      Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Auto    -3.7320790  0.1435564 -25.9973 &lt; 2.2e-16 ***
-(Intercept):Transit -1.9486525  0.1037423 -18.7836 &lt; 2.2e-16 ***
-get(i)Other:Auto     1.4397718  0.5049661   2.8512 0.0043551 ** 
-get(i)Other:Transit  0.5970744  0.4456893   1.3397 0.1803543    
-get(i)PT:Auto        0.9155040  0.2586670   3.5393 0.0004012 ***
-get(i)PT:Transit    -0.1835727  0.2375872  -0.7727 0.4397271    
-Time:Active         -0.0324393  0.0015298 -21.2054 &lt; 2.2e-16 ***
-Time:Auto           -0.0136637  0.0047775  -2.8600 0.0042365 ** 
-Time:Transit        -0.0029554  0.0018248  -1.6196 0.1053240    
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Auto    -3.23100421  0.24281051 -13.3067 &lt; 2.2e-16 ***
+(Intercept):Transit -1.65152072  0.18361855  -8.9943 &lt; 2.2e-16 ***
+get(i)FT:Auto       -0.56538563  0.24077294  -2.3482   0.01886 *  
+get(i)FT:Transit    -0.22885460  0.18166169  -1.2598   0.20775    
+get(i)PT:Auto        0.41099378  0.26670540   1.5410   0.12332    
+get(i)PT:Transit    -0.24537977  0.21014671  -1.1677   0.24294    
+Time:Active         -0.03230257  0.00073558 -43.9146 &lt; 2.2e-16 ***
+Time:Auto           -0.02048158  0.00250040  -8.1913 2.220e-16 ***
+Time:Transit        -0.00546930  0.00097298  -5.6212 1.897e-08 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1801.5
-McFadden R^2:  0.35271 
-Likelihood ratio test : chisq = 1963.2 (p.value = &lt; 2.22e-16)
-
-
----------------------------------------------------------------
----------------------------------------------------------------
-[1] &quot;CHOICE SPECIFIC VARIABLE:  Mode&quot;
-
-
----------------------------------------------------------------
-Referece: AUTO
-
-Call:
-mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Auto&quot;, 
-    method = &quot;nr&quot;)
-
-Frequencies of alternatives:choice
-   Auto  Active Transit 
-0.10846 0.26431 0.62723 
-
-nr method
-23 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 4.43E-07 
-gradient close to zero 
-
-Coefficients :
-                       Estimate  Std. Error z-value Pr(&gt;|z|)
-(Intercept):Active  -2.2708e+01  8.0784e+03 -0.0028   0.9978
-(Intercept):Transit -2.2742e+01  8.4500e+03 -0.0027   0.9979
-get(i)TRUE:Active    4.6884e+01  9.5902e+03  0.0049   0.9961
-get(i)TRUE:Transit   4.7644e+01  7.8956e+03  0.0060   0.9952
-Time:Auto           -4.9876e-04  2.4004e+02  0.0000   1.0000
-Time:Active          2.1587e-04  3.8456e+01  0.0000   1.0000
-Time:Transit        -7.5142e-03  1.0028e+02 -0.0001   0.9999
-
-Log-Likelihood: -1.6308e-07
-McFadden R^2:  1 
-Likelihood ratio test : chisq = 5566.1 (p.value = &lt; 2.22e-16)
-
----------------------------------------------------------------
-Referece: ACTIVE
-
-Call:
-mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Active&quot;, 
-    method = &quot;nr&quot;)
-
-Frequencies of alternatives:choice
- Active    Auto Transit 
-0.26431 0.10846 0.62723 
-
-nr method
-23 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 4.22E-07 
-gradient close to zero 
-
-Coefficients :
-                       Estimate  Std. Error z-value Pr(&gt;|z|)
-(Intercept):Auto    -2.3965e+01  5.1922e+03 -0.0046   0.9963
-(Intercept):Transit -2.4358e+01  7.0804e+03 -0.0034   0.9973
-get(i)TRUE:Auto      4.6704e+01  9.9204e+03  0.0047   0.9962
-get(i)TRUE:Transit   4.8056e+01  9.0395e+03  0.0053   0.9958
-Time:Active         -1.4729e-03  4.6483e+01  0.0000   1.0000
-Time:Auto            5.6625e-02  3.8921e+02  0.0001   0.9999
-Time:Transit         2.0719e-03  1.4818e+02  0.0000   1.0000
-
-Log-Likelihood: -1.5526e-07
-McFadden R^2:  1 
-Likelihood ratio test : chisq = 5566.1 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7570.8
+McFadden R^2:  0.36332 
+Likelihood ratio test : chisq = 8640.6 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
@@ -2074,38 +2046,38 @@ Likelihood ratio test : chisq = 5566.1 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
-Referece: AUTO
+Reference: AUTO
 
 Call:
 mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Auto&quot;, 
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
-   Auto  Active Transit 
-0.10846 0.26431 0.62723 
+    Auto   Active  Transit 
+0.091248 0.283469 0.625283 
 
 nr method
-17 iterations, 0h:0m:1s 
-g&#39;(-H)^-1g = 6.46E-07 
-gradient close to zero 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.98E-06 
+successive function values within tolerance limits 
 
 Coefficients :
-                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Active   3.4665e+00  1.4901e-01  23.2642 &lt; 2.2e-16 ***
-(Intercept):Transit  1.6768e+00  1.3827e-01  12.1270 &lt; 2.2e-16 ***
-get(i)Male:Active    3.3588e-01  1.6398e-01   2.0483  0.040534 *  
-get(i)Male:Transit  -1.4235e-01  1.2513e-01  -1.1376  0.255275    
-get(i)Other:Active   1.6245e+01  2.0506e+03   0.0079  0.993679    
-get(i)Other:Transit  1.6134e+01  2.0506e+03   0.0079  0.993722    
-Time:Auto           -1.3361e-02  4.7341e-03  -2.8223  0.004768 ** 
-Time:Active         -3.2623e-02  1.5351e-03 -21.2515 &lt; 2.2e-16 ***
-Time:Transit        -3.0036e-03  1.8127e-03  -1.6570  0.097519 .  
+                        Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Active    4.70477830  0.51933167   9.0593 &lt; 2.2e-16 ***
+(Intercept):Transit   2.63577994  0.46696918   5.6444 1.657e-08 ***
+get(i)Female:Active  -1.12011932  0.51801955  -2.1623   0.03059 *  
+get(i)Female:Transit -0.82167623  0.46430983  -1.7697   0.07678 .  
+get(i)Male:Active    -0.84624095  0.52022775  -1.6267   0.10381    
+get(i)Male:Transit   -0.88936939  0.46591730  -1.9089   0.05628 .  
+Time:Auto            -0.02056830  0.00248732  -8.2693 2.220e-16 ***
+Time:Active          -0.03244596  0.00073740 -44.0002 &lt; 2.2e-16 ***
+Time:Transit         -0.00544192  0.00096928  -5.6144 1.973e-08 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1815.5
-McFadden R^2:  0.34765 
-Likelihood ratio test : chisq = 1935.1 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7609.5
+McFadden R^2:  0.36007 
+Likelihood ratio test : chisq = 8563.2 (p.value = &lt; 2.22e-16)
 
 ---------------------------------------------------------------
 Referece: ACTIVE
@@ -2115,31 +2087,31 @@ mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Active&
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
- Active    Auto Transit 
-0.26431 0.10846 0.62723 
+  Active     Auto  Transit 
+0.283469 0.091248 0.625283 
 
 nr method
-17 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 6.46E-07 
-gradient close to zero 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.98E-06 
+successive function values within tolerance limits 
 
 Coefficients :
-                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Auto    -3.4665e+00  1.4901e-01 -23.2642 &lt; 2.2e-16 ***
-(Intercept):Transit -1.7896e+00  1.1035e-01 -16.2176 &lt; 2.2e-16 ***
-get(i)Male:Auto     -3.3588e-01  1.6398e-01  -2.0483 0.0405340 *  
-get(i)Male:Transit  -4.7824e-01  1.2891e-01  -3.7100 0.0002073 ***
-get(i)Other:Auto    -1.6245e+01  2.0506e+03  -0.0079 0.9936792    
-get(i)Other:Transit -1.1108e-01  5.4993e-01  -0.2020 0.8399300    
-Time:Active         -3.2623e-02  1.5351e-03 -21.2515 &lt; 2.2e-16 ***
-Time:Auto           -1.3361e-02  4.7341e-03  -2.8223 0.0047680 ** 
-Time:Transit        -3.0036e-03  1.8127e-03  -1.6570 0.0975195 .  
+                        Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Auto     -4.70477830  0.51933167  -9.0593 &lt; 2.2e-16 ***
+(Intercept):Transit  -2.06899835  0.28903311  -7.1583 8.167e-13 ***
+get(i)Female:Auto     1.12011932  0.51801955   2.1623   0.03059 *  
+get(i)Female:Transit  0.29844309  0.28835161   1.0350   0.30067    
+get(i)Male:Auto       0.84624095  0.52022775   1.6267   0.10381    
+get(i)Male:Transit   -0.04312843  0.29057091  -0.1484   0.88201    
+Time:Active          -0.03244596  0.00073740 -44.0002 &lt; 2.2e-16 ***
+Time:Auto            -0.02056830  0.00248732  -8.2693 2.220e-16 ***
+Time:Transit         -0.00544192  0.00096928  -5.6144 1.973e-08 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1815.5
-McFadden R^2:  0.34765 
-Likelihood ratio test : chisq = 1935.1 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7609.5
+McFadden R^2:  0.36007 
+Likelihood ratio test : chisq = 8563.2 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
@@ -2148,36 +2120,36 @@ Likelihood ratio test : chisq = 1935.1 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
-Referece: AUTO
+Reference: AUTO
 
 Call:
 mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Auto&quot;, 
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
-   Auto  Active Transit 
-0.10846 0.26431 0.62723 
+    Auto   Active  Transit 
+0.091248 0.283469 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 2.43E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.61E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                      Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Active   4.3763888  0.2016668  21.7011 &lt; 2.2e-16 ***
-(Intercept):Transit  2.7075775  0.1844043  14.6828 &lt; 2.2e-16 ***
-get(i)1:Active      -1.1130947  0.1909254  -5.8300 5.543e-09 ***
-get(i)1:Transit     -1.6351830  0.1615676 -10.1207 &lt; 2.2e-16 ***
-Time:Auto           -0.0159751  0.0048442  -3.2978 0.0009746 ***
-Time:Active         -0.0324563  0.0015329 -21.1727 &lt; 2.2e-16 ***
-Time:Transit        -0.0026680  0.0018546  -1.4386 0.1502698    
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Active   4.62694698  0.10387304  44.5443 &lt; 2.2e-16 ***
+(Intercept):Transit  2.97040893  0.09768728  30.4073 &lt; 2.2e-16 ***
+get(i)1:Active      -1.33459153  0.09874090 -13.5161 &lt; 2.2e-16 ***
+get(i)1:Transit     -1.76407625  0.08740922 -20.1818 &lt; 2.2e-16 ***
+Time:Auto           -0.02311243  0.00252283  -9.1613 &lt; 2.2e-16 ***
+Time:Active         -0.03232287  0.00073941 -43.7145 &lt; 2.2e-16 ***
+Time:Transit        -0.00504099  0.00098872  -5.0985 3.424e-07 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1754.5
-McFadden R^2:  0.36959 
-Likelihood ratio test : chisq = 2057.2 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7339
+McFadden R^2:  0.38282 
+Likelihood ratio test : chisq = 9104.2 (p.value = &lt; 2.22e-16)
 
 ---------------------------------------------------------------
 Referece: ACTIVE
@@ -2187,29 +2159,29 @@ mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Active&
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
- Active    Auto Transit 
-0.26431 0.10846 0.62723 
+  Active     Auto  Transit 
+0.283469 0.091248 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 2.43E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.61E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                      Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Auto    -4.3763888  0.2016668 -21.7011 &lt; 2.2e-16 ***
-(Intercept):Transit -1.6688113  0.1230018 -13.5674 &lt; 2.2e-16 ***
-get(i)1:Auto         1.1130947  0.1909254   5.8300 5.543e-09 ***
-get(i)1:Transit     -0.5220883  0.1248551  -4.1816 2.895e-05 ***
-Time:Active         -0.0324563  0.0015329 -21.1727 &lt; 2.2e-16 ***
-Time:Auto           -0.0159751  0.0048442  -3.2978 0.0009746 ***
-Time:Transit        -0.0026680  0.0018546  -1.4386 0.1502698    
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Auto    -4.62694698  0.10387304 -44.5443 &lt; 2.2e-16 ***
+(Intercept):Transit -1.65653805  0.05716620 -28.9776 &lt; 2.2e-16 ***
+get(i)1:Auto         1.33459153  0.09874090  13.5161 &lt; 2.2e-16 ***
+get(i)1:Transit     -0.42948472  0.05812339  -7.3892 1.477e-13 ***
+Time:Active         -0.03232287  0.00073941 -43.7145 &lt; 2.2e-16 ***
+Time:Auto           -0.02311243  0.00252283  -9.1613 &lt; 2.2e-16 ***
+Time:Transit        -0.00504099  0.00098872  -5.0985 3.424e-07 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1754.5
-McFadden R^2:  0.36959 
-Likelihood ratio test : chisq = 2057.2 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7339
+McFadden R^2:  0.38282 
+Likelihood ratio test : chisq = 9104.2 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
@@ -2218,60 +2190,38 @@ Likelihood ratio test : chisq = 2057.2 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
-Referece: AUTO
+Reference: AUTO
 
 Call:
 mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Auto&quot;, 
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
-   Auto  Active Transit 
-0.10846 0.26431 0.62723 
+    Auto   Active  Transit 
+0.091248 0.283469 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 2.55E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.34E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                                                             Estimate Std. Error  z-value
-(Intercept):Active                                          3.8477205  0.1639318  23.4715
-(Intercept):Transit                                         1.8344266  0.1496275  12.2600
-get(i)Yes, I work &gt; 40 hours per week:Active               -0.6251040  0.4252690  -1.4699
-get(i)Yes, I work &gt; 40 hours per week:Transit              -1.3645072  0.2665619  -5.1189
-get(i)Yes, I work 31-40 hours per week:Active              -1.2632183  0.3378951  -3.7385
-get(i)Yes, I work 31-40 hours per week:Transit             -1.3559161  0.2306875  -5.8777
-get(i)Yes, I work part time (&lt;10 hours per week):Active    -0.0399014  0.2159019  -0.1848
-get(i)Yes, I work part time (&lt;10 hours per week):Transit   -0.0133698  0.1718553  -0.0778
-get(i)Yes, I work part time (11-20 hours per week):Active  -0.5241032  0.2172325  -2.4126
-get(i)Yes, I work part time (11-20 hours per week):Transit -0.2254237  0.1627230  -1.3853
-get(i)Yes, I work part time (21-30 hours per week):Active  -1.0429610  0.3211069  -3.2480
-get(i)Yes, I work part time (21-30 hours per week):Transit -0.5699049  0.2146286  -2.6553
-Time:Auto                                                  -0.0148589  0.0048110  -3.0885
-Time:Active                                                -0.0324022  0.0015329 -21.1375
-Time:Transit                                               -0.0029109  0.0018341  -1.5871
-                                                            Pr(&gt;|z|)    
-(Intercept):Active                                         &lt; 2.2e-16 ***
-(Intercept):Transit                                        &lt; 2.2e-16 ***
-get(i)Yes, I work &gt; 40 hours per week:Active               0.1415882    
-get(i)Yes, I work &gt; 40 hours per week:Transit              3.073e-07 ***
-get(i)Yes, I work 31-40 hours per week:Active              0.0001851 ***
-get(i)Yes, I work 31-40 hours per week:Transit             4.160e-09 ***
-get(i)Yes, I work part time (&lt;10 hours per week):Active    0.8533761    
-get(i)Yes, I work part time (&lt;10 hours per week):Transit   0.9379897    
-get(i)Yes, I work part time (11-20 hours per week):Active  0.0158376 *  
-get(i)Yes, I work part time (11-20 hours per week):Transit 0.1659542    
-get(i)Yes, I work part time (21-30 hours per week):Active  0.0011621 ** 
-get(i)Yes, I work part time (21-30 hours per week):Transit 0.0079236 ** 
-Time:Auto                                                  0.0020117 ** 
-Time:Active                                                &lt; 2.2e-16 ***
-Time:Transit                                               0.1124872    
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Active   3.73389578  0.06961478  53.6365 &lt; 2.2e-16 ***
+(Intercept):Transit  1.84067846  0.06744643  27.2910 &lt; 2.2e-16 ***
+get(i)FT:Active     -0.96733780  0.25211810  -3.8368 0.0001246 ***
+get(i)FT:Transit    -1.31347693  0.16362963  -8.0271 8.882e-16 ***
+get(i)PT:Active     -0.31289933  0.12243514  -2.5556 0.0105995 *  
+get(i)PT:Transit    -0.15180737  0.09206985  -1.6488 0.0991828 .  
+Time:Auto           -0.02027809  0.00249196  -8.1374 4.441e-16 ***
+Time:Active         -0.03224980  0.00073557 -43.8432 &lt; 2.2e-16 ***
+Time:Transit        -0.00521497  0.00097156  -5.3676 7.978e-08 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1793.1
-McFadden R^2:  0.35571 
-Likelihood ratio test : chisq = 1979.9 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7598
+McFadden R^2:  0.36103 
+Likelihood ratio test : chisq = 8586.1 (p.value = &lt; 2.22e-16)
 
 ---------------------------------------------------------------
 Referece: ACTIVE
@@ -2281,53 +2231,101 @@ mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Active&
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
- Active    Auto Transit 
-0.26431 0.10846 0.62723 
+  Active     Auto  Transit 
+0.283469 0.091248 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 2.55E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.34E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                                                             Estimate Std. Error  z-value
-(Intercept):Auto                                           -3.8477205  0.1639318 -23.4715
-(Intercept):Transit                                        -2.0132939  0.1176725 -17.1093
-get(i)Yes, I work &gt; 40 hours per week:Auto                  0.6251040  0.4252690   1.4699
-get(i)Yes, I work &gt; 40 hours per week:Transit              -0.7394032  0.3993516  -1.8515
-get(i)Yes, I work 31-40 hours per week:Auto                 1.2632183  0.3378951   3.7385
-get(i)Yes, I work 31-40 hours per week:Transit             -0.0926978  0.3113545  -0.2977
-get(i)Yes, I work part time (&lt;10 hours per week):Auto       0.0399014  0.2159019   0.1848
-get(i)Yes, I work part time (&lt;10 hours per week):Transit    0.0265316  0.1589244   0.1669
-get(i)Yes, I work part time (11-20 hours per week):Auto     0.5241032  0.2172325   2.4126
-get(i)Yes, I work part time (11-20 hours per week):Transit  0.2986795  0.1703495   1.7533
-get(i)Yes, I work part time (21-30 hours per week):Auto     1.0429610  0.3211069   3.2480
-get(i)Yes, I work part time (21-30 hours per week):Transit  0.4730561  0.2753040   1.7183
-Time:Active                                                -0.0324022  0.0015329 -21.1375
-Time:Auto                                                  -0.0148589  0.0048110  -3.0885
-Time:Transit                                               -0.0029109  0.0018341  -1.5871
-                                                            Pr(&gt;|z|)    
-(Intercept):Auto                                           &lt; 2.2e-16 ***
-(Intercept):Transit                                        &lt; 2.2e-16 ***
-get(i)Yes, I work &gt; 40 hours per week:Auto                 0.1415882    
-get(i)Yes, I work &gt; 40 hours per week:Transit              0.0640963 .  
-get(i)Yes, I work 31-40 hours per week:Auto                0.0001851 ***
-get(i)Yes, I work 31-40 hours per week:Transit             0.7659136    
-get(i)Yes, I work part time (&lt;10 hours per week):Auto      0.8533761    
-get(i)Yes, I work part time (&lt;10 hours per week):Transit   0.8674135    
-get(i)Yes, I work part time (11-20 hours per week):Auto    0.0158376 *  
-get(i)Yes, I work part time (11-20 hours per week):Transit 0.0795448 .  
-get(i)Yes, I work part time (21-30 hours per week):Auto    0.0011621 ** 
-get(i)Yes, I work part time (21-30 hours per week):Transit 0.0857411 .  
-Time:Active                                                &lt; 2.2e-16 ***
-Time:Auto                                                  0.0020117 ** 
-Time:Transit                                               0.1124872    
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Auto    -3.73389578  0.06961478 -53.6365 &lt; 2.2e-16 ***
+(Intercept):Transit -1.89321733  0.04882280 -38.7773 &lt; 2.2e-16 ***
+get(i)FT:Auto        0.96733780  0.25211810   3.8368 0.0001246 ***
+get(i)FT:Transit    -0.34613913  0.23746303  -1.4577 0.1449357    
+get(i)PT:Auto        0.31289933  0.12243514   2.5556 0.0105995 *  
+get(i)PT:Transit     0.16109196  0.09594562   1.6790 0.0931536 .  
+Time:Active         -0.03224980  0.00073557 -43.8432 &lt; 2.2e-16 ***
+Time:Auto           -0.02027809  0.00249196  -8.1374 4.441e-16 ***
+Time:Transit        -0.00521497  0.00097156  -5.3676 7.978e-08 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1793.1
-McFadden R^2:  0.35571 
-Likelihood ratio test : chisq = 1979.9 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7598
+McFadden R^2:  0.36103 
+Likelihood ratio test : chisq = 8586.1 (p.value = &lt; 2.22e-16)
+
+
+---------------------------------------------------------------
+---------------------------------------------------------------
+[1] &quot;CHOICE SPECIFIC VARIABLE:  Car_Avail&quot;
+
+
+---------------------------------------------------------------
+Reference: AUTO
+
+Call:
+mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Auto&quot;, 
+    method = &quot;nr&quot;)
+
+Frequencies of alternatives:choice
+    Auto   Active  Transit 
+0.091248 0.283469 0.625283 
+
+nr method
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.43E-06 
+successive function values within tolerance limits 
+
+Coefficients :
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Active   3.59883586  0.07006386  51.3651 &lt; 2.2e-16 ***
+(Intercept):Transit  1.75692910  0.06729616  26.1074 &lt; 2.2e-16 ***
+get(i)1:Active       0.40496971  0.09107569   4.4465 8.727e-06 ***
+get(i)1:Transit      0.24513174  0.07245581   3.3832 0.0007165 ***
+Time:Auto           -0.01982899  0.00248925  -7.9658 1.554e-15 ***
+Time:Active         -0.03236941  0.00073532 -44.0208 &lt; 2.2e-16 ***
+Time:Transit        -0.00543408  0.00096719  -5.6184 1.927e-08 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Log-Likelihood: -7617.6
+McFadden R^2:  0.35938 
+Likelihood ratio test : chisq = 8546.9 (p.value = &lt; 2.22e-16)
+
+---------------------------------------------------------------
+Referece: ACTIVE
+
+Call:
+mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Active&quot;, 
+    method = &quot;nr&quot;)
+
+Frequencies of alternatives:choice
+  Active     Auto  Transit 
+0.283469 0.091248 0.625283 
+
+nr method
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.43E-06 
+successive function values within tolerance limits 
+
+Coefficients :
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Auto    -3.59883586  0.07006386 -51.3651 &lt; 2.2e-16 ***
+(Intercept):Transit -1.84190676  0.05032065 -36.6034 &lt; 2.2e-16 ***
+get(i)1:Auto        -0.40496971  0.09107569  -4.4465 8.727e-06 ***
+get(i)1:Transit     -0.15983797  0.06634842  -2.4091   0.01599 *  
+Time:Active         -0.03236941  0.00073532 -44.0208 &lt; 2.2e-16 ***
+Time:Auto           -0.01982899  0.00248925  -7.9658 1.554e-15 ***
+Time:Transit        -0.00543408  0.00096719  -5.6184 1.927e-08 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Log-Likelihood: -7617.6
+McFadden R^2:  0.35938 
+Likelihood ratio test : chisq = 8546.9 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
@@ -2336,40 +2334,36 @@ Likelihood ratio test : chisq = 1979.9 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
-Referece: AUTO
+Reference: AUTO
 
 Call:
 mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Auto&quot;, 
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
-   Auto  Active Transit 
-0.10846 0.26431 0.62723 
+    Auto   Active  Transit 
+0.091248 0.283469 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 4.02E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 7.76E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                                         Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Active                      3.6340972  0.2326988  15.6172 &lt; 2.2e-16 ***
-(Intercept):Transit                     1.4261171  0.2198926   6.4855 8.843e-11 ***
-get(i)Live with family/parents:Active  -1.8102670  0.2570931  -7.0413 1.905e-12 ***
-get(i)Live with family/parents:Transit  0.0459800  0.2101594   0.2188  0.826816    
-get(i)Live with partner:Active         -0.1672718  0.2935083  -0.5699  0.568742    
-get(i)Live with partner:Transit         0.0459038  0.2599600   0.1766  0.859838    
-get(i)Live with roommates:Active        1.0701373  0.3308393   3.2346  0.001218 ** 
-get(i)Live with roommates:Transit       1.0520458  0.3189473   3.2985  0.000972 ***
-Time:Auto                              -0.0156522  0.0049003  -3.1941  0.001403 ** 
-Time:Active                            -0.0277059  0.0015577 -17.7865 &lt; 2.2e-16 ***
-Time:Transit                           -0.0027061  0.0018452  -1.4666  0.142494    
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Active   3.96942568  0.07642400  51.9395 &lt; 2.2e-16 ***
+(Intercept):Transit  1.87004524  0.07490101  24.9669 &lt; 2.2e-16 ***
+get(i)1:Active      -1.92259340  0.09405317 -20.4416 &lt; 2.2e-16 ***
+get(i)1:Transit     -0.18007376  0.07157225  -2.5160   0.01187 *  
+Time:Auto           -0.02104382  0.00257906  -8.1595 4.441e-16 ***
+Time:Active         -0.02796236  0.00074341 -37.6138 &lt; 2.2e-16 ***
+Time:Transit        -0.00497073  0.00097879  -5.0785 3.805e-07 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1729.9
-McFadden R^2:  0.37842 
-Likelihood ratio test : chisq = 2106.3 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7289.6
+McFadden R^2:  0.38697 
+Likelihood ratio test : chisq = 9202.9 (p.value = &lt; 2.22e-16)
 
 ---------------------------------------------------------------
 Referece: ACTIVE
@@ -2379,33 +2373,29 @@ mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Active&
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
- Active    Auto Transit 
-0.26431 0.10846 0.62723 
+  Active     Auto  Transit 
+0.283469 0.091248 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 4.02E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 7.76E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                                         Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Auto                       -3.6340972  0.2326988 -15.6172 &lt; 2.2e-16 ***
-(Intercept):Transit                    -2.2079801  0.1640692 -13.4576 &lt; 2.2e-16 ***
-get(i)Live with family/parents:Auto     1.8102670  0.2570931   7.0413 1.905e-12 ***
-get(i)Live with family/parents:Transit  1.8562470  0.1966581   9.4390 &lt; 2.2e-16 ***
-get(i)Live with partner:Auto            0.1672718  0.2935083   0.5699  0.568742    
-get(i)Live with partner:Transit         0.2131756  0.2090451   1.0198  0.307843    
-get(i)Live with roommates:Auto         -1.0701373  0.3308393  -3.2346  0.001218 ** 
-get(i)Live with roommates:Transit      -0.0180915  0.1793086  -0.1009  0.919633    
-Time:Active                            -0.0277059  0.0015577 -17.7865 &lt; 2.2e-16 ***
-Time:Auto                              -0.0156522  0.0049003  -3.1941  0.001403 ** 
-Time:Transit                           -0.0027061  0.0018452  -1.4666  0.142494    
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Auto    -3.96942568  0.07642400 -51.9395 &lt; 2.2e-16 ***
+(Intercept):Transit -2.09938044  0.05090733 -41.2393 &lt; 2.2e-16 ***
+get(i)1:Auto         1.92259340  0.09405317  20.4416 &lt; 2.2e-16 ***
+get(i)1:Transit      1.74251965  0.07231524  24.0962 &lt; 2.2e-16 ***
+Time:Active         -0.02796236  0.00074341 -37.6138 &lt; 2.2e-16 ***
+Time:Auto           -0.02104382  0.00257906  -8.1595 4.441e-16 ***
+Time:Transit        -0.00497073  0.00097879  -5.0785 3.805e-07 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1729.9
-McFadden R^2:  0.37842 
-Likelihood ratio test : chisq = 2106.3 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7289.6
+McFadden R^2:  0.38697 
+Likelihood ratio test : chisq = 9202.9 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
@@ -2414,36 +2404,36 @@ Likelihood ratio test : chisq = 2106.3 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
-Referece: AUTO
+Reference: AUTO
 
 Call:
 mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Auto&quot;, 
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
-   Auto  Active Transit 
-0.10846 0.26431 0.62723 
+    Auto   Active  Transit 
+0.091248 0.283469 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 5.21E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 0.00119 
 successive function values within tolerance limits 
 
 Coefficients :
-                      Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Active   4.7434668  0.1754072  27.0426 &lt; 2.2e-16 ***
-(Intercept):Transit  2.5314498  0.1612942  15.6946 &lt; 2.2e-16 ***
-get(i):Active       -1.4698917  0.0970821 -15.1407 &lt; 2.2e-16 ***
-get(i):Transit      -0.8222711  0.0640431 -12.8393 &lt; 2.2e-16 ***
-Time:Auto           -0.0306256  0.0053198  -5.7569 8.568e-09 ***
-Time:Active         -0.0309049  0.0015814 -19.5432 &lt; 2.2e-16 ***
-Time:Transit        -0.0039991  0.0019749  -2.0250   0.04287 *  
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Active   6.53385428  0.23041142  28.3573 &lt; 2.2e-16 ***
+(Intercept):Transit  4.43222970  0.22963667  19.3011 &lt; 2.2e-16 ***
+get(i)1:Active      -4.19095043  0.23151370 -18.1024 &lt; 2.2e-16 ***
+get(i)1:Transit     -3.23650935  0.22800602 -14.1948 &lt; 2.2e-16 ***
+Time:Auto           -0.03050380  0.00263081 -11.5948 &lt; 2.2e-16 ***
+Time:Active         -0.02946985  0.00074721 -39.4400 &lt; 2.2e-16 ***
+Time:Transit        -0.00530408  0.00103014  -5.1489 2.621e-07 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1680.8
-McFadden R^2:  0.39606 
-Likelihood ratio test : chisq = 2204.5 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7124.5
+McFadden R^2:  0.40085 
+Likelihood ratio test : chisq = 9533.2 (p.value = &lt; 2.22e-16)
 
 ---------------------------------------------------------------
 Referece: ACTIVE
@@ -2453,29 +2443,29 @@ mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Active&
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
- Active    Auto Transit 
-0.26431 0.10846 0.62723 
+  Active     Auto  Transit 
+0.283469 0.091248 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 5.21E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 0.00119 
 successive function values within tolerance limits 
 
 Coefficients :
-                      Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Auto    -4.7434668  0.1754072 -27.0426 &lt; 2.2e-16 ***
-(Intercept):Transit -2.2120170  0.1144736 -19.3234 &lt; 2.2e-16 ***
-get(i):Auto          1.4698917  0.0970821  15.1407 &lt; 2.2e-16 ***
-get(i):Transit       0.6476205  0.0820473   7.8933 2.887e-15 ***
-Time:Active         -0.0309049  0.0015814 -19.5432 &lt; 2.2e-16 ***
-Time:Auto           -0.0306256  0.0053198  -5.7569 8.568e-09 ***
-Time:Transit        -0.0039991  0.0019749  -2.0250   0.04287 *  
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Auto    -6.53385428  0.23041142 -28.3573 &lt; 2.2e-16 ***
+(Intercept):Transit -2.10162457  0.05269081 -39.8860 &lt; 2.2e-16 ***
+get(i)1:Auto         4.19095043  0.23151370  18.1024 &lt; 2.2e-16 ***
+get(i)1:Transit      0.95444109  0.05989194  15.9361 &lt; 2.2e-16 ***
+Time:Active         -0.02946985  0.00074721 -39.4400 &lt; 2.2e-16 ***
+Time:Auto           -0.03050380  0.00263081 -11.5948 &lt; 2.2e-16 ***
+Time:Transit        -0.00530408  0.00103014  -5.1489 2.621e-07 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1680.8
-McFadden R^2:  0.39606 
-Likelihood ratio test : chisq = 2204.5 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7124.5
+McFadden R^2:  0.40085 
+Likelihood ratio test : chisq = 9533.2 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
@@ -2484,36 +2474,36 @@ Likelihood ratio test : chisq = 2204.5 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
-Referece: AUTO
+Reference: AUTO
 
 Call:
 mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Auto&quot;, 
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
-   Auto  Active Transit 
-0.10846 0.26431 0.62723 
+    Auto   Active  Transit 
+0.091248 0.283469 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 3.03E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 6.55E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                      Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Active   3.7117015  0.1428917  25.9756 &lt; 2.2e-16 ***
-(Intercept):Transit  1.6667639  0.1341746  12.4224 &lt; 2.2e-16 ***
-get(i):Active       -0.6214054  0.1232447  -5.0420 4.606e-07 ***
-get(i):Transit      -0.0816335  0.0625677  -1.3047  0.191987    
-Time:Auto           -0.0130692  0.0047416  -2.7563  0.005846 ** 
-Time:Active         -0.0320133  0.0015340 -20.8696 &lt; 2.2e-16 ***
-Time:Transit        -0.0028110  0.0018196  -1.5448  0.122394    
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Active   3.78814972  0.06975410  54.3072 &lt; 2.2e-16 ***
+(Intercept):Transit  1.82499202  0.06748921  27.0412 &lt; 2.2e-16 ***
+get(i):Active       -0.59836312  0.05999606  -9.9734 &lt; 2.2e-16 ***
+get(i):Transit      -0.08701757  0.03561140  -2.4435   0.01454 *  
+Time:Auto           -0.02039773  0.00248844  -8.1970 2.220e-16 ***
+Time:Active         -0.03180357  0.00073706 -43.1491 &lt; 2.2e-16 ***
+Time:Transit        -0.00524779  0.00097080  -5.4056 6.458e-08 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1809.9
-McFadden R^2:  0.34968 
-Likelihood ratio test : chisq = 1946.4 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7568.9
+McFadden R^2:  0.36348 
+Likelihood ratio test : chisq = 8644.4 (p.value = &lt; 2.22e-16)
 
 ---------------------------------------------------------------
 Referece: ACTIVE
@@ -2523,29 +2513,29 @@ mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Active&
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
- Active    Auto Transit 
-0.26431 0.10846 0.62723 
+  Active     Auto  Transit 
+0.283469 0.091248 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 3.03E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 6.55E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                      Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Auto    -3.7117015  0.1428917 -25.9756 &lt; 2.2e-16 ***
-(Intercept):Transit -2.0449376  0.1060293 -19.2865 &lt; 2.2e-16 ***
-get(i):Auto          0.6214054  0.1232447   5.0420 4.606e-07 ***
-get(i):Transit       0.5397719  0.1126426   4.7919 1.652e-06 ***
-Time:Active         -0.0320133  0.0015340 -20.8696 &lt; 2.2e-16 ***
-Time:Auto           -0.0130692  0.0047416  -2.7563  0.005846 ** 
-Time:Transit        -0.0028110  0.0018196  -1.5448  0.122394    
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Auto    -3.78814972  0.06975410 -54.3072 &lt; 2.2e-16 ***
+(Intercept):Transit -1.96315771  0.04925487 -39.8571 &lt; 2.2e-16 ***
+get(i):Auto          0.59836312  0.05999606   9.9734 &lt; 2.2e-16 ***
+get(i):Transit       0.51134555  0.05240100   9.7583 &lt; 2.2e-16 ***
+Time:Active         -0.03180357  0.00073706 -43.1491 &lt; 2.2e-16 ***
+Time:Auto           -0.02039773  0.00248844  -8.1970 2.220e-16 ***
+Time:Transit        -0.00524779  0.00097080  -5.4056 6.458e-08 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1809.9
-McFadden R^2:  0.34968 
-Likelihood ratio test : chisq = 1946.4 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7568.9
+McFadden R^2:  0.36348 
+Likelihood ratio test : chisq = 8644.4 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
@@ -2554,36 +2544,36 @@ Likelihood ratio test : chisq = 1946.4 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
-Referece: AUTO
+Reference: AUTO
 
 Call:
 mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Auto&quot;, 
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
-   Auto  Active Transit 
-0.10846 0.26431 0.62723 
+    Auto   Active  Transit 
+0.091248 0.283469 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 2.34E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.62E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                      Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Active   3.6611731  0.1978066  18.5089 &lt; 2.2e-16 ***
-(Intercept):Transit  1.4613472  0.1772692   8.2437  2.22e-16 ***
-get(i):Active       -0.0318295  0.0554615  -0.5739   0.56603    
-get(i):Transit       0.0668981  0.0453497   1.4752   0.14017    
-Time:Auto           -0.0122094  0.0047736  -2.5577   0.01054 *  
-Time:Active         -0.0321773  0.0015261 -21.0853 &lt; 2.2e-16 ***
-Time:Transit        -0.0029730  0.0018074  -1.6449   0.09999 .  
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Active   3.88649823  0.09714872  40.0057 &lt; 2.2e-16 ***
+(Intercept):Transit  1.83253178  0.09017920  20.3210 &lt; 2.2e-16 ***
+get(i):Active       -0.08071062  0.02614514  -3.0870  0.002022 ** 
+get(i):Transit      -0.01259258  0.02263395  -0.5564  0.577966    
+Time:Auto           -0.02057714  0.00250896  -8.2015 2.220e-16 ***
+Time:Active         -0.03220286  0.00073713 -43.6868 &lt; 2.2e-16 ***
+Time:Transit        -0.00539261  0.00096959  -5.5617 2.671e-08 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1821.4
-McFadden R^2:  0.34555 
-Likelihood ratio test : chisq = 1923.4 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7620.2
+McFadden R^2:  0.35917 
+Likelihood ratio test : chisq = 8541.8 (p.value = &lt; 2.22e-16)
 
 ---------------------------------------------------------------
 Referece: ACTIVE
@@ -2593,29 +2583,29 @@ mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Active&
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
- Active    Auto Transit 
-0.26431 0.10846 0.62723 
+  Active     Auto  Transit 
+0.283469 0.091248 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 2.34E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.62E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                      Estimate Std. Error  z-value Pr(&gt;|z|)    
-(Intercept):Auto    -3.6611731  0.1978066 -18.5089  &lt; 2e-16 ***
-(Intercept):Transit -2.1998259  0.1464340 -15.0226  &lt; 2e-16 ***
-get(i):Auto          0.0318295  0.0554615   0.5739  0.56603    
-get(i):Transit       0.0987276  0.0401029   2.4619  0.01382 *  
-Time:Active         -0.0321773  0.0015261 -21.0853  &lt; 2e-16 ***
-Time:Auto           -0.0122094  0.0047736  -2.5577  0.01054 *  
-Time:Transit        -0.0029730  0.0018074  -1.6449  0.09999 .  
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Auto    -3.88649823  0.09714872 -40.0057 &lt; 2.2e-16 ***
+(Intercept):Transit -2.05396645  0.06733086 -30.5056 &lt; 2.2e-16 ***
+get(i):Auto          0.08071062  0.02614514   3.0870 0.0020217 ** 
+get(i):Transit       0.06811804  0.01813669   3.7558 0.0001728 ***
+Time:Active         -0.03220286  0.00073713 -43.6868 &lt; 2.2e-16 ***
+Time:Auto           -0.02057714  0.00250896  -8.2015 2.220e-16 ***
+Time:Transit        -0.00539261  0.00096959  -5.5617 2.671e-08 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1821.4
-McFadden R^2:  0.34555 
-Likelihood ratio test : chisq = 1923.4 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7620.2
+McFadden R^2:  0.35917 
+Likelihood ratio test : chisq = 8541.8 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
@@ -2624,54 +2614,38 @@ Likelihood ratio test : chisq = 1923.4 (p.value = &lt; 2.22e-16)
 
 
 ---------------------------------------------------------------
-Referece: AUTO
+Reference: AUTO
 
 Call:
 mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Auto&quot;, 
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
-   Auto  Active Transit 
-0.10846 0.26431 0.62723 
+    Auto   Active  Transit 
+0.091248 0.283469 0.625283 
 
 nr method
 8 iterations, 0h:0m:1s 
-g&#39;(-H)^-1g = 2.48E-06 
+g&#39;(-H)^-1g = 5.9E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                                    Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Active                 2.6228080  0.4900263   5.3524 8.680e-08 ***
-(Intercept):Transit                1.2046432  0.3245644   3.7116 0.0002060 ***
-get(i)$ 150,000 - 179,999:Active   1.4507440  0.8786699   1.6511 0.0987246 .  
-get(i)$ 150,000 - 179,999:Transit -0.9817387  0.4801212  -2.0448 0.0408773 *  
-get(i)$ 180,000 - 209,999:Active   0.3577531  0.8089131   0.4423 0.6582982    
-get(i)$ 180,000 - 209,999:Transit -0.6385002  0.5470336  -1.1672 0.2431277    
-get(i)$ 210,000 - 239,999:Active  -1.4508330  1.4805434  -0.9799 0.3271193    
-get(i)$ 210,000 - 239,999:Transit -0.5894556  0.7572624  -0.7784 0.4363313    
-get(i)$ 240,000 +:Active           0.8096682  0.7786514   1.0398 0.2984170    
-get(i)$ 240,000 +:Transit         -0.2166724  0.5985253  -0.3620 0.7173442    
-get(i)$ 30,000 - 59,999:Active     1.0646328  0.5607410   1.8986 0.0576148 .  
-get(i)$ 30,000 - 59,999:Transit    0.7687677  0.3730431   2.0608 0.0393220 *  
-get(i)$ 60,000 - 89,999:Active     0.2458485  0.5625288   0.4370 0.6620812    
-get(i)$ 60,000 - 89,999:Transit    0.1477452  0.3587358   0.4118 0.6804497    
-get(i)$ 90,000 - 119,999:Active    0.2779058  0.6132290   0.4532 0.6504160    
-get(i)$ 90,000 - 119,999:Transit  -0.3797348  0.3691554  -1.0287 0.3036403    
-get(i)I donÃ¢â‚¬â„¢t know:Active   1.1047172  0.5210030   2.1204 0.0339752 *  
-get(i)I donÃ¢â‚¬â„¢t know:Transit  0.4160196  0.3421655   1.2158 0.2240446    
-get(i)Less than $ 30,000:Active    2.2368871  0.5463034   4.0946 4.229e-05 ***
-get(i)Less than $ 30,000:Transit   1.3684365  0.3871746   3.5344 0.0004087 ***
-get(i)Unknown:Active               0.7786005  0.4902812   1.5881 0.1122707    
-get(i)Unknown:Transit              0.4175386  0.3132098   1.3331 0.1825005    
-Time:Auto                         -0.0158826  0.0048737  -3.2589 0.0011186 ** 
-Time:Active                       -0.0324297  0.0015400 -21.0579 &lt; 2.2e-16 ***
-Time:Transit                      -0.0033078  0.0018580  -1.7803 0.0750244 .  
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Active   3.56859612  0.07396267  48.2486 &lt; 2.2e-16 ***
+(Intercept):Transit  1.77512257  0.07029550  25.2523 &lt; 2.2e-16 ***
+get(i)High:Active   -0.50568770  0.11970313  -4.2245 2.395e-05 ***
+get(i)High:Transit  -0.57627494  0.08465977  -6.8070 9.969e-12 ***
+get(i)Low:Active     0.60299002  0.09068030   6.6496 2.938e-11 ***
+get(i)Low:Transit    0.35521493  0.07552487   4.7033 2.560e-06 ***
+Time:Auto           -0.02149750  0.00250743  -8.5735 &lt; 2.2e-16 ***
+Time:Active         -0.03246753  0.00073882 -43.9452 &lt; 2.2e-16 ***
+Time:Transit        -0.00561133  0.00097693  -5.7439 9.254e-09 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1781.9
-McFadden R^2:  0.35975 
-Likelihood ratio test : chisq = 2002.4 (p.value = &lt; 2.22e-16)
+Log-Likelihood: -7572.6
+McFadden R^2:  0.36317 
+Likelihood ratio test : chisq = 8636.9 (p.value = &lt; 2.22e-16)
 
 ---------------------------------------------------------------
 Referece: ACTIVE
@@ -2681,57 +2655,37 @@ mlogit(formula = Mode ~ 0 | get(i) | Time, data = mldf, reflevel = &quot;Active&
     method = &quot;nr&quot;)
 
 Frequencies of alternatives:choice
- Active    Auto Transit 
-0.26431 0.10846 0.62723 
+  Active     Auto  Transit 
+0.283469 0.091248 0.625283 
 
 nr method
-8 iterations, 0h:0m:0s 
-g&#39;(-H)^-1g = 2.48E-06 
+8 iterations, 0h:0m:1s 
+g&#39;(-H)^-1g = 5.9E-06 
 successive function values within tolerance limits 
 
 Coefficients :
-                                    Estimate Std. Error  z-value  Pr(&gt;|z|)    
-(Intercept):Auto                  -2.6228080  0.4900263  -5.3524 8.680e-08 ***
-(Intercept):Transit               -1.4181648  0.4310301  -3.2902  0.001001 ** 
-get(i)$ 150,000 - 179,999:Auto    -1.4507440  0.8786699  -1.6511  0.098725 .  
-get(i)$ 150,000 - 179,999:Transit -2.4324828  0.8392057  -2.8986  0.003749 ** 
-get(i)$ 180,000 - 209,999:Auto    -0.3577531  0.8089131  -0.4423  0.658298    
-get(i)$ 180,000 - 209,999:Transit -0.9962533  0.7385295  -1.3490  0.177347    
-get(i)$ 210,000 - 239,999:Auto     1.4508330  1.4805434   0.9799  0.327119    
-get(i)$ 210,000 - 239,999:Transit  0.8613773  1.4153738   0.6086  0.542799    
-get(i)$ 240,000 +:Auto            -0.8096682  0.7786514  -1.0398  0.298417    
-get(i)$ 240,000 +:Transit         -1.0263406  0.6599070  -1.5553  0.119879    
-get(i)$ 30,000 - 59,999:Auto      -1.0646328  0.5607410  -1.8986  0.057615 .  
-get(i)$ 30,000 - 59,999:Transit   -0.2958651  0.4780643  -0.6189  0.535994    
-get(i)$ 60,000 - 89,999:Auto      -0.2458485  0.5625288  -0.4370  0.662081    
-get(i)$ 60,000 - 89,999:Transit   -0.0981033  0.4949965  -0.1982  0.842897    
-get(i)$ 90,000 - 119,999:Auto     -0.2779058  0.6132290  -0.4532  0.650416    
-get(i)$ 90,000 - 119,999:Transit  -0.6576405  0.5558146  -1.1832  0.236729    
-get(i)I donÃ¢â‚¬â„¢t know:Auto    -1.1047172  0.5210030  -2.1204  0.033975 *  
-get(i)I donÃ¢â‚¬â„¢t know:Transit -0.6886976  0.4524042  -1.5223  0.127932    
-get(i)Less than $ 30,000:Auto     -2.2368871  0.5463034  -4.0946 4.229e-05 ***
-get(i)Less than $ 30,000:Transit  -0.8684505  0.4456979  -1.9485  0.051353 .  
-get(i)Unknown:Auto                -0.7786005  0.4902812  -1.5881  0.112271    
-get(i)Unknown:Transit             -0.3610619  0.4316893  -0.8364  0.402934    
-Time:Active                       -0.0324297  0.0015400 -21.0579 &lt; 2.2e-16 ***
-Time:Auto                         -0.0158826  0.0048737  -3.2589  0.001119 ** 
-Time:Transit                      -0.0033078  0.0018580  -1.7803  0.075024 .  
+                       Estimate  Std. Error  z-value  Pr(&gt;|z|)    
+(Intercept):Auto    -3.56859612  0.07396267 -48.2486 &lt; 2.2e-16 ***
+(Intercept):Transit -1.79347355  0.05266501 -34.0544 &lt; 2.2e-16 ***
+get(i)High:Auto      0.50568770  0.11970313   4.2245 2.395e-05 ***
+get(i)High:Transit  -0.07058724  0.10160246  -0.6947    0.4872    
+get(i)Low:Auto      -0.60299002  0.09068030  -6.6496 2.938e-11 ***
+get(i)Low:Transit   -0.24777509  0.06248363  -3.9654 7.326e-05 ***
+Time:Active         -0.03246753  0.00073882 -43.9452 &lt; 2.2e-16 ***
+Time:Auto           -0.02149750  0.00250743  -8.5735 &lt; 2.2e-16 ***
+Time:Transit        -0.00561133  0.00097693  -5.7439 9.254e-09 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Log-Likelihood: -1781.9
-McFadden R^2:  0.35975 
-Likelihood ratio test : chisq = 2002.4 (p.value = &lt; 2.22e-16)
-
-
----------------------------------------------------------------
----------------------------------------------------------------</code></pre>
+Log-Likelihood: -7572.6
+McFadden R^2:  0.36317 
+Likelihood ratio test : chisq = 8636.9 (p.value = &lt; 2.22e-16)</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkl0ZXJhdGlvbiBvZiBDaG9pY2UgU3BlY2lmaWMgVmFyaWFibGVzIg0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KSW4gdGhpcyBub3RlYm9vayB3ZSBpdGVyYXRlIHRocm91Z2ggYSBzaW1wbGUgbXVsdGlub21pYWwgX19Nb2RlIENob2ljZSBtb2RlbF9fLCB3aGVyZSBlYWNoIHJ1biBjb250YWlucyBhIGRpZmZlcmVudCBjaG9pY2Ugc3BlY2lmaWMgdmFyaWFibGUuIEVhY2ggcnVuIGFsc28gbG9va3MgYXQgdHdvIGRpZmZlcmVudCByZWZlcmVuY2UgbW9kZXMgKEF1dG8gYW5kIEFjdGl2ZSkuDQoNCmBgYHtyfQ0KbGlicmFyeShtbG9naXQpDQpsaWJyYXJ5KGRhdGEudGFibGUpDQoNCiMgUmVhZCBNb2RlQ2hvaWNlX2lucHV0LmNzdg0KZGYgPC0gcmVhZC5jc3YoIkM6L1VzZXJzL2dvbnphL0Rlc2t0b3AvTUNoSW5wdXRfMjAxNV93aXRoQ29sdW1ucy5jc3YiKQ0KZGYkTW9kZSA9IGFzLmZhY3RvcihkZiRNb2RlKQ0KZGYkSW5jb21lID0gYXMuZmFjdG9yKGRmJEluY29tZSkNCmRmJFN0YXR1cyA9IGFzLmZhY3RvcihkZiRTdGF0dXMpDQpkZiRHZW5kZXIgPSBhcy5mYWN0b3IoZGYkR2VuZGVyKQ0KZGYkTGljZW5jZSA9IGFzLmZhY3RvcihkZiRMaWNlbmNlKQ0KZGYkV29yayA9IGFzLmZhY3RvcihkZiRXb3JrKQ0KZGYkRmFtaWx5ID0gYXMuZmFjdG9yKGRmJEZhbWlseSkNCmRmJExldmVsID0gYXMuZmFjdG9yKGRmJExldmVsKQ0KDQpoZWFkKGRmKQ0Kc3RyKGRmKQ0KDQojIFJlbW92ZSBvdXRsaWVycw0KZGZfbW9kZSA8LSBkZlshKGRmJFRpbWUuQWN0aXZlID4gNjAwKSxdDQpkZl9tb2RlIDwtIGRmX21vZGVbIShkZl9tb2RlJFRpbWUuVHJhbnNpdCA+IDIwMCksXQ0KZGZfbW9kZSA8LSBkZl9tb2RlWyEoZGZfbW9kZSRUaW1lLkF1dG8gPiAxNTApLF0NCg0KIyBUcmFuc2Zvcm0gZGF0YWZyYW1lIGZyb20gd2lkZSB0byBsb25nDQptbGRmID0gbWxvZ2l0LmRhdGEoZGZfbW9kZSwgdmFyeWluZyA9IDEyOjE0LCBjaG9pY2UgPSAiTW9kZSIsIHNoYXBlID0gIndpZGUiKQ0KaGVhZChtbGRmKQ0KDQojIEhlYWRlcnMgb2YgY2hvaWNlIHNwZWNpZmljIHZhcmlhYmxlcw0KZGZfaGVhZGVycyA9IGRmDQpkZl9oZWFkZXJzJFRpbWUuQXV0byA9IE5VTEwNCmRmX2hlYWRlcnMkVGltZS5BY3RpdmUgPSBOVUxMDQpkZl9oZWFkZXJzJFRpbWUuVHJhbnNpdCA9IE5VTEwNCmhlYWRlcnMgPSBjb2xuYW1lcyhkZl9oZWFkZXJzKQ0KDQpmb3IgKGkgaW4gaGVhZGVycykNCnsNCiAgIyBSdW4gTU5MIG1vZGVsDQogIG1vZGVsID0gbWxvZ2l0KE1vZGUgfiAwfGdldChpKXxUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSAiQXV0byIpDQogIHByaW50KHBhc3RlKCJDSE9JQ0UgU1BFQ0lGSUMgVkFSSUFCTEU6ICIsaSkpDQogIGNhdCgiXG5cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuIikNCiAgY2F0KCJSZWZlcmVjZTogQVVUT1xuIikNCiAgcHJpbnQoc3VtbWFyeShtb2RlbCkpDQogIG1vZGVsID0gbWxvZ2l0KE1vZGUgfiAwfGdldChpKXxUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSAiQWN0aXZlIikNCiAgY2F0KCJcbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuIikNCiAgY2F0KCJSZWZlcmVjZTogQUNUSVZFXG4iKQ0KICBwcmludChzdW1tYXJ5KG1vZGVsKSkNCiAgY2F0KCJcblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbiIpDQp9DQpgYGANCg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkl0ZXJhdGlvbiBvZiBDaG9pY2UgU3BlY2lmaWMgVmFyaWFibGVzIg0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KSW4gdGhpcyBub3RlYm9vayB3ZSBpdGVyYXRlIHRocm91Z2ggYSBzaW1wbGUgbXVsdGlub21pYWwgX19Nb2RlIENob2ljZV9fIG1vZGVsLCB3aGVyZSBlYWNoIHJ1biBjb250YWlucyBhIGRpZmZlcmVudCBjaG9pY2Ugc3BlY2lmaWMgdmFyaWFibGUuIEVhY2ggcnVuIGFsc28gbG9va3MgYXQgdHdvIGRpZmZlcmVudCByZWZlcmVuY2UgbW9kZXMgKEF1dG8gYW5kIEFjdGl2ZSkuDQoNCl9fQ2hvaWNlIFNwZWNpZmljIFZhcmlhYmxlczpfXw0KDQoqIF9fRWR1Y2F0aW9uIExldmVsX186IChVRy9HcmFkL090aGVyKQ0KKiBfX0VkdWNhdGlvbiBTdGF0dXNfXzogKEZUL1BUL090aGVyKQ0KKiBfX0dlbmRlcl9fOiAoTWFsZS9GZW1hbGUvT3RoZXIpDQoqIF9fV29ya19fOiAoRlQvUFQvT3RoZXIpDQoqIF9fTGl2aW5nIHdpdGggRmFtaWx5X186ICgwIC0gTm8sIDEgLSBZZXMpDQoqIF9fQ2FyIE93bmVyc2hpcF9fOiAoMCAtIE5vLCAxIC0gWWVzKQ0KKiBfX0NhciBBdmFpbGFiaWxpdHlfXzogKDAgLSBObywgMSAtIFllcykNCiogX19MaWNlbnNlX186ICgwIC0gTm8sIDEgLSBZZXMpDQoqIF9fTnVtYmVyIG9mIENoaWxkcmVuIGluIEhvdXNlaG9sZF9fDQoqIF9fTnVtYmVyIG9mIEFkdWx0cyBpbiBIb3VzZWhvbGRfXw0KKiBfX0luY29tZV9fOiAoTG93L0hpZ2gvVW5rbm93bikNCg0KRm9yIGVhY2ggb2YgdGhlIGNob2ljZSBzcGVjaWZpYyB2YXJpYWJsZXMgdGhhdCBjb250YWluIGZhY3RvciBvcHRpb25zLCB0aGUgcGFja2FnZSBgbWxvZ2l0YCBzZXRzIG9uZSBvZiB0aGUgZmFjdG9ycyB0byBiZSB0aGUgcmVmZXJlbmNlIGJ5IGRlZmF1bHQuIEhvd2V2ZXIsIGluIG9yZGVyIHRvIG1ha2Ugb3VyIGFuYWx5c2lzIHNpbXBsZXIgd2Ugd2lsbCBzZXQgb3VyIG93biByZWZlcmVuY2UgZmFjdG9ycyB0byBiZSB0aGUgb25lcyBsaXN0ZWQgYmVsb3c6DQoNCl9fUmVmZXJlbmNlIEZhY3RvcnNfXzoNCg0KKiBfX0VkdWNhdGlvbiBMZXZlbF9fOiAiT3RoZXIiDQoqIF9fRWR1Y2F0aW9uIFN0YXR1c19fOiAiT3RoZXIiDQoqIF9fR2VuZGVyX186ICJPdGhlciINCiogX19Xb3JrX186ICJPdGhlciINCiogX19MaXZpbmcgd2l0aCBGYW1pbHlfXzogMA0KKiBfX0NhciBPd25lcnNoaXBfXzogMA0KKiBfX0NhciBBdmFpbGFiaWxpdHlfXzogMA0KKiBfX0xpY2Vuc2VfXzogMA0KKiBfX0luY29tZV9fOiAiVW5rbm93biINCg0KYGBge3J9DQpsaWJyYXJ5KG1sb2dpdCkNCmxpYnJhcnkoZGF0YS50YWJsZSkNCg0KIyBSZWFkIE1vZGVDaG9pY2VfaW5wdXQuY3N2DQpkZiA8LSByZWFkLmNzdigiQzovVXNlcnMvZ29uemEvRGVza3RvcC9NQ2hJbnB1dF8yMDE1X3dpdGhDb2x1bW5zXzIuMS5jc3YiKQ0KZGYkTW9kZSA9IGFzLmZhY3RvcihkZiRNb2RlKQ0KZGYkSW5jb21lID0gcmVsZXZlbChhcy5mYWN0b3IoZGYkSW5jb21lKSwgIlVua25vd24iKQ0KZGYkU3RhdHVzID0gcmVsZXZlbChhcy5mYWN0b3IoZGYkU3RhdHVzKSwgIk90aGVyIikNCmRmJEdlbmRlciA9IHJlbGV2ZWwoYXMuZmFjdG9yKGRmJEdlbmRlciksICJPdGhlciIpDQpkZiRMaWNlbmNlID0gYXMuZmFjdG9yKGRmJExpY2VuY2UpDQpkZiRXb3JrID0gcmVsZXZlbChhcy5mYWN0b3IoZGYkV29yayksICJPdGhlciIpDQpkZiRGYW1pbHkgPSBhcy5mYWN0b3IoZGYkRmFtaWx5KQ0KZGYkTGV2ZWwgPSByZWxldmVsKGFzLmZhY3RvcihkZiRMZXZlbCksICJPdGhlciIpDQpkZiRDYXJfQXZhaWwgPSBhcy5mYWN0b3IoZGYkQ2FyX0F2YWlsKQ0KZGYkQ2FycyA9IGFzLmZhY3RvcihkZiRDYXJzKQ0KDQoNCmhlYWQoZGYpDQpzdHIoZGYpDQoNCiMgUmVtb3ZlIG91dGxpZXJzDQpkZl9tb2RlIDwtIGRmWyEoZGYkVGltZS5BY3RpdmUgPiA2MDApLF0NCmRmX21vZGUgPC0gZGZfbW9kZVshKGRmX21vZGUkVGltZS5UcmFuc2l0ID4gMjAwKSxdDQpkZl9tb2RlIDwtIGRmX21vZGVbIShkZl9tb2RlJFRpbWUuQXV0byA+IDE1MCksXQ0KDQojIFRyYW5zZm9ybSBkYXRhZnJhbWUgZnJvbSB3aWRlIHRvIGxvbmcNCm1sZGYgPSBtbG9naXQuZGF0YShkZl9tb2RlLCB2YXJ5aW5nID0gMTM6MTUsIGNob2ljZSA9ICJNb2RlIiwgc2hhcGUgPSAid2lkZSIpDQpoZWFkKG1sZGYpDQoNCiMgSGVhZGVycyBvZiBjaG9pY2Ugc3BlY2lmaWMgdmFyaWFibGVzDQpkZl9oZWFkZXJzID0gZGYNCmRmX2hlYWRlcnMkVGltZS5BdXRvID0gTlVMTA0KZGZfaGVhZGVycyRUaW1lLkFjdGl2ZSA9IE5VTEwNCmRmX2hlYWRlcnMkVGltZS5UcmFuc2l0ID0gTlVMTA0KZGZfaGVhZGVycyRNb2RlID0gTlVMTA0KDQpoZWFkZXJzID0gY29sbmFtZXMoZGZfaGVhZGVycykNCg0KZm9yIChpIGluIGhlYWRlcnMpDQp7DQogICMgUnVuIE1OTCBtb2RlbA0KICBtb2RlbCA9IG1sb2dpdChNb2RlIH4gMHxnZXQoaSl8VGltZSwgZGF0YSA9IG1sZGYsIHJlZmxldmVsID0gIkF1dG8iKQ0KICBjYXQoIlxuXG4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuIikNCiAgcHJpbnQocGFzdGUoIkNIT0lDRSBTUEVDSUZJQyBWQVJJQUJMRTogIixpKSkNCiAgY2F0KCJcblxuLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG4iKQ0KICBjYXQoIlJlZmVyZW5jZTogQVVUT1xuIikNCiAgcHJpbnQoc3VtbWFyeShtb2RlbCkpDQogIG1vZGVsID0gbWxvZ2l0KE1vZGUgfiAwfGdldChpKXxUaW1lLCBkYXRhID0gbWxkZiwgcmVmbGV2ZWwgPSAiQWN0aXZlIikNCiAgY2F0KCJcbi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuIikNCiAgY2F0KCJSZWZlcmVjZTogQUNUSVZFXG4iKQ0KICBwcmludChzdW1tYXJ5KG1vZGVsKSkNCiAgDQp9DQpgYGANCg0K</div>
 
 
 
@@ -2778,7 +2732,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("allRuns.Rmd");
+  window.initializeSourceEmbed("Iterations.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
