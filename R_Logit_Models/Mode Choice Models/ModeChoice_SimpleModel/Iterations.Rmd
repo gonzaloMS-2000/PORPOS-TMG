@@ -50,6 +50,7 @@ df$Level = relevel(as.factor(df$Level), "Other")
 df$Car_Avail = as.factor(df$Car_Avail)
 df$Cars = as.factor(df$Cars)
 
+table(df$Car)
 
 head(df)
 str(df)
