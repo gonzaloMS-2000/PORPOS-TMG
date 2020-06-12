@@ -2,7 +2,7 @@ library(mlogit)
 library(data.table)
 
 # Read ModeChoice_input.csv
-df <- read.csv("C:/Users/gonza/Desktop/MChInput_2015_withColumns.csv")
+df <- read.csv("MChInput_2015_withColumns_2.1.csv")
 df$Mode = as.factor(df$Mode)
 df$Income = as.factor(df$Income)
 df$Status = as.factor(df$Status)
@@ -19,7 +19,7 @@ df_mode <- df_mode[!(df_mode$Time.Transit > 200),]
 df_mode <- df_mode[!(df_mode$Time.Auto > 150),]
 
 # Transform dataframe from wide to long
-mldf = mlogit.data(df_mode, varying = 12:14, choice = "Mode", shape = "wide")
+mldf = mlogit.data(df_mode, varying = 13:15, choice = "Mode", shape = "wide")
 head(mldf)
 
 df_headers = df
