@@ -1,6 +1,0 @@
-"0","```r
-# Read ModeChoice_input.csv
-df1 <- read.csv(\"C:/Users/gonza/Desktop/ModeChoice_Input_withCost.csv\")
-df1$Mode = as.factor(df1$Mode)
-head(df1)
-```"

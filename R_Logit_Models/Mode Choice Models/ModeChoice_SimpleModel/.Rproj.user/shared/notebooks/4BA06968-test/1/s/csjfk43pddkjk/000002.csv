@@ -1,8 +1,0 @@
-"0","library(mlogit)"
-"2","Loading required package: dfidx
-"
-"2","Error: package or namespace load failed for ‘dfidx’:
- package ‘vctrs’ does not have a namespace
-"
-"2","Error: package â€˜dfidxâ€™ could not be loaded
-"
