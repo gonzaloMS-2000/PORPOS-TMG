@@ -1,9 +1,9 @@
 library(data.table)
 library(mlogit)
 
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Location_Choice")
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Location_Choice/Simple")
 
-df <- read.csv("Campus_Choice_Segments.csv")
+df <- read.csv("../Campus_Choice_Segments.csv")
 df$Campus = as.factor(df$Campus)
 
 num_intercepts = 7L

@@ -1,9 +1,9 @@
 library(data.table)
 library(mlogit)
 
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Location_Choice")
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Location_Choice/Enrollment")
 
-df <- read.csv("R_Segmented_Input.csv")
+df <- read.csv("../R_Segmented_Input.csv")
 df$Campus = as.factor(df$Campus)
 
 num_segments = 7L
