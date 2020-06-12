@@ -38,7 +38,7 @@ library(mlogit)
 library(data.table)
 
 # Read ModeChoice_input.csv
-df <- read.csv("C:/Users/gonza/Desktop/MChInput_2015_withColumns_2.1.csv")
+df <- read.csv("MChInput_2015_withColumns_2.3.csv")
 df$Mode = as.factor(df$Mode)
 df$Income = relevel(as.factor(df$Income), "Unknown")
 df$Status = relevel(as.factor(df$Status), "Other")
@@ -50,7 +50,8 @@ df$Level = relevel(as.factor(df$Level), "Other")
 df$Car_Avail = as.factor(df$Car_Avail)
 df$Cars = as.factor(df$Cars)
 
-table(df$Car)
+table(df$Car_Avail)
+table(df$Cars)
 
 head(df)
 str(df)

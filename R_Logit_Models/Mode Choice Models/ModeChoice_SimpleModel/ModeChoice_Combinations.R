@@ -30,7 +30,14 @@ s = summary(model)
 k = 1
 cat("R^2 Rel. Null: ", s[[20]][[1]], "\nR^2 Rel. Time: ",  1 - (s[[2]][[1]])/b[[2]][[1]], "\nR^2 Adj. Time: ", 1 - (s[[2]][[1]] - k)/b[[2]][[1]])
 
-write.table()
-writeLines(paste("R^2 Rel. Null,", "R^2 Rel. Time,", "R^2 Adj. Time"), con = "OutputsModeChoice.csv")
-writeLines(paste(s[[20]][[1]], ",", 1 - (s[[2]][[1]])/b[[2]][[1]], ",", 1 - (s[[2]][[1]] - k)/b[[2]][[1]]), con = "OutputsModeChoice.csv")
-     
+
+writeLines(paste("R^2 Rel. Null,", "R^2 Rel. Time,", "R^2 Adj. Time", sep="\n"), con = "OutputsModeChoice.csv")
+writeLines(paste(toString(s[[20]][[1]]), ",", toString(1 - (s[[2]][[1]])/b[[2]][[1]]), ",", toString(1 - (s[[2]][[1]] - k)/b[[2]][[1]]), sep = "\n"), con = "OutputsModeChoice.csv")
+
+R1 = c()
+R2 = c()
+R3 = c()
+
+
+
+df_rho = data.fram("R^2 Rel. Null", "R^2 Rel. Time", "R^2 Adj. Time")
