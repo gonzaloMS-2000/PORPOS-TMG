@@ -51,5 +51,5 @@ for (i in 0:(num_segments-1))
 # Print output to file
 d = as.data.frame(coefs_and_stats)
 setnames(d, old = c('V1','V2', 'V3', 'V4'), new = c("Ref.", "SMTO", "By Total", "By Level"))
-write.csv(d, "Exp_Comparison.csv", row.names = c("ASC_SG", "ASC_SC", "ASC_MI", "ASC_YK", "ASC_RY", "ASC_OC", "B_DIST", "L_LHOOD", "MCF_R^2"))
+write.csv(d, "Exp_Comparison.csv", row.names = c("ASC_MI", "ASC_OC", "ASC_RY", "ASC_SC", "ASC_SG", "ASC_YK", "B_DIST", "L_LHOOD", "MCF_R^2"))
 
