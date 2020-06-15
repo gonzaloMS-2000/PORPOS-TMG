@@ -72,4 +72,4 @@ for (t in c(seq(15, 33, by=2), seq(35, 50, by=0.2), seq(51, 55, by=1), seq(60, 1
   # print(cat("Threshold = ", t, "\tAccuracy: ", nrow(df_mode2) * mean(fitted(model)) / nrow(df_mode)))
 }
 
-write.csv(out, "Active_Thresholds_Accuracy_Revised.csv")
+write.csv(out, "Filtered_Active_Thresholds.csv")
