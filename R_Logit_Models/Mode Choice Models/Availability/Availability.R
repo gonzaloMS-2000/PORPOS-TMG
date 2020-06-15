@@ -46,17 +46,18 @@ df_mode <- df[!(df$Time.Auto > 1e3),]
 
 model = mlogit(Mode ~ 0| 1 | Time, data = mldf, reflevel = "Transit")
 
-out = data.frame("Threshold" = -1, "R^2" = summary(model)[[20]][1])
-for (t in c(seq(15, 23, by=2), seq(25, 37, by=0.2), seq(40, 60, by=5), seq(75, 120, by=15), seq(180, 300, by=60)))
-{
-  print(t)
-  df_mode <- df[!(df$Time.Auto > 1e3),]
-  df_mode <- df_mode[!((df_mode$Mode == "Active") & df_mode$Time.Active >= t),]
-  mldf = mlogit.data(df_mode, varying = 13:15, choice = "Mode", shape = "wide")
-  mldf$available = (mldf$alt == "Auto") | (mldf$alt == "Transit") | (mldf$alt == "Active" & mldf$Time < t)
-  model = mlogit(Mode ~ 0| 1 | Time, data = mldf, reflevel = "Transit", subset = mldf$available)
-  out[nrow(out)+1,] = c(t, summary(model)[[20]][1])
-  # print(cat("Threshold = ", t, "\tR^2: ", summary(model)[[20]][[1]]))
-}
-
-write.csv(out, "Active_Thresholds.csv")
+# out = data.frame("Threshold" = -1, "R^2" = summary(model)[[20]][1])
+# for (t in c(seq(15, 23, by=2), seq(25, 37, by=0.2), seq(40, 60, by=5), seq(75, 120, by=15), seq(180, 300, by=60)))
+# for (t in c(seq(25, 35, by=1)))
+# {
+#   print(t)
+#   df_mode <- df[!(df$Time.Auto > 1e3),]
+#   df_mode <- df_mode[!((df_mode$Mode == "Active") & df_mode$Time.Active >= t),]
+#   mldf = mlogit.data(df_mode, varying = 13:15, choice = "Mode", shape = "wide")
+#   mldf$available = (mldf$alt == "Auto") | (mldf$alt == "Transit") | (mldf$alt == "Active" & mldf$Time < t)
+#   model = mlogit(Mode ~ 0| 1 | Time, data = mldf, reflevel = "Transit", subset = mldf$available)
+#   out[nrow(out)+1,] = c(t, summary(model)[[20]][1])
+#   # print(cat("Threshold = ", t, "\tR^2: ", summary(model)[[20]][[1]]))
+# }
+# 
+# write.csv(out, "Active_Thresholds.csv")
