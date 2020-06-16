@@ -98,7 +98,7 @@ for (call in calls)
 {
   print(call[[1]])
   s = summary(mlogit(call[[1]], data = mldf, reflevel = "Auto"))
-  out[nrow(out) + 1,] = c(paste(toString(s[[17]][[2]][[3]][2]), " | ", toString(s[[17]][[2]][[3]][3])), s[[20]][1], 1 - s[[2]][[1]]/b[[2]][[1]], 1 - (s[[2]][[1]] - call[[2]])/b[[2]][[1]])
+  out[nrow(out) + 1,] = c(paste(toString(s[[17]][[2]][[3]][2]), " | ", toString(s[[17]][[2]][[3]][3])), sum(mldf$Mode & mldf$available) * mean(fitted(model)) / nrow(df_mode_original), s[[20]][1], 1 - s[[2]][[1]]/b[[2]][[1]], 1 - (s[[2]][[1]] - call[[2]])/b[[2]][[1]])
 }
 
 # Write results to file
