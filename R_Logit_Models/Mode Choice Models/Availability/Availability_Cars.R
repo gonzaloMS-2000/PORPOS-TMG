@@ -5,7 +5,8 @@ library(mlogit)
 library(data.table)
 
 # Load data
-df_visualize <- read.csv("MChInput_2015_withColumns_2.4.csv")
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Availability")
+df_visualize <- read.csv("../MChInput_2015_withColumns_2.4.csv")
 
 # Reformat data
 # df$Mode = relevel(as.factor(df$Mode), "Auto")

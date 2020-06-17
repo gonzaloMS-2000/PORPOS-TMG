@@ -4,10 +4,12 @@
 library(mlogit)
 library(data.table)
 
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Availability")
+
 run_model = function(call) {
   
   # Load data
-  df <- read.csv("MChInput_2015_withColumns_2.4.csv")
+  df <- read.csv("../MChInput_2015_withColumns_2.4.csv")
   
   # Reformat data
   df$Mode = as.factor(df$Mode)
