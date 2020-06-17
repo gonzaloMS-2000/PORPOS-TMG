@@ -1,0 +1,30 @@
+*** File created 2020-06-08 17:01:54.816811 ***
+*** Log file from biogeme 3.2.5 [2020-06-08]
+[17:01:53] < General >   Remove 9 unused variables from the database as only 7 are used.
+[17:01:53] < General >   Log likelihood (N=14260):  -715069.7
+[17:01:53] < General >   Minimize with tol 1e-07
+[17:01:53] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08  
+[17:01:53] < General >   Log likelihood (N=14260):  -9.95e+19 Gradient norm:      1e+20  
+[17:01:54] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08  
+[17:01:54] < General >   Log likelihood (N=14260):  -6.55e+19 Gradient norm:      1e+20  
+[17:01:54] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08  
+[17:01:54] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08  
+[17:01:54] < General >   Log likelihood (N=14260):  -3.25e+19 Gradient norm:      1e+20  
+[17:01:54] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08  
+[17:01:54] < General >   Log likelihood (N=14260): -2.128e+19 Gradient norm:      1e+20  
+[17:01:54] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08  
+[17:01:54] < General >   Log likelihood (N=14260): -1.38748e+19 Gradient norm:      1e+20  
+[17:01:54] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08  
+[17:01:54] < General >   Log likelihood (N=14260): -8.987368e+18 Gradient norm:      1e+20  
+[17:01:54] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08  
+[17:01:54] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08  
+[17:01:54] < General >   Log likelihood (N=14260): -4.243684e+18 Gradient norm:      1e+20  
+[17:01:54] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08  
+[17:01:54] < General >   Log likelihood (N=14260): -2.630831e+18 Gradient norm:      1e+20  
+[17:01:54] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08  
+[17:01:54] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08  
+[17:01:54] < General >   Log likelihood (N=14260): -1.065416e+18 Gradient norm:      1e+20  
+[17:01:54] < General >   Log likelihood (N=14260):  -715069.7 Gradient norm:      1e+08 Hessian norm:       1e+07 BHHH norm:       2e+13
+[17:01:54] < General >   Results saved in file SMTO_Logit_ModeChoice_withCost~01.html
+[17:01:54] < General >   Results saved in file SMTO_Logit_ModeChoice_withCost~01.pickle
+[17:01:54] < General >   Log file created: SMTO_Logit_ModeChoice_withCost~01.log

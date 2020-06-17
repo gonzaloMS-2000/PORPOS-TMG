@@ -1,0 +1,93 @@
+---
+title: "Iteration of Choice Specific Variables"
+output: html_notebook
+---
+
+In this notebook we iterate through a simple multinomial __Mode Choice__ model, where each run contains a different choice specific variable. Each run also looks at two different reference modes (Auto and Active).
+
+__Choice Specific Variables:__
+
+* __Education Level__: (UG/Grad/Other)
+* __Education Status__: (FT/PT/Other)
+* __Gender__: (Male/Female/Other)
+* __Work__: (FT/PT/Other)
+* __Living with Family__: (0 - No, 1 - Yes)
+* __Car Ownership__: (0 - No, 1 - Yes)
+* __Car Availability__: (0 - No, 1 - Yes)
+* __License__: (0 - No, 1 - Yes)
+* __Number of Children in Household__
+* __Number of Adults in Household__
+* __Income__: (Low/High/Unknown)
+
+For each of the choice specific variables that contain factor options, the package `mlogit` sets one of the factors to be the reference by default. However, in order to make our analysis simpler we will set our own reference factors to be the ones listed below:
+
+__Reference Factors__:
+
+* __Education Level__: "Other"
+* __Education Status__: "Other"
+* __Gender__: "Other"
+* __Work__: "Other"
+* __Living with Family__: 0
+* __Car Ownership__: 0
+* __Car Availability__: 0
+* __License__: 0
+* __Income__: "Unknown"
+
+```{r}
+library(mlogit)
+library(data.table)
+
+# Read ModeChoice_input.csv
+df <- read.csv("MChInput_2015_withColumns_2.3.csv")
+df$Mode = as.factor(df$Mode)
+df$Income = relevel(as.factor(df$Income), "Unknown")
+df$Status = relevel(as.factor(df$Status), "Other")
+df$Gender = relevel(as.factor(df$Gender), "Other")
+df$Licence = as.factor(df$Licence)
+df$Work = relevel(as.factor(df$Work), "Other")
+df$Family = as.factor(df$Family)
+df$Level = relevel(as.factor(df$Level), "Other")
+df$Car_Avail = as.factor(df$Car_Avail)
+df$Cars = as.factor(df$Cars)
+
+table(df$Car_Avail)
+table(df$Cars)
+
+head(df)
+str(df)
+
+# Remove outliers
+df_mode <- df[!(df$Time.Active > 600),]
+df_mode <- df_mode[!(df_mode$Time.Transit > 200),]
+df_mode <- df_mode[!(df_mode$Time.Auto > 150),]
+
+# Transform dataframe from wide to long
+mldf = mlogit.data(df_mode, varying = 13:15, choice = "Mode", shape = "wide")
+head(mldf)
+
+# Headers of choice specific variables
+df_headers = df
+df_headers$Time.Auto = NULL
+df_headers$Time.Active = NULL
+df_headers$Time.Transit = NULL
+df_headers$Mode = NULL
+
+headers = colnames(df_headers)
+
+for (i in headers)
+{
+  # Run MNL model
+  model = mlogit(Mode ~ 0|get(i)|Time, data = mldf, reflevel = "Auto")
+  cat("\n\n---------------------------------------------------------------\n---------------------------------------------------------------\n")
+  print(paste("CHOICE SPECIFIC VARIABLE: ",i))
+  cat("\n\n---------------------------------------------------------------\n")
+  cat("Reference: AUTO\n")
+  print(summary(model))
+  model = mlogit(Mode ~ 0|get(i)|Time, data = mldf, reflevel = "Active")
+  cat("\n---------------------------------------------------------------\n")
+  cat("Referece: ACTIVE\n")
+  print(summary(model))
+  
+}
+```
+
