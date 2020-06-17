@@ -1,0 +1,41 @@
+# Install packages
+require(devtools) 
+install_version("mlogit", version = "0.4-2", repos = "http://cran.us.r-project.org")
+library(mlogit)
+library(data.table)
+
+# Load data
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Availability")
+df <- read.csv("../MChInput_2015_withColumns.csv")
+
+# Reformat data
+df$Mode = relevel(as.factor(df$Mode), "Auto")
+df$Income = as.factor(df$Income)
+df$Status = as.factor(df$Status)
+df$Gender = as.factor(df$Gender)
+df$Licence = as.factor(df$Licence)
+df$Work = as.factor(df$Work)
+df$Family = as.factor(df$Family)
+df$Level = as.factor(df$Level)
+
+# Remove outliers
+df_mode <- df[!(df$Time.Active > 600),]
+df_mode <- df_mode[!(df_mode$Time.Transit > 200),]
+df_mode <- df_mode[!(df_mode$Time.Auto > 150),]
+
+# Filter unavailable choices
+df_mode <- df_mode[!((df_mode$Mode == "Active") & df_mode$Time.Active >= 300),]
+df_mode <- df_mode[!((df_mode$Mode == "Auto") & df_mode$Cars <= 0),]
+df_mode <- df_mode[!(df_mode$Time.Active >= 300 & df_mode$Cars <= 0),]
+
+# Transform dataframe from wide to long
+mldf = mlogit.data(df_mode, varying = 12:14, choice = "Mode", shape = "wide")
+# head(mldf, 12)
+
+# Column for availability
+mldf$available = (mldf$alt == "Auto" & mldf$Cars > 0) | (mldf$alt == "Transit") | (mldf$alt == "Active" & mldf$Time < 300)
+# table(mldf$available)
+
+# Run MNL model
+model = mlogit(Mode ~ 0| 1 | Time, data = mldf, reflevel = "Transit", subset = mldf$available == 1)
+print(summary(model))

@@ -1,0 +1,32 @@
+{
+    "id": "975D1F5E",
+    "path": null,
+    "project_path": null,
+    "type": "r_dataframe",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1591716067395.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "expression": "coefs_and_stats",
+        "caption": "coefs_and_stats",
+        "totalObservations": "8",
+        "displayedObservations": "8",
+        "variables": "4",
+        "cacheKey": "4E1CB3B5",
+        "object": "coefs_and_stats",
+        "environment": "",
+        "contentUrl": "grid_resource/gridviewer.html?env=&obj=coefs_and_stats&cache_key=4E1CB3B5&max_cols=50",
+        "preview": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 31244169095872613,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1591716067395,
+    "read_only": false,
+    "read_only_alternatives": []
+}

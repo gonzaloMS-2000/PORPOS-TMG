@@ -1,0 +1,25 @@
+{
+    "id": "A6FD7C5E",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1591721037120.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "id": "33c6a0f797544e6ca3506fb43d76f66d",
+        "name": "model",
+        "title": "model"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 3219023077552,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1591721037120,
+    "read_only": false,
+    "read_only_alternatives": []
+}
