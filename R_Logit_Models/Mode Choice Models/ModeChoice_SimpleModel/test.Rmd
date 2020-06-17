@@ -1,0 +1,148 @@
+---
+title: "Simple Mode Choice Model"
+output: html_notebook
+---
+
+This notebook goes through a series of simple __Mode Choice__ multinomial logit models.
+
+#### 2015 SMTO - Mode Choice Model (No Travel Cost)
+
+``` {r}
+library(mlogit)
+library(data.table)
+library(ggplot2)
+library(egg)
+
+# Read ModeChoice_input.csv
+df <- read.csv("C:/Users/gonza/Desktop/ModeChoice_Input.csv")
+df$Mode = as.factor(df$Mode)
+head(df)
+```
+The dimensions of the above data frame are:
+``` {r}
+dim(df)
+```
+We are first going to look at the density distributions for the travel times of each of the modes. 
+``` {r}
+p1 <- ggplot(df, aes(x=Time.Auto, fill= Time.Auto)) +
+  geom_density(color="black", fill="deepskyblue", alpha=0.5) + 
+  labs(title="Auto Time Density",x="Time (min)", y = "Density")
+
+p2 <- ggplot(df, aes(x=Time.Transit, fill= Time.Transit)) +
+  geom_density(color="black", fill="orangered1", alpha=0.5) + 
+  labs(title="Transit Time Density",x="Time (min)", y = "Density")
+
+p3 <- ggplot(df, aes(x=Time.Active, fill= Time.Active)) +
+  geom_density(color="black", fill="grey34", alpha=0.5) + 
+  labs(title="Active Time Density",x="Time (min)", y = "Density")
+
+ggarrange(p1, p2, p3, widths = c(1,1,1))
+```
+From the plots above, we can see that there many outliers that need to be removed. In fact, when we attempted to run this model including the outliers, we continuously encountered an error saying that our matrix was _"compulationally singular"_. Below, the outliers are removed and the updated plots are shown:
+
+```{r}
+# Remove Outliers
+df_mode <- df[!(df$Time.Active > 600),]
+df_mode <- df_mode[!(df_mode$Time.Transit > 200),]
+df_mode <- df_mode[!(df_mode$Time.Auto > 150),]
+
+p4 <- ggplot(df_mode, aes(x=Time.Auto, fill= Time.Auto)) +
+  geom_density(color="black", fill="deepskyblue", alpha=0.5) + 
+  labs(title="Auto Time Density",x="Time (min)", y = "Density")
+
+p5 <- ggplot(df_mode, aes(x=Time.Transit, fill= Time.Transit)) +
+  geom_density(color="black", fill="orangered1", alpha=0.5) + 
+  labs(title="Transit Time Density",x="Time (min)", y = "Density")
+
+p6 <- ggplot(df_mode, aes(x=Time.Active, fill= Time.Active)) +
+  geom_density(color="black", fill="grey34", alpha=0.5) + 
+  labs(title="Active Time Density",x="Time (min)", y = "Density")
+
+ggarrange(p4, p5, p6, widths = c(1,1,1))
+```
+The dimensions of the new data frame are:
+```{r}
+dim(df_mode)
+```
+This shows that in order to obtain good results we had to lower our sample size by __1,176__. We are now ready to run the multinomial logit model.
+
+__Running Mode Choice Model (without Cost)__
+``` {r}
+# Transform dataframe from wide to long
+mldf = mlogit.data(df_mode, varying = 2:4, choice = "Mode", shape = "wide")
+
+# Run MNL model
+model = mlogit(Mode ~ 0|1|Time, data = mldf, reflevel = "Auto")
+summary(model)
+
+# Write results to .csv file:
+coefs_and_stats = array(numeric(), c(8,4))
+x = summary(model)
+for (i in 1:5)
+{
+  coefs_and_stats[i,1] = x[[18]][[i]]
+  coefs_and_stats[i,2] = x[[18]][[i+15]]
+  coefs_and_stats[i,3] = x[[18]][[i+10]]
+  coefs_and_stats[i,4] = x[[18]][[i+5]]
+}
+
+coefs_and_stats[7,1] = x[[2]][[1]]
+coefs_and_stats[8,1] = x[[20]][[1]]
+
+# d = as.data.frame(coefs_and_stats)
+# setnames(d, old = c('V1','V2', 'V3', 'V4'), new = c("Estimate","p-value","z-value","Std. Error"))
+# write.csv(d, "ModeChoice_noCost_output.csv", row.names = c(
+#   "ASC_Active", "ASC_Transit", "B_Auto", "B_Active", "B_Transit", "","LOG_LHOOD", "MCF_R^2"))
+```
+
+#### 2015 SMTO - Mode Choice Model (with Cost)
+```{r}
+# Read ModeChoice_input.csv
+df1 <- read.csv("C:/Users/gonza/Desktop/ModeChoice_Input_withCost.csv")
+df1$Mode = as.factor(df1$Mode)
+head(df1)
+```
+
+__Running Mode Choice Model (with Cost)__
+```{r}
+# Remove Outliers
+df_mode1 <- df1[!(df1$Time.Active > 600),]
+df_mode1 <- df_mode1[!(df_mode1$Time.Transit > 200),]
+df_mode1 <- df_mode1[!(df_mode1$Time.Auto > 150),]
+
+# Transform dataframe from wide to long
+mldf1 = mlogit.data(df_mode1, varying = 2:6, choice = "Mode", shape = "wide")
+head(mldf1)
+
+p7 <- ggplot(df_mode1, aes(x=Cost.Auto, fill= Cost.Auto)) +
+  geom_density(color="black", fill="deepskyblue", alpha=0.5) + 
+  labs(title="Auto Time Density",x="Time (min)", y = "Density")
+p7
+
+# Run MNL model
+model1 = mlogit(Mode ~ 0|1|Time + Cost, data = mldf1, reflevel = "Auto")
+summary(model1)
+
+# Write results to .csv file:
+coefs_and_stats = array(numeric(), c(8,4))
+x = summary(model)
+for (i in 1:5)
+{
+  coefs_and_stats[i,1] = x[[18]][[i]]
+  coefs_and_stats[i,2] = x[[18]][[i+15]]
+  coefs_and_stats[i,3] = x[[18]][[i+10]]
+  coefs_and_stats[i,4] = x[[18]][[i+5]]
+}
+
+coefs_and_stats[7,1] = x[[2]][[1]]
+coefs_and_stats[8,1] = x[[20]][[1]]
+
+# d = as.data.frame(coefs_and_stats)
+# setnames(d, old = c('V1','V2', 'V3', 'V4'), new = c("Estimate","p-value","z-value","Std. Error"))
+# write.csv(d, "ModeChoice_noCost_output.csv", row.names = c(
+#   "ASC_Active", "ASC_Transit", "B_Auto", "B_Active", "B_Transit", "","LOG_LHOOD", "MCF_R^2"))
+```
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
