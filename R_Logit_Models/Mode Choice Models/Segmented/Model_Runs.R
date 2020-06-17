@@ -3,7 +3,7 @@ library(mlogit)
 
 # Load data
 setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Segmented")
-df <- read.csv("MChInput_2015_withColumns_2.4.csv")
+df <- read.csv("../MChInput_2015_withColumns_2.4.csv")
 
 # Reformat data
 df$Mode = relevel(as.factor(df$Mode), "Auto")
