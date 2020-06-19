@@ -5,8 +5,8 @@ library(mlogit)
 library(data.table)
 
 # Load data
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Proposed")
-df <- read.csv("../MChInput_2015_withColumns_2.4.csv")
+setwd("C:/Users/gonza/Desktop/University/Summer 2020/TMG/GitHub_PORPOS/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Active_Modifications")
+df <- read.csv("Input_Final_Filtered.csv")
 
 # Reformat data
 df$Mode = as.factor(df$Mode)
@@ -17,6 +17,8 @@ df$Licence = as.factor(df$Licence)
 df$Work = as.factor(df$Work)
 df$Family = as.factor(df$Family)
 df$Level = as.factor(df$Level)
+
+table(df$Mode)
 
 # Remove outliers
 df_mode <- df[!(df$Time.Auto > 1000),]

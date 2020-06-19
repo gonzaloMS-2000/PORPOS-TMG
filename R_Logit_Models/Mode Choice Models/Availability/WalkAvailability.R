@@ -1,12 +1,14 @@
 # Install packages
-require(devtools) 
-install_version("mlogit", version = "0.4-2", repos = "http://cran.us.r-project.org")
+# require(devtools) 
+# install_version("mlogit", version = "0.4-2", repos = "http://cran.us.r-project.org")
 library(mlogit)
 library(data.table)
 
 # Load data
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Availability")
-df <- read.csv("../MChInput_2015_withColumns_2.4.csv")
+setwd("C:/Users/gonza/Desktop/University/Summer 2020/TMG/GitHub_PORPOS/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Active_Modifications")
+df <- read.csv("Input_Final_Filtered.csv")
+
+table(df$Mode)
 
 # Reformat data
 df$Mode = relevel(as.factor(df$Mode), "Auto")
@@ -57,7 +59,7 @@ out = data.frame("Threshold" = -1,
 
 # for (t in c(seq(15, 23, by=2), seq(25, 37, by=0.2), seq(40, 60, by=5), seq(75, 120, by=15), seq(180, 300, by=60)))
 # for (t in c(seq(40, 60, by=5)))
-for (t in c(seq(15, 33, by=2), seq(35, 50, by=0.2), seq(51, 55, by=1), seq(60, 120, by=15), seq(180, 300, by=60)))
+for (t in c(seq(10, 20, by=1), seq(20, 50, by=0.2), seq(50, 70, by=1), seq(70, 180, by=10), seq(180, 300, by=60)))
 {
   print(t)
   df_mode2 <- df[!(df$Time.Auto > 1e3),]
@@ -72,4 +74,4 @@ for (t in c(seq(15, 33, by=2), seq(35, 50, by=0.2), seq(51, 55, by=1), seq(60, 1
   # print(cat("Threshold = ", t, "\tAccuracy: ", nrow(df_mode2) * mean(fitted(model)) / nrow(df_mode)))
 }
 
-write.csv(out, "Filtered_Active_Thresholds.csv")
+write.csv(out, "FILTERED_Active_Threshold.csv")
