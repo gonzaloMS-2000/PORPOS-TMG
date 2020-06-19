@@ -1,6 +1,6 @@
 # ---- Install packages ----
-# require(devtools)
-# install_version("mlogit", version = "0.4-2", repos = "http://cran.us.r-project.org")
+require(devtools)
+install_version("mlogit", version = "0.4-2", repos = "http://cran.us.r-project.org")
 library(mlogit)
 library(data.table)
 
@@ -60,30 +60,40 @@ campus_df$Family = as.factor(campus_df$Family)
 campus_df = campus_df[c(1, 5, seq(8, 32, by=4), 34:41)]
 lc_mldf = mlogit.data(campus_df, varying = c(3:9, 11:17), choice = "Campus", shape = "wide")
 
+# Prepare output matrix
+num_segments = 7L
+num_ascs = 6L
+coefs_and_stats = array(numeric(), c(num_ascs + 4, num_segments*6))
+
 # Iterate over segments
 for (i in 0:6)
 {
   print(i)
-  # Run model
-  # ref = mlogit(Campus ~ Dist, data=lc_mldf, reflevel="4",
-  #              subset = lc_mldf$Segment == i)
-  # wei = mlogit(Campus ~ Dist, data=lc_mldf, reflevel="4",
-  #              subset = lc_mldf$Segment == i, weights=lc_mldf$Exp)
-  # print(paste(i, summary(ref)[[20]][1], summary(wei)[[20]][1]))
-  
-  lc_model = mlogit(Campus ~ 1, data=lc_mldf, reflevel="4",
-                    weights=lc_mldf$Exp, subset = lc_mldf$Segment == i)
-  print(lc_model[[2]][1])
 
-  lc_model_dist = mlogit(Campus ~ Dist, data=lc_mldf, reflevel="4",
-                    weights=lc_mldf$Exp, subset = lc_mldf$Segment == i)
-  print(lc_model_dist[[2]][1])
+  lc_model_1 = mlogit(Campus ~ Dist, data=lc_mldf, reflevel="4", subset = lc_mldf$Segment == i)
+  lc_model_2 = mlogit(Campus ~ Access, data=lc_mldf, reflevel="4", subset = lc_mldf$Segment == i)
+  lc_model_3 = mlogit(Campus ~ Dist + Access, data=lc_mldf, reflevel="4", subset = lc_mldf$Segment == i)
+  lc_model_4 = mlogit(Campus ~ Dist, data=lc_mldf, reflevel="4", subset = lc_mldf$Segment == i, weights = lc_mldf$Exp)
+  lc_model_5 = mlogit(Campus ~ Access, data=lc_mldf, reflevel="4", subset = lc_mldf$Segment == i, weights = lc_mldf$Exp)
+  lc_model_6 = mlogit(Campus ~ Dist + Access, data=lc_mldf, reflevel="4", subset = lc_mldf$Segment == i, weights = lc_mldf$Exp)
+  for (k in 1:6)
+  {
+    col = (6*i)+k
+    for (j in 1:num_ascs)
+    {
+      coefs_and_stats[j, col] = get(paste0("lc_model_", k))[[1]][[j]]
+    }
+    add = 1
+    if (k %in% c(1, 3, 4, 6))  {
+      coefs_and_stats[j+1, col] = get(paste0("lc_model_", k))[[1]][[j+add]]
+      add = 2   }
+    if (k %in% c(2, 3, 5, 6)) coefs_and_stats[j+2, col] = get(paste0("lc_model_", k))[[1]][[j+add]]
 
-  lc_model_access = mlogit(Campus ~ Access, data=lc_mldf, reflevel="4",
-                    weights=lc_mldf$Exp, subset = lc_mldf$Segment == i)
-  print(lc_model_access[[2]][1])
-
-  lc_model_both = mlogit(Campus ~ Dist + Access, data=lc_mldf, reflevel="4",
-                    weights=lc_mldf$Exp, subset = lc_mldf$Segment == i)
-  print(lc_model_both[[2]][1])
+    coefs_and_stats[j+3, col] = get(paste0("lc_model_", k))[[2]][[1]]
+    coefs_and_stats[j+4, col] = summary(get(paste0("lc_model_", k)))[[20]][[1]]
+  }
 }
+coefs_and_stats
+write.csv(coefs_and_stats, file="Combined_Output.csv", na = "0",
+          row.names = c("ASC_SG", "ASC_SC", "ASC_MI", "ASC_YK", "ASC_RY", "ASC_OC",
+                        "B_DIST", "B_ACCESS", "LLHOOD", "MCF R2"))
