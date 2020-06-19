@@ -30,7 +30,8 @@ model = mlogit(Mode ~ 0 | Family + Licence | Time, data = mldf, reflevel = "Tran
 
 
 # ---- Accessibility ----
-campus_df <- read.csv("Combined_Input.csv")
+# campus_df <- read.csv("Combined_Input.csv")
+campus_df <- read.csv("Combined_Input_Access.csv")
 
 # Reformat data
 campus_df$Campus = as.factor(campus_df$Campus)
@@ -38,21 +39,20 @@ campus_df$Segment = as.factor(campus_df$Segment)
 campus_df$Licence = as.factor(campus_df$Licence)
 campus_df$Family = as.factor(campus_df$Family)
 
-for (i in 0:6)
-{
-  print(i)
-  temp_df = campus_df[, c(2:4, (i*4)+6, (i*4)+7, (i*4)+9)]
-  names(temp_df)[names(temp_df)==paste0("Time.Auto.", i)] <- "Time.Auto"
-  names(temp_df)[names(temp_df)==paste0("Time.Transit.", i)] <- "Time.Transit"
-  names(temp_df)[names(temp_df)==paste0("Time.Active.", i)] <- "Time.Active"
-  temp_df$Mode = "Transit"
-  temp_mldf = mlogit.data(temp_df, varying = 4:6, choice = "Mode", shape = "wide")
-  mldf_av = mldf[mldf$available]
-  access = as.data.frame(logsum(model, data=temp_mldf))
-  names(access) <- paste0("Access.", i)
-  campus_df = cbind(campus_df, access)
-
-}
+# for (i in 0:6)
+# {
+#   print(i)
+#   temp_df = campus_df[, c(2:4, (i*4)+6, (i*4)+7, (i*4)+9)]
+#   names(temp_df)[names(temp_df)==paste0("Time.Auto.", i)] <- "Time.Auto"
+#   names(temp_df)[names(temp_df)==paste0("Time.Transit.", i)] <- "Time.Transit"
+#   names(temp_df)[names(temp_df)==paste0("Time.Active.", i)] <- "Time.Active"
+#   temp_df$Mode = "Transit"
+#   temp_mldf = mlogit.data(temp_df, varying = 4:6, choice = "Mode", shape = "wide")
+#   mldf_av = mldf[mldf$available]
+#   access = as.data.frame(logsum(model, data=temp_mldf))
+#   names(access) <- paste0("Access.", i)
+#   campus_df = cbind(campus_df, access)
+# }
 
 # ---- Location choice ----
 
