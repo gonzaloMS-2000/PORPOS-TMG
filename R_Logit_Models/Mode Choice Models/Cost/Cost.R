@@ -5,8 +5,9 @@ library(mlogit)
 library(data.table)
 
 # Load data
-#setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Cost")
-df <- read.csv("Mode_Choice_Cost_Input.csv")
+setwd("C:/Users/gonza/Desktop/University/Summer 2020/TMG/GitHub_PORPOS/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Cost")
+df<- read.csv("Mode_Choice_Cost_Input.csv")
+
 #df$Cost.Active = runif(nrow(df), 0, 1)
 df$Cost.Active = (sample(101, size = nrow(df), replace = TRUE) - 1)
 #df$Cost.Active = 0
@@ -30,7 +31,7 @@ mldf$available = (mldf$alt == "Auto" & mldf$Cars > 1) | (mldf$alt == "Transit") 
 # table(mldf$available)
 
 # Run MNL model
-model = mlogit(Mode ~ Cost | 1 | Time, data = mldf, reflevel = "Transit", subset = mldf$available)
+model = mlogit(Mode ~ Cost | 1 | Time, data = mldf, reflevel = "Active", subset = mldf$available)
 # model = mlogit(Mode ~ Cost | 1 | Time, data = mldf, reflevel = "Transit", subset = mldf$available)
 print(summary(model))
 
