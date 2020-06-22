@@ -35,7 +35,7 @@ mldf = mlogit.data(df_mode, varying = 13:15, choice = "Mode", shape = "wide")
 mldf$available = (mldf$alt == "Auto" & mldf$Cars >= 2) | (mldf$alt == "Transit") | (mldf$alt == "Active" & mldf$Time < 46.6)
 
 # Run model
-model = mlogit(Mode ~ 0 | 1 | Time, data = mldf, reflevel = "Transit", subset = mldf$available)
+model = mlogit(Mode ~ 0 | Licence + Family | Time, data = mldf, reflevel = "Transit", subset = mldf$available)
 summary(model)
 
 # Results
