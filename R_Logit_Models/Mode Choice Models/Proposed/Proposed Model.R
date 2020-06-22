@@ -5,8 +5,8 @@ library(mlogit)
 library(data.table)
 
 # Load data
-setwd("C:/Users/gonza/Desktop/University/Summer 2020/TMG/GitHub_PORPOS/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Active_Modifications")
-df <- read.csv("Input_Final_Filtered.csv")
+setwd("C:/Users/gonza/Desktop/University/Summer 2020/TMG/GitHub_PORPOS/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Proposed")
+df <- read.csv("Input_withoutRoommates.csv")
 
 # Reformat data
 df$Mode = as.factor(df$Mode)
@@ -35,7 +35,7 @@ mldf = mlogit.data(df_mode, varying = 13:15, choice = "Mode", shape = "wide")
 mldf$available = (mldf$alt == "Auto" & mldf$Cars >= 2) | (mldf$alt == "Transit") | (mldf$alt == "Active" & mldf$Time < 46.6)
 
 # Run model
-model = mlogit(Mode ~ 0 | Family + Licence | Time, data = mldf, reflevel = "Transit", subset = mldf$available)
+model = mlogit(Mode ~ 0 | 1 | Time, data = mldf, reflevel = "Transit", subset = mldf$available)
 summary(model)
 
 # Results
