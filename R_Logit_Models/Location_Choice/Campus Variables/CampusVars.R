@@ -11,6 +11,7 @@ df <- read.csv("../../../Data/SMTO_2015/SMTO_2015_Complete_Input.csv")
 
 factor_cols = c(1:7, 13:16)
 df[factor_cols] = lapply(df[factor_cols], factor)
+levels(df$School_Codes) = c("SG", "SC", "MI", "YK", "YG", "RY", "OC")
 df$Family = ifelse(df$Family == "Family", 1, 0)
 # df$Income = ifelse(df$Income == "High", 2, ifelse(df$Income == "Low", 1, 1.266)) # Average for unknown
 
@@ -20,21 +21,23 @@ mldf$Tuition = mldf$Tuition / 100
 mldf$Admission_Avg = mldf$Admission_Avg * 100
 
 # ---- Run Models ----
-# model = mlogit(School_Codes ~ Dist, data=mldf, reflevel="YG", weights = mldf$Exp) # 0.270
-# model = mlogit(School_Codes ~ AIVTT, data=mldf, reflevel="YG", weights = mldf$Exp) # 0.264
-# model = mlogit(School_Codes ~ TPTT, data=mldf, reflevel="YG", weights = mldf$Exp) # 0.256
 
-metrics = array(numeric(), c(5, 6))
-output = array(numeric(), c(4, 6))
+# TODO Run for all segments, output to file
 formulas = c(mFormula(School_Codes ~ Dist),
              mFormula(School_Codes ~ Dist + I(Family * Domestic)),
              mFormula(School_Codes ~ Dist + I(Family * Tuition)),
-             mFormula(School_Codes ~ Dist + I(Family * Admission_Avg)))
+             mFormula(School_Codes ~ Dist + I(Family * Admission_Avg)),
+             mFormula(School_Codes ~ Dist + I(Family * Domestic) + I(Family * Tuition)),
+             mFormula(School_Codes ~ Dist + I(Family * Domestic) + I(Family * Admission_Avg)),
+             mFormula(School_Codes ~ Dist + I(Family * Tuition) + I(Family * Admission_Avg)),
+             mFormula(School_Codes ~ Dist + I(Family * Domestic) + I(Family * Admission_Avg) + I(Family * Tuition)))
+metrics = array(numeric(), c(5, 6))
+output = array(numeric(), c(length(formulas), 6))
 
 for (k in 1:length(formulas))
 {
   print(k)
-  model = mlogit(formulas[[k]], data=mldf, reflevel="YG")
+  model = mlogit(formulas[[k]], data=mldf, reflevel="YG", weights=mldf$Exp_Level)
   x = fitted(model, outcome = FALSE)
   for (j in 1:5)
   {
@@ -50,3 +53,6 @@ for (k in 1:length(formulas))
   output[k,] = apply(metrics, 2, mean)
 }
 output
+
+model = mlogit(School_Codes ~ Dist | Level + Family, data=mldf, reflevel="YG")
+summary(model)
