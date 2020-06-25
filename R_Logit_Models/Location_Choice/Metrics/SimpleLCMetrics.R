@@ -17,7 +17,7 @@ num_campuses = 7L
 num_trials = 5L
 num_metrics = 6L # Accuracy, Macro PRF, MCC, APO
 metrics = array(numeric(), c(num_trials, num_metrics)) 
-output = array(numeric(), c(num_segments + 1, num_campuses + num_metrics))
+output = array(numeric(), c(num_segments + 1, num_campuses + num_metrics + 1))
 
 # ---- Reference Model ----
 model = mlogit(Campus ~ Dist, data=ml_data, reflevel="0")
@@ -46,16 +46,21 @@ for (i in 1:num_segments)
     preds = vector()
     for (k in 1:nrow(x)) preds = c(preds, sample(7, 1, prob = x[k,]) - 1)
     preds = as.factor(preds) # TODO manually set levels to correspond to df$Campus
+    levels(preds) = levels(df$Campus)
     y = confusionMatrix(preds, subset(df, Segment == i-1)$Campus)
     y[[4]][,5][is.na(y[[4]][,5])] = 0
     y[[4]][,7][is.na(y[[4]][,7])] = 0
     
-    metrics[j,] = c(y[[3]][1], mcc(preds=preds, actuals=subset(df, Segment == i-1)$Campus), mean(fitted(model)),
-                    mean(y[[4]][,5]), mean(y[[4]][,6]), mean(y[[4]][,7]))
-   
+    metrics[j,] = c(y[[3]][1], mean(y[[4]][,5]), mean(y[[4]][,6]), mean(y[[4]][,7]),
+                    mcc(preds=preds, actuals=subset(df, Segment == i-1)$Campus),
+                    mean(fitted(model)))
 }
   output[i+1, (num_campuses+1):(num_campuses+num_metrics)] = apply(metrics, 2, mean)
 }
 
-# ---- Send Output ----
-write.csv(output, "MetricsOutput.csv")
+# ---- Print Output ----
+print(output)
+write.table(output, "MetricsOutput.csv", sep=",", na="", row.names = c("All", 0:6),
+            col.names = c("Segment", "ASC_SC", "ASC_MI", "ASC_YK", "ASC_YG", "ASC_RY", "ASC_OC",
+                          "B_DIST", "Accuracy", "MacroPre", "MacroRec", "MacroF1",
+                          "Matthews", "AvePrObs"))
