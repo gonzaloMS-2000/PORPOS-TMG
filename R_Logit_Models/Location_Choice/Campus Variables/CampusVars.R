@@ -20,12 +20,33 @@ mldf$Tuition = mldf$Tuition / 100
 mldf$Admission_Avg = mldf$Admission_Avg * 100
 
 # ---- Run Models ----
-model = mlogit(School_Codes ~ Dist, data=mldf, reflevel="YG", weights = mldf$Exp) # 0.270
-model = mlogit(School_Codes ~ AIVTT, data=mldf, reflevel="YG", weights = mldf$Exp) # 0.264
-model = mlogit(School_Codes ~ TPTT, data=mldf, reflevel="YG", weights = mldf$Exp) # 0.256
+# model = mlogit(School_Codes ~ Dist, data=mldf, reflevel="YG", weights = mldf$Exp) # 0.270
+# model = mlogit(School_Codes ~ AIVTT, data=mldf, reflevel="YG", weights = mldf$Exp) # 0.264
+# model = mlogit(School_Codes ~ TPTT, data=mldf, reflevel="YG", weights = mldf$Exp) # 0.256
 
-model = mlogit(School_Codes ~ Dist, data=mldf, reflevel="YG")                             #          0.126
-model = mlogit(School_Codes ~ Dist + I(Family * Domestic), data=mldf, reflevel="YG")      #  0.076 | 0.143
-model = mlogit(School_Codes ~ Dist + I(Family * Tuition), data=mldf, reflevel="YG")       # -0.145 | 0.134
-model = mlogit(School_Codes ~ Dist + I(Family * Admission_Avg), data=mldf, reflevel="YG") # -0.062 | 0.128
-summary(model)
+metrics = array(numeric(), c(5, 6))
+output = array(numeric(), c(4, 6))
+formulas = c(mFormula(School_Codes ~ Dist),
+             mFormula(School_Codes ~ Dist + I(Family * Domestic)),
+             mFormula(School_Codes ~ Dist + I(Family * Tuition)),
+             mFormula(School_Codes ~ Dist + I(Family * Admission_Avg)))
+
+for (k in 1:length(formulas))
+{
+  print(k)
+  model = mlogit(formulas[[k]], data=mldf, reflevel="YG")
+  x = fitted(model, outcome = FALSE)
+  for (j in 1:5)
+  {
+    preds = vector()
+    for (i in 1:nrow(x)) preds = c(preds, sample(7, 1, prob = x[i,]) - 1)
+    preds = as.factor(preds)
+    levels(preds) = levels(df$School_Codes)
+    y = confusionMatrix(preds, df$School_Codes)
+    metrics[j,] = c(y[[3]][1], mean(y[[4]][,5]), mean(y[[4]][,6]),
+                    2 * mean(y[[4]][,5]) * mean(y[[4]][,6]) / (mean(y[[4]][,5]) + mean(y[[4]][,6])),
+                    mcc(preds=preds, actuals=df$School_Codes), mean(fitted(model)))
+  }
+  output[k,] = apply(metrics, 2, mean)
+}
+output
