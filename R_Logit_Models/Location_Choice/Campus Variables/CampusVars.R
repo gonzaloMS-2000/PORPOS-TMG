@@ -23,6 +23,10 @@ mldf$Admission_Avg = mldf$Admission_Avg * 100
 # ---- Run Models ----
 
 # TODO Run for all segments, output to file
+# F1, MCC, APO for formulas 1-4
+# Use weights by segments - fix them first
+# Interaction with Family won't add value?
+
 formulas = c(mFormula(School_Codes ~ Dist),
              mFormula(School_Codes ~ Dist + I(Family * Domestic)),
              mFormula(School_Codes ~ Dist + I(Family * Tuition)),
