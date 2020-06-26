@@ -11,7 +11,6 @@ df <- read.csv("../../../Data/SMTO_2015/SMTO_2015_Complete_Input.csv")
 
 factor_cols = c(1:7, 13:16)
 df[factor_cols] = lapply(df[factor_cols], factor)
-levels(df$School_Codes) = c("SG", "SC", "MI", "YK", "YG", "RY", "OC")
 df$Family = ifelse(df$Family == "Family", 1, 0)
 # df$Income = ifelse(df$Income == "High", 2, ifelse(df$Income == "Low", 1, 1.266)) # Average for unknown
 
@@ -20,6 +19,7 @@ mldf$Domestic = mldf$Domestic * 100
 mldf$Tuition = mldf$Tuition / 100
 mldf$Admission_Avg = mldf$Admission_Avg * 100
 
+mlogit(School_Codes ~ Dist, data=mldf, reflevel="YG")
 # ---- Run Models ----
 
 # TODO Run for all segments, output to file
@@ -60,3 +60,40 @@ output
 
 model = mlogit(School_Codes ~ Dist | Level + Family, data=mldf, reflevel="YG")
 summary(model)
+
+# ---- Segments ----
+num_segments = 7L
+# formulas = c(mFormula(School_Codes ~ Dist + AIVTT),
+#              mFormula(School_Codes ~ AIVTT + TPTT),
+#              mFormula(School_Codes ~ TPTT + Dist))
+formulas = c(mFormula(School_Codes ~ Dist + AIVTT + TPTT))
+metrics = array(numeric(), c(5, 6))
+output = array(numeric(), c(length(formulas) * num_segments, 6))
+
+for (i in 0:(num_segments-1))
+{
+  print(i)
+  for (formula in formulas)
+  {
+    model = mlogit(formula, data=mldf, reflevel="YG", subset = mldf$Segment == i)
+    print(summary(model)[[20]][1])
+  }
+}
+
+    # x = fitted(model, outcome = FALSE)
+    # for (j in 1:5)
+    # {
+    #   preds = vector()
+    #   for (l in 1:nrow(x)) preds = c(preds, sample(7, 1, prob = x[l,]) - 1)
+    #   preds = as.factor(preds)
+    #   levels(preds) = levels(subset(df, Segment == i)$School_Codes)
+    #   y = confusionMatrix(preds, subset(df, Segment == i)$School_Codes)
+    #   metrics[j,] = c(y[[3]][1], mean(y[[4]][,5]), mean(y[[4]][,6]),
+    #                   2 * mean(y[[4]][,5]) * mean(y[[4]][,6]) / (mean(y[[4]][,5]) + mean(y[[4]][,6])),
+    #                   mcc(preds=preds, actuals=subset(df, Segment == i)$School_Codes), mean(fitted(model)))
+    # }
+    # output[i * 3 + k,] = apply(metrics, 2, mean)
+#   }
+# }
+
+
