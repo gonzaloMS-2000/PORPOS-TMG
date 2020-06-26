@@ -21,7 +21,10 @@ metrics = array(numeric(), c(num_trials, num_metrics))
 output = array(numeric(), c(num_segments + 1, num_campuses + num_metrics + 1))
 
 # ---- Reference Model ----
-model = mlogit(School_Codes ~ Dist, data=ml_data, reflevel="YG")
+model = mlogit(School_Codes ~ Dist | Level, data=ml_data, reflevel="YG")
+summary = summary(model)
+summary(model)
+print(cat('test: ', model[[1]][[1]]))
 for (j in 1:num_campuses) {output[1, j] = model[[1]][[j]]}
 x = fitted(model, outcome = FALSE)
 for (j in 1:num_trials)
@@ -35,48 +38,38 @@ for (j in 1:num_trials)
                   mcc(preds=preds, actuals=df$School_Codes), mean(fitted(model)))
 }
 output[1, (num_campuses+1):(num_campuses+num_metrics)] = apply(metrics, 2, mean)
+output[1,14] = summary[[20]][[1]]
 
 # ---- Segmented Model ----
 for (i in 1:num_segments)
 {
-  print(1)
-  model = mlogit(School_Codes~ Dist | Income , data=ml_data, reflevel="YG", subset=ml_data$Segment==(i-1))
-  print(2)
+  model = mlogit(School_Codes~ Dist | Level, data=ml_data, reflevel="YG", subset=ml_data$Segment==(i-1))
+  summary = summary(model)
   print(summary(model))
-  print(3)
   for (j in 1:num_campuses) output[i+1, j] = model[[1]][[j]]
-  print(4)
-  
+
   x = fitted(model, outcome = FALSE)
-  print(5)
   for (j in 1:num_trials)
   {
-    print(6)
     preds = vector()
-    print(7)
     for (k in 1:nrow(x)) preds = c(preds, sample(7, 1, prob = x[k,]) - 1)
-    print(8)
     preds = as.factor(preds) # TODO manually set levels to correspond to df$Campus
-    print(9)
     levels(preds) = levels(df$School_Codes)
-    print(10)
     y = confusionMatrix(preds, subset(df, Segment == i-1)$School_Codes)
-    print(11)
     y[[4]][,5][is.na(y[[4]][,5])] = 0
-    print(12)
     y[[4]][,7][is.na(y[[4]][,7])] = 0
-    print(13)
-    
+
     metrics[j,] = c(y[[3]][1], mean(y[[4]][,5]), mean(y[[4]][,6]), mean(y[[4]][,7]),
                     mcc(preds=preds, actuals=subset(df, Segment == i-1)$School_Codes),
                     mean(fitted(model)))
   }
   output[i+1, (num_campuses+1):(num_campuses+num_metrics)] = apply(metrics, 2, mean)
+  output[i+1,14] = summary[[20]][[1]]
 }
 
 # ---- Print Output ----
 print(output)
-# write.table(output, "MetricsOutput_Gonzalo.csv", sep=",", na="", row.names = c("All", 0:6),
-#             col.names = c("Segment", "ASC_SC", "ASC_MI", "ASC_YK", "ASC_YG", "ASC_RY", "ASC_OC",
-#                           "B_DIST", "Accuracy", "MacroPre", "MacroRec", "MacroF1",
-#                           "Matthews", "AvePrObs"))
+write.table(output, "resutls.csv", sep=",", na="", row.names = c("All", 0:6),
+             col.names = c("Segment", "ASC_MI", "ASC_OC", "ASC_RY", "ASC_SC", "ASC_SG", "ASC_YK",
+                           "B_DIST", "Accuracy", "MacroPre", "MacroRec", "MacroF1",
+                           "Matthews", "AvePrObs"))
