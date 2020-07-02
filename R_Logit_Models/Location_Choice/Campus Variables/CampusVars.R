@@ -14,8 +14,7 @@ df$Family = ifelse(df$Family == "Family", 1, 0)
 
 mldf = mlogit.data(df, choice="School_Codes", shape="wide", varying = 18:87)
 mldf$Domestic = mldf$Domestic * 100
-mldf$Tuition = mldf$Tuition / 100
-mldf$Admission_Avg = mldf$Admission_Avg * 100
+# mldf$Admission_Avg = mldf$Admission_Avg * 100
 
 # ---- Run Models ----
 
@@ -33,14 +32,14 @@ mldf$Admission_Avg = mldf$Admission_Avg * 100
 #              mFormula(School_Codes ~ Dist + I(Family * Domestic) + I(Family * Admission_Avg)),
 #              mFormula(School_Codes ~ Dist + I(Family * Tuition) + I(Family * Admission_Avg)),
 #              mFormula(School_Codes ~ Dist + I(Family * Domestic) + I(Family * Admission_Avg) + I(Family * Tuition)))
-formulas = c(mFormula(School_Codes ~ Dist + I(LogIncome * Tuition)))
+formulas = c(mFormula(School_Codes ~ Dist + I(Tuition / LogIncome)))
 metrics = array(numeric(), c(5, 6))
 output = array(numeric(), c(length(formulas), 6))
 
 for (k in 1:length(formulas))
 {
   print(k)
-  model = mlogit(formulas[[k]], data=mldf, reflevel="MI", weights=mldf$Exp_Level)
+  model = mlogit(formulas[[k]], data=mldf, weights=mldf$Exp_Level, subset = mldf$LogIncome != 0)
   x = fitted(model, outcome = FALSE)
   for (j in 1:5)
   {
@@ -48,15 +47,81 @@ for (k in 1:length(formulas))
     for (i in 1:nrow(x)) preds = c(preds, sample(7, 1, prob = x[i,]) - 1)
     preds = as.factor(preds)
     levels(preds) = levels(df$School_Codes)
-    y = confusionMatrix(preds, df$School_Codes)
+    y = confusionMatrix(preds, subset(df, LogIncome != 0)$School_Codes)
     metrics[j,] = c(y[[3]][1], mean(y[[4]][,5]), mean(y[[4]][,6]),
                     2 * mean(y[[4]][,5]) * mean(y[[4]][,6]) / (mean(y[[4]][,5]) + mean(y[[4]][,6])),
-                    mcc(preds=preds, actuals=df$School_Codes), mean(fitted(model)))
+                    mcc(preds=preds, actuals=subset(df, LogIncome != 0)$School_Codes), mean(fitted(model)))
+  }
+  output[k,] = apply(metrics, 2, mean)
+}
+summary(model)
+output
+
+# ---- Tuition, Income ----
+formulas = list(c(mFormula(School_Codes ~ Dist), TRUE),
+                c(mFormula(School_Codes ~ Dist + Tuition:LogIncome), TRUE),
+                c(mFormula(School_Codes ~ Dist + I(Tuition * LogIncome)), TRUE),
+                c(mFormula(School_Codes ~ Dist + I(LogIncome / Tuition)), TRUE),
+                c(mFormula(School_Codes ~ Dist), FALSE),
+                c(mFormula(School_Codes ~ Dist + Tuition:LogIncome), FALSE),
+                c(mFormula(School_Codes ~ Dist + I(LogIncome / Tuition)), FALSE),
+                c(mFormula(School_Codes ~ Dist + I(Tuition / LogIncome)), FALSE))
+metrics = array(numeric(), c(5, 6))
+output = array(numeric(), c(length(formulas), 6))
+for (k in 1:length(formulas))
+{
+  print(k)
+  if (formulas[[k]][[2]]) model = mlogit(formulas[[k]][[1]], data=mldf, weights=mldf$Exp_Level)
+  else model = mlogit(formulas[[k]][[1]], data=mldf, weights=mldf$Exp_Level, subset=mldf$LogIncome>0)
+  x = fitted(model, outcome = FALSE)
+  print(model)
+  for (j in 1:5)
+  {
+    preds = vector()
+    for (i in 1:nrow(x)) preds = c(preds, sample(7, 1, prob = x[i,]) - 1)
+    preds = as.factor(preds)
+    levels(preds) = levels(df$School_Codes)
+    if (formulas[[k]][[2]]) y = confusionMatrix(preds, df$School_Codes)
+    else y = confusionMatrix(preds, subset(df, LogIncome>0)$School_Codes)
+    prec = mean(y[[4]][,5])
+    rec = mean(y[[4]][,6])
+    cm_metrics = c(mean(fitted(model)), y[[3]][1], prec, rec, 2 * prec * rec / (prec + rec))
+    if (formulas[[k]][[2]]) metrics[j,] = c(cm_metrics, mcc(preds=preds, actuals=df$School_Codes))
+    else metrics[j,] = c(cm_metrics, mcc(preds=preds, actuals=subset(df, LogIncome>0)$School_Codes))
   }
   output[k,] = apply(metrics, 2, mean)
 }
 output
 
+# ---- Admission, Income ----
+formulas = list(c(mFormula(School_Codes ~ Dist), TRUE),
+                c(mFormula(School_Codes ~ Dist + Admission_Avg:LogIncome), TRUE))
+metrics = array(numeric(), c(5, 6))
+output = array(numeric(), c(length(formulas), 6))
+for (k in 1:length(formulas))
+{
+  print(k)
+  if (formulas[[k]][[2]]) model = mlogit(formulas[[k]][[1]], data=mldf, weights=mldf$Exp_Level)
+  else model = mlogit(formulas[[k]][[1]], data=mldf, weights=mldf$Exp_Level, subset=mldf$LogIncome>0)
+  x = fitted(model, outcome = FALSE)
+  print(model)
+  for (j in 1:5)
+  {
+    preds = vector()
+    for (i in 1:nrow(x)) preds = c(preds, sample(7, 1, prob = x[i,]) - 1)
+    preds = as.factor(preds)
+    levels(preds) = levels(df$School_Codes)
+    if (formulas[[k]][[2]]) y = confusionMatrix(preds, df$School_Codes)
+    else y = confusionMatrix(preds, subset(df, LogIncome>0)$School_Codes)
+    prec = mean(y[[4]][,5])
+    rec = mean(y[[4]][,6])
+    cm_metrics = c(mean(fitted(model)), y[[3]][1], prec, rec, 2 * prec * rec / (prec + rec))
+    if (formulas[[k]][[2]]) metrics[j,] = c(cm_metrics, mcc(preds=preds, actuals=df$School_Codes))
+    else metrics[j,] = c(cm_metrics, mcc(preds=preds, actuals=subset(df, LogIncome>0)$School_Codes))
+  }
+  output[k,] = apply(metrics, 2, mean)
+}
+output
 
 # ---- Segments ----
 num_segments = 7L
