@@ -5,7 +5,7 @@ library(mlogit)
 library(data.table)
 
 # Load data
-setwd("C:/Users/gonza/Desktop/University/Summer 2020/TMG/GitHub_PORPOS/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Active_Modifications")
+setwd("C:/Users/gonza/Desktop/University/Summer 2020/TMG/GitHub_PORPOS/PORPOS-TMG/R_Logit_Models/Mode Choice Models/Active_Modifications/Inputs")
 df <- read.csv("Input_withoutBikes.csv")
 
 # Reformat data
@@ -95,8 +95,8 @@ for (call in formulas) {
 
 out
 # write.csv(d, "../Active_Modifications/ChSpVars_withoutBikes.csv", row.names = vars)
-
-# Write results to file
-write.csv(out, "Outputs_Avai+ChSpVars_withBikeTimes.csv")
-
-#../Active_Modifications/
+# 
+# # Write results to file
+# write.csv(out, "Outputs_Avai+ChSpVars_withBikeTimes.csv")
+# 
+# #../Active_Modifications/
