@@ -54,7 +54,7 @@ for (call_idx in 1:length(formulas)) {
   
   df <- read.csv("../../../Data/SMTO_2015/SMTO_2015_Complete_Input.csv")
   df$School_Codes = as.factor(df$School_Codes)
-  ml_data = mlogit.data(df, varying=17:86, choice="School_Codes", shape="wide")
+  ml_data = mlogit.data(df, varying=18:87, choice="School_Codes", shape="wide")
   
   output[current_row-1,1:14] = c("ASC_MI", "ASC_OC", "ASC_RY", "ASC_SC", "ASC_SG", "ASC_YK",
                                "B_DIST", "Accuracy", "MacroPre", "MacroRec", "MacroF1",
@@ -115,6 +115,6 @@ for (call_idx in 1:length(formulas)) {
   
 # ---- Print Output ----
 #print(output)
-write.table(output, "results.csv", sep=",", na="")
+#write.table(output, "results.csv", sep=",", na="")
 
 
