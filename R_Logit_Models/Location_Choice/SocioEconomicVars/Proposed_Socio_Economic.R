@@ -11,12 +11,18 @@ df <- read.csv("../../../Data/SMTO_2015/SMTO_2015_Complete_Input.csv")
 # factor_cols = c(1:7, 10, 14:17)
 # df[factor_cols] = lapply(df[factor_cols], factor)
 df$School_Codes = as.factor(df$School_Codes)
+df$Income = relevel(as.factor(df$Income), "Unknown")
+df$Work = relevel(as.factor(df$Work), "Unknown")
+# df$Level = relevel(as.factor(df$Level), "UG")
+# df$Adults = as.factor(ifelse(df$Adults < 2, 1, ifelse(df$Adults < 3, 2, ifelse(df$Adults < 7, 3, 4))))
+df$Adults = as.factor(ifelse(df$Adults < 7, df$Adults, 7))
 ml_data = mlogit.data(df, varying=18:87, choice="School_Codes", shape="wide")
 
 # ---- Model Formulas ----
 base_formula = "School_Codes ~ Dist + Family:Dist + Level:Dist + Status:Dist + Family:Level:Dist + Family:Status:Dist + Level:Status:Dist | Family + Level"
 # socio_vars = c("Cars", "Adults", "Children", "Income", "Licence", "Work")
-socio_vars = c("Children + Adults + Cars + Licence")
+socio_vars = c("Cars + Adults + Children + Income + Licence + Work")
+# socio_vars = c("Adults")
 
 # ---- Prepare Output ----
 num_segments = 7L
@@ -46,6 +52,7 @@ output[1, (num_campuses+num_metrics+1):(num_campuses+num_metrics+2)] = c(mean(fi
 for (i in 1:length(socio_vars)) {
   print(i)
   model = mlogit(as.formula(paste(base_formula, socio_vars[i], sep = " + ")), data=ml_data, reflevel="SG", subset = ml_data$Segment!=0, weights=ml_data$Exp_Segment)
+  print(summary(model))
   x = fitted(model, outcome = FALSE)
   for (j in 1:num_campuses) output[i+1, j] = model[[1]][[j]]
   for (j in 1:num_trials) {
@@ -62,7 +69,7 @@ for (i in 1:length(socio_vars)) {
 output  
 # ---- Print Output ----
 #print(output)
-c("ASC_MI", "ASC_OC", "ASC_RY", "ASC_SC", "ASC_SG", "ASC_YK",
+cols = c("ASC_MI", "ASC_OC", "ASC_RY", "ASC_SC", "ASC_SG", "ASC_YK",
   "B_DIST", "Accuracy", "MacroPre", "MacroRec", "MacroF1",
   "Matthews", "AvePrObs", "McF. R^2")
-write.table(output, "Next_Steps_Results.csv", sep=",", na="")
+write.table(output, sep=",", na="", row.names=c("Ref", socio_vars), col.names=cols)
