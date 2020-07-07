@@ -15,11 +15,15 @@ df$Segment = as.factor(df$Segment)
 ml_data = mlogit.data(df, varying=18:87, choice="School_Codes", shape="wide")
 
 # ---- Formulas ----
-formulas = c(mFormula(School_Codes ~ Dist | 1),
-             mFormula(School_Codes ~ Dist | Work),
-             mFormula(School_Codes ~ Dist | Work + Cars),
-             mFormula(School_Codes ~ Dist | Cars + Adults + Children + Income + Licence + Work))
-                
+# formulas = c(mFormula(School_Codes ~ Dist | 1),
+#              mFormula(School_Codes ~ Dist | Work),
+#              mFormula(School_Codes ~ Dist | Work + Cars),
+#              mFormula(School_Codes ~ Dist | Cars + Adults + Children + Income + Licence + Work))
+
+# formulas = c(mFormula(School_Codes ~ Dist | Cars + Adults + Children + Licence + Work))
+formulas = c(mFormula(School_Codes ~ Dist | Cars + Adults + Income + Licence + Work))
+
+
 # ---- Prepare Output ----
 num_segments = 6L
 num_campuses = 7L
@@ -31,7 +35,7 @@ output = array(numeric(), c((num_segments) * length(formulas), num_campuses + nu
 # --- Run Models ----
 for (i in 1:length(formulas)) {
   print(i)
-  for (j in 1:num_segments) {
+  for (j in 6:num_segments) {
     actuals = subset(df, Segment==j)$School_Codes
     cat(j, levels(actuals), "\n")
     model = mlogit(formulas[[i]], data=ml_data, reflevel="SG", subset = ml_data$Segment==j, weights=ml_data$Exp_Segment)
@@ -47,6 +51,7 @@ for (i in 1:length(formulas)) {
     }
     output[(i-1)*num_segments + j, (num_campuses+1):(num_campuses+num_metrics)] = apply(metrics, 2, mean)
     output[(i-1)*num_segments + j, (num_campuses+num_metrics+1):(num_campuses+num_metrics+2)] = c(mean(fitted(model)), summary(model)[[20]][[1]])
+    print(mean(fitted(model)))
   }
 }  
 
