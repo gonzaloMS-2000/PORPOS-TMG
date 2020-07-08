@@ -8,154 +8,33 @@ library(mltools)
 # ---- Load and Format Data ----
 setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Location_Choice/Campus Variables")
 df <- read.csv("../../../Data/SMTO_2015/SMTO_2015_Complete_Input.csv")
-factor_cols = c(1:7, 13:15, 17)
-df[factor_cols] = lapply(df[factor_cols], factor)
-df$Family = ifelse(df$Family == "Family", 1, 0)
-
+df$School_Codes = as.factor(df$School_Codes)
 mldf = mlogit.data(df, choice="School_Codes", shape="wide", varying = 18:87)
+mldf$Admission_Avg = mldf$Admission_Avg * 100
 mldf$Domestic = mldf$Domestic * 100
-# mldf$Admission_Avg = mldf$Admission_Avg * 100
+
+# ---- Formulas ----
+base_formula_1 = "School_Codes ~ Dist + Family:Dist + Level:Dist + Status:Dist + Family:Level:Dist + Family:Status:Dist + Level:Status:Dist"
+formulas = c("+ Family:Admission_Avg | Family + Level", "+ Family:Admission_Avg | Family", "+ Family:Admission_Avg | Level",
+             "+ Family:Domestic + Family:Tuition | Family + Level", "+ Family:Domestic + Family:Tuition | Family", "+ Family:Domestic + Family:Tuition | Level")
+
+# ---- Prepare Output ----
+output = array(numeric(), c(length(formulas), 3))
+models = c()
 
 # ---- Run Models ----
-
-# TODO Run for all segments, output to file
-# F1, MCC, APO for formulas 1-4
-# Use weights by segments - fix them first
-# Interaction with Family won't add value?
-
-
-# formulas = c(mFormula(School_Codes ~ Dist),
-#              mFormula(School_Codes ~ Dist + I(Family * Domestic)),
-#              mFormula(School_Codes ~ Dist + I(Family * Tuition)),
-#              mFormula(School_Codes ~ Dist + I(Family * Admission_Avg)),
-#              mFormula(School_Codes ~ Dist + I(Family * Domestic) + I(Family * Tuition)),
-#              mFormula(School_Codes ~ Dist + I(Family * Domestic) + I(Family * Admission_Avg)),
-#              mFormula(School_Codes ~ Dist + I(Family * Tuition) + I(Family * Admission_Avg)),
-#              mFormula(School_Codes ~ Dist + I(Family * Domestic) + I(Family * Admission_Avg) + I(Family * Tuition)))
-formulas = c(mFormula(School_Codes ~ Dist + I(Tuition / LogIncome)))
-metrics = array(numeric(), c(5, 6))
-output = array(numeric(), c(length(formulas), 6))
-
-for (k in 1:length(formulas))
-{
+for (k in 6:length(formulas)) {
   print(k)
-  model = mlogit(formulas[[k]], data=mldf, weights=mldf$Exp_Level, subset = mldf$LogIncome != 0)
-  x = fitted(model, outcome = FALSE)
-  for (j in 1:5)
-  {
-    preds = vector()
-    for (i in 1:nrow(x)) preds = c(preds, sample(7, 1, prob = x[i,]) - 1)
-    preds = as.factor(preds)
-    levels(preds) = levels(df$School_Codes)
-    y = confusionMatrix(preds, subset(df, LogIncome != 0)$School_Codes)
-    metrics[j,] = c(y[[3]][1], mean(y[[4]][,5]), mean(y[[4]][,6]),
-                    2 * mean(y[[4]][,5]) * mean(y[[4]][,6]) / (mean(y[[4]][,5]) + mean(y[[4]][,6])),
-                    mcc(preds=preds, actuals=subset(df, LogIncome != 0)$School_Codes), mean(fitted(model)))
-  }
-  output[k,] = apply(metrics, 2, mean)
+  model = mlogit(as.formula(paste(base_formula_1, formulas[[k]])), data=mldf, weights=mldf$Exp_Segment, reflevel="SG", subset=mldf$Segment!=0)
+  output[k,] = c(formulas[[k]], summary(model)[[20]][1], mean(fitted(model)))
+  models = c(models, model)
 }
-summary(model)
+
+# ---- Write Output ----
+output[,1] = formulas
 output
+write.table(output, sep=",")
 
-# ---- Tuition, Income ----
-formulas = list(c(mFormula(School_Codes ~ Dist), TRUE),
-                c(mFormula(School_Codes ~ Dist + Tuition:LogIncome), TRUE),
-                c(mFormula(School_Codes ~ Dist + I(Tuition * LogIncome)), TRUE),
-                c(mFormula(School_Codes ~ Dist + I(LogIncome / Tuition)), TRUE),
-                c(mFormula(School_Codes ~ Dist), FALSE),
-                c(mFormula(School_Codes ~ Dist + Tuition:LogIncome), FALSE),
-                c(mFormula(School_Codes ~ Dist + I(LogIncome / Tuition)), FALSE),
-                c(mFormula(School_Codes ~ Dist + I(Tuition / LogIncome)), FALSE))
-metrics = array(numeric(), c(5, 6))
-output = array(numeric(), c(length(formulas), 6))
-for (k in 1:length(formulas))
-{
-  print(k)
-  if (formulas[[k]][[2]]) model = mlogit(formulas[[k]][[1]], data=mldf, weights=mldf$Exp_Level)
-  else model = mlogit(formulas[[k]][[1]], data=mldf, weights=mldf$Exp_Level, subset=mldf$LogIncome>0)
-  x = fitted(model, outcome = FALSE)
-  print(model)
-  for (j in 1:5)
-  {
-    preds = vector()
-    for (i in 1:nrow(x)) preds = c(preds, sample(7, 1, prob = x[i,]) - 1)
-    preds = as.factor(preds)
-    levels(preds) = levels(df$School_Codes)
-    if (formulas[[k]][[2]]) y = confusionMatrix(preds, df$School_Codes)
-    else y = confusionMatrix(preds, subset(df, LogIncome>0)$School_Codes)
-    prec = mean(y[[4]][,5])
-    rec = mean(y[[4]][,6])
-    cm_metrics = c(mean(fitted(model)), y[[3]][1], prec, rec, 2 * prec * rec / (prec + rec))
-    if (formulas[[k]][[2]]) metrics[j,] = c(cm_metrics, mcc(preds=preds, actuals=df$School_Codes))
-    else metrics[j,] = c(cm_metrics, mcc(preds=preds, actuals=subset(df, LogIncome>0)$School_Codes))
-  }
-  output[k,] = apply(metrics, 2, mean)
-}
-output
-
-# ---- Admission, Income ----
-formulas = list(c(mFormula(School_Codes ~ Dist), TRUE),
-                c(mFormula(School_Codes ~ Dist + Admission_Avg:LogIncome), TRUE))
-metrics = array(numeric(), c(5, 6))
-output = array(numeric(), c(length(formulas), 6))
-for (k in 1:length(formulas))
-{
-  print(k)
-  if (formulas[[k]][[2]]) model = mlogit(formulas[[k]][[1]], data=mldf, weights=mldf$Exp_Level)
-  else model = mlogit(formulas[[k]][[1]], data=mldf, weights=mldf$Exp_Level, subset=mldf$LogIncome>0)
-  x = fitted(model, outcome = FALSE)
-  print(model)
-  for (j in 1:5)
-  {
-    preds = vector()
-    for (i in 1:nrow(x)) preds = c(preds, sample(7, 1, prob = x[i,]) - 1)
-    preds = as.factor(preds)
-    levels(preds) = levels(df$School_Codes)
-    if (formulas[[k]][[2]]) y = confusionMatrix(preds, df$School_Codes)
-    else y = confusionMatrix(preds, subset(df, LogIncome>0)$School_Codes)
-    prec = mean(y[[4]][,5])
-    rec = mean(y[[4]][,6])
-    cm_metrics = c(mean(fitted(model)), y[[3]][1], prec, rec, 2 * prec * rec / (prec + rec))
-    if (formulas[[k]][[2]]) metrics[j,] = c(cm_metrics, mcc(preds=preds, actuals=df$School_Codes))
-    else metrics[j,] = c(cm_metrics, mcc(preds=preds, actuals=subset(df, LogIncome>0)$School_Codes))
-  }
-  output[k,] = apply(metrics, 2, mean)
-}
-output
-
-# ---- Segments ----
-num_segments = 7L
-# formulas = c(mFormula(School_Codes ~ Dist + AIVTT),
-#              mFormula(School_Codes ~ AIVTT + TPTT),
-#              mFormula(School_Codes ~ TPTT + Dist))
-formulas = c(mFormula(School_Codes ~ Dist + AIVTT + TPTT))
-metrics = array(numeric(), c(5, 6))
-output = array(numeric(), c(length(formulas) * num_segments, 6))
-
-for (i in 0:(num_segments-1))
-{
-  print(i)
-  for (formula in formulas)
-  {
-    model = mlogit(formula, data=mldf, reflevel="YG", subset = mldf$Segment == i)
-    print(summary(model)[[20]][1])
-  }
-}
-
-    # x = fitted(model, outcome = FALSE)
-    # for (j in 1:5)
-    # {
-    #   preds = vector()
-    #   for (l in 1:nrow(x)) preds = c(preds, sample(7, 1, prob = x[l,]) - 1)
-    #   preds = as.factor(preds)
-    #   levels(preds) = levels(subset(df, Segment == i)$School_Codes)
-    #   y = confusionMatrix(preds, subset(df, Segment == i)$School_Codes)
-    #   metrics[j,] = c(y[[3]][1], mean(y[[4]][,5]), mean(y[[4]][,6]),
-    #                   2 * mean(y[[4]][,5]) * mean(y[[4]][,6]) / (mean(y[[4]][,5]) + mean(y[[4]][,6])),
-    #                   mcc(preds=preds, actuals=subset(df, Segment == i)$School_Codes), mean(fitted(model)))
-    # }
-    # output[i * 3 + k,] = apply(metrics, 2, mean)
-#   }
-# }
-
-
+# Income Ideas
+# Income: 0/1/2, means, log_means
+# Tuition:Income, I(Tuition/Income), Admission:Avg_Income
