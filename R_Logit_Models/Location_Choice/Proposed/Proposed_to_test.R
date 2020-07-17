@@ -46,29 +46,10 @@ results = matrix(data = NA, nrow = num_folds, ncol = num_metrics)
 # results_summary
 
 
-# # ---- Proposed Model (Original) ----
-# full_mldf = mlogit.data(df, choice="School_Codes", shape="wide", varying = 18:87)
-# full_mldf$Enrol = ifelse(full_mldf$Level == "UG", full_mldf$UG, ifelse(full_mldf$Level == "Grad", full_mldf$Grad, full_mldf$Total))
-# model = mlogit(School_Codes ~ Dist + Family:Dist + Enrol | 0, data=full_mldf, reflevel="SG")
-# actuals = df$School_Codes
-# probs = fitted(model, outcome=FALSE)
-# preds = vector()
-# for (j in 1:nrow(probs)) preds = c(preds, colnames(probs)[which.max(probs[j,])[[1]]])
-# preds = as.factor(preds)
-# levels(preds) = c(levels(preds), setdiff(levels(actuals), levels(preds)))
-# y =  suppressWarnings(confusionMatrix(preds, actuals))
-# prec = sum(y[[4]][,5], na.rm=TRUE) / 7
-# f1 = sum(y[[4]][,7], na.rm=TRUE) / 7
-# metrics = c(y[[3]][1], prec, mean(y[[4]][,6]), f1, mcc(preds=preds, actuals=actuals), mean(fitted(model)))
-# names(metrics) = c("Acc", "Prec", "Rec", "F1", "MCC", "APO")
-# print(metrics)
-
-
-# ---- Simplified Model ----
+# ---- Proposed Model (Enroll) ----
 full_mldf = mlogit.data(df, choice="School", shape="wide", varying = 18:87)
-#full_mldf$Enrol = ifelse(full_mldf$Level == "UG", full_mldf$UG, ifelse(full_mldf$Level == "Grad", full_mldf$Grad, full_mldf$Total))
-
-model = mlogit(School ~ Dist, data=full_mldf)
+full_mldf$Enrol = ifelse(full_mldf$Level == "UG", full_mldf$UG, ifelse(full_mldf$Level == "Grad", full_mldf$Grad, full_mldf$Total))
+model = mlogit(School ~  Dist + Family:Dist | 0 |Enrol , data=full_mldf, reflevel="SG")
 actuals = df$School
 probs = fitted(model, outcome=FALSE)
 preds = vector()
@@ -82,12 +63,53 @@ metrics = c(y[[3]][1], prec, mean(y[[4]][,6]), f1, mcc(preds=preds, actuals=actu
 names(metrics) = c("Acc", "Prec", "Rec", "F1", "MCC", "APO")
 print(metrics)
 
+print(summary(model))
 
-# ---- Testing with 2019SMTO Data ----
+# 
+# # ---- Proposed Model (ASC) ----
+# full_mldf = mlogit.data(df, choice="School", shape="wide", varying = 18:87)
+# full_mldf$Enrol = ifelse(full_mldf$Level == "UG", full_mldf$UG, ifelse(full_mldf$Level == "Grad", full_mldf$Grad, full_mldf$Total))
+# model = mlogit(School ~ Dist + Family:Dist |0, data=full_mldf, reflevel="SG")
+# actuals = df$School
+# probs = fitted(model, outcome=FALSE)
+# preds = vector()
+# for (j in 1:nrow(probs)) preds = c(preds, colnames(probs)[which.max(probs[j,])[[1]]])
+# preds = as.factor(preds)
+# levels(preds) = c(levels(preds), setdiff(levels(actuals), levels(preds)))
+# y =  suppressWarnings(confusionMatrix(preds, actuals))
+# prec = sum(y[[4]][,5], na.rm=TRUE) / 7
+# f1 = sum(y[[4]][,7], na.rm=TRUE) / 7
+# metrics = c(y[[3]][1], prec, mean(y[[4]][,6]), f1, mcc(preds=preds, actuals=actuals), mean(fitted(model)))
+# names(metrics) = c("Acc", "Prec", "Rec", "F1", "MCC", "APO")
+# print(metrics)
+# print(summary(model))
 
-new_df <- read.csv("../../../../../../../../SMTO_2019_Complete_Input.csv")
-new_mldf = mlogit.data(new_df, choice="School", shape="wide", varying = 16:42)
-new_probs = predict(model, new_mldf)
+
+# # ---- Simplified Model ----
+# full_mldf = mlogit.data(df, choice="School", shape="wide", varying = 18:87)
+# #full_mldf$Enrol = ifelse(full_mldf$Level == "UG", full_mldf$UG, ifelse(full_mldf$Level == "Grad", full_mldf$Grad, full_mldf$Total))
+# 
+# model = mlogit(School ~ Dist, data=full_mldf)
+# print(summary(model))
+# actuals = df$School
+# probs = fitted(model, outcome=FALSE)
+# preds = vector()
+# for (j in 1:nrow(probs)) preds = c(preds, colnames(probs)[which.max(probs[j,])[[1]]])
+# preds = as.factor(preds)
+# levels(preds) = c(levels(preds), setdiff(levels(actuals), levels(preds)))
+# y =  suppressWarnings(confusionMatrix(preds, actuals))
+# prec = sum(y[[4]][,5], na.rm=TRUE) / 7
+# f1 = sum(y[[4]][,7], na.rm=TRUE) / 7
+# metrics = c(y[[3]][1], prec, mean(y[[4]][,6]), f1, mcc(preds=preds, actuals=actuals), mean(fitted(model)))
+# names(metrics) = c("Acc", "Prec", "Rec", "F1", "MCC", "APO")
+# print(metrics)
+# 
+# 
+# # ---- Testing with 2019SMTO Data ----
+# 
+# new_df <- read.csv("../../../../../../../../SMTO_2019_Complete_Input.csv")
+# new_mldf = mlogit.data(new_df, choice="School", shape="wide", varying = 16:42)
+# new_probs = predict(model, new_df)
 
 # preds = vector()
 # for (j in 1:nrow(new_probs)) preds = c(preds, colnames(new_probs)[which.max(new_probs[j,])[[1]]])
