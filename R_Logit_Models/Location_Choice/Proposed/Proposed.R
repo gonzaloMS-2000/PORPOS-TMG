@@ -6,7 +6,8 @@ library(data.table)
 
 
 # ---- Load and Format Data ----
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Location_Choice/Proposed")
+#setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Location_Choice/Proposed")
+setwd("C:/Users/gonza/Desktop/University/Summer 2020/TMG/GitHub_PORPOS/PORPOS-TMG/R_Logit_Models/Location_Choice/Proposed")
 df <- read.csv("../../../Data/SMTO_2015/SMTO_2015_Complete_Input.csv")
 df = subset(df, Segment!=0)
 df$School_Codes = as.factor(df$School_Codes)
