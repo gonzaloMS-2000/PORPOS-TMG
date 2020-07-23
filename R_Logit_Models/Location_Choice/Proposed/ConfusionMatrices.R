@@ -6,7 +6,8 @@ library(e1071)
 library(mltools)
 
 # ---- Load and Format Data ----
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Location_Choice/Campus Variables")
+#setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Location_Choice/Campus Variables")
+setwd("C:/Users/gonza/Desktop/University/Summer 2020/TMG/GitHub_PORPOS/PORPOS-TMG/R_Logit_Models/Location_Choice/Campus Variables")
 df <- read.csv("../../../Data/SMTO_2015/SMTO_2015_Complete_Input.csv")
 df$School_Codes = as.factor(df$School_Codes)
 mldf = mlogit.data(df, choice="School_Codes", shape="wide", varying = 18:87)
@@ -44,7 +45,7 @@ for (i in 1:length(campuses)){
   z = probs[which(subset(df, Segment!=0)$School_Codes == campuses[i]),]
   cm[i,] = colSums(z)
 }
-write.table(cm, row.names=campuses, col.names = campuses)
+#write.table(cm, row.names=campuses, col.names = campuses)
 
 
 
