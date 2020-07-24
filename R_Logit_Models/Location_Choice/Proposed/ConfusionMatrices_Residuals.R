@@ -40,7 +40,8 @@ for (j in 0:0)
   print(metrics)
 }
 
-# ----- Calculating Absolute Residuals per Zone ----- [Residual = (Predicted - Observed)/Total]
+#### ----- Calculating Absolute Residuals per Zone ----- [Residual = abs((Predicted - Observed)/Total)]
+
 hz = sort(unique(df$HomeZone))
 residuals = matrix(data=NA, nrow = length(hz), ncol = (length(campuses) + 1))
 campuses = names(as.data.frame(probs))

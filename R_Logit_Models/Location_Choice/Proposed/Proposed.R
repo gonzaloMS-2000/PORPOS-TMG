@@ -11,6 +11,15 @@ setwd("C:/Users/gonza/Desktop/University/Summer 2020/TMG/GitHub_PORPOS/PORPOS-TM
 df <- read.csv("../../../Data/SMTO_2015/SMTO_2015_Complete_Input.csv")
 df = subset(df, Segment!=0)
 df$School = as.factor(df$School)
+df$Closest_School = as.factor(df$Closest_School)
+
+levels(df$Closest_School)[levels(df$Closest_School)=="SG"] <- NaN
+levels(df$Closest_School)[levels(df$Closest_School)=="OC"] <- NaN
+levels(df$Closest_School)[levels(df$Closest_School)=="RY"] <- NaN
+levels(df$Closest_School)[levels(df$Closest_School)=="YG"] <- NaN
+
+# df$Closest_School = as.numeric(df$Closest_School)
+# df$Closest_School = as.factor(df$Closest_School)
 
 # ---- Prepare Outputs ----
 num_metrics = 6
@@ -48,12 +57,11 @@ results = matrix(data = NA, nrow = num_folds, ncol = num_metrics)
 
 
 # ---- Proposed Model (Enroll) ----
-full_mldf = mlogit.data(df, choice="School", shape="wide", varying = 17:205)
-#full_mldf$Enrol = ifelse(full_mldf$Level == "UG", full_mldf$UG, ifelse(full_mldf$Level == "Grad", full_mldf$Grad, full_mldf$Total))
-model = mlogit(School ~  Dist + Sample_Total| 0, data=full_mldf, reflevel = 'SG')
+full_mldf = mlogit.data(df, choice="School", shape="wide", varying = 18:87)
+full_mldf$Enrol = ifelse(full_mldf$Level == "UG", full_mldf$UG, ifelse(full_mldf$Level == "Grad", full_mldf$Grad, full_mldf$Total))
+model = mlogit(School ~  Dist + Enrol + Family:Dist | Closest_School, data=full_mldf, weights = full_mldf$Exp_Segment, reflevel = 'SG')
                #nests = list(college = c('CST', 'CAS', 'CPR', 'CMO', 'CDV','CEG','CPI','CDS','DOS','DWH','MOF', 'MOS', 'MOI', 'SHD', 'SHH', 'SHT'), 
                #             university = c('MCM', 'MCB', 'OTD', 'OTN', 'SG', 'SC', 'MI', 'OC', 'RY', 'YK', 'YG')), un.nest.el = FALSE)
-
 actuals = df$School
 probs = fitted(model, outcome=FALSE)
 preds = vector()
@@ -65,9 +73,8 @@ prec = sum(y[[4]][,5], na.rm=TRUE) / 7
 f1 = sum(y[[4]][,7], na.rm=TRUE) / 7
 metrics = c(y[[3]][1], prec, mean(y[[4]][,6]), f1, mcc(preds=preds, actuals=actuals), mean(fitted(model)))
 names(metrics) = c("Acc", "Prec", "Rec", "F1", "MCC", "APO")
-print(metrics)
-
 print(summary(model))
+print(metrics)
 
 # 
 # # ---- Proposed Model (ASC) ----
@@ -109,23 +116,23 @@ print(summary(model))
 # print(metrics)
 
 
-# ---- Testing with 2019SMTO Data ----
-
-new_df <- read.csv("../../../../../../../../SMTO_2019_Complete_Input.csv")
-#new_df$School = sample(c('SG','MI','SC','OC','RY','YK','YG'), size = nrow(new_df), replace = TRUE,inpl)
-new_mldf = mlogit.data(new_df, choice="School", shape="wide", varying = 36:42)
-new_probs = predict(model, new_mldf)
-
-preds = vector()
-for (j in 1:nrow(new_probs)) preds = c(preds, colnames(new_probs)[which.max(new_probs[j,])[[1]]])
-preds = as.factor(preds)
-levels(preds) = c(levels(preds), setdiff(levels(actuals), levels(preds)))
-y =  suppressWarnings(confusionMatrix(preds, actuals))
-prec = sum(y[[4]][,5], na.rm=TRUE) / 7
-f1 = sum(y[[4]][,7], na.rm=TRUE) / 7
-metrics = c(y[[3]][1], prec, mean(y[[4]][,6]), f1, mcc(preds=preds, actuals=actuals), mean(fitted(model)))
-names(metrics) = c("Acc", "Prec", "Rec", "F1", "MCC", "APO")
-print(metrics)
+# # ---- Testing with 2019SMTO Data ----
+# 
+# new_df <- read.csv("../../../../../../../../SMTO_2019_Complete_Input.csv")
+# #new_df$School = sample(c('SG','MI','SC','OC','RY','YK','YG'), size = nrow(new_df), replace = TRUE,inpl)
+# new_mldf = mlogit.data(new_df, choice="School", shape="wide", varying = 36:42)
+# new_probs = predict(model, new_mldf)
+# 
+# preds = vector()
+# for (j in 1:nrow(new_probs)) preds = c(preds, colnames(new_probs)[which.max(new_probs[j,])[[1]]])
+# preds = as.factor(preds)
+# levels(preds) = c(levels(preds), setdiff(levels(actuals), levels(preds)))
+# y =  suppressWarnings(confusionMatrix(preds, actuals))
+# prec = sum(y[[4]][,5], na.rm=TRUE) / 7
+# f1 = sum(y[[4]][,7], na.rm=TRUE) / 7
+# metrics = c(y[[3]][1], prec, mean(y[[4]][,6]), f1, mcc(preds=preds, actuals=actuals), mean(fitted(model)))
+# names(metrics) = c("Acc", "Prec", "Rec", "F1", "MCC", "APO")
+# print(metrics)
 
 
 
