@@ -9,8 +9,8 @@ library(mltools)
 #setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Location_Choice/Campus Variables")
 setwd("C:/Users/gonza/Desktop/University/Summer 2020/TMG/GitHub_PORPOS/PORPOS-TMG/R_Logit_Models/Location_Choice/Campus Variables")
 df <- read.csv("../../../Data/SMTO_2015/SMTO_2015_Complete_Input.csv")
-df$School_Codes = as.factor(df$School_Codes)
-mldf = mlogit.data(df, choice="School_Codes", shape="wide", varying = 18:87)
+df$School = as.factor(df$School)
+mldf = mlogit.data(df, choice="School", shape="wide", varying = 18:87)
 mldf$Enrol = ifelse(mldf$Level == "UG", mldf$UG, ifelse(mldf$Level == "Grad", mldf$Grad, mldf$Total))
 
 # ---- Variables ----
@@ -20,8 +20,8 @@ num_metrics = 5L # Accuracy, Macro PRF, MCC
 # ---- Run Model ----
 for (j in 0:0)
 {
-  actuals = subset(df, Segment!=0)$School_Codes
-  model = mlogit(School_Codes ~ Dist + Enrol | 0, data=mldf,
+  actuals = subset(df, Segment!=0)$School
+  model = mlogit(School ~ Dist + Enrol + Dist:Family| 0, data=mldf,
                  weights=mldf$Exp_Segment, reflevel="SG",
                  subset= (mldf$Segment!=0))
   probs = fitted(model, outcome = FALSE)
@@ -42,9 +42,11 @@ campuses = names(as.data.frame(probs))
 cm = matrix(data=NA, nrow = length(campuses), ncol = length(campuses))
 for (i in 1:length(campuses)){
   print(campuses[i])
-  z = probs[which(subset(df, Segment!=0)$School_Codes == campuses[i]),]
+  z = probs[which(subset(df, Segment!=0)$School == campuses[i]),]
   cm[i,] = colSums(z)
 }
+print(cm)
+
 #write.table(cm, row.names=campuses, col.names = campuses)
 
 
