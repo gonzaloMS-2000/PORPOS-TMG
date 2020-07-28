@@ -9,7 +9,8 @@ library(data.table)
 #setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/Location_Choice/Proposed")
 setwd("C:/Users/gonza/Desktop/University/Summer 2020/TMG/GitHub_PORPOS/PORPOS-TMG/R_Logit_Models/Location_Choice/Proposed")
 df <- read.csv("../../../Data/SMTO_2019/SMTO_2019_Complete_Input.csv")
-df = subset(df, Segment!=0)
+df = subset(df, !is.na(df$Family))
+
 
 
 # df$Closest_School = as.numeric(df$Closest_School)
