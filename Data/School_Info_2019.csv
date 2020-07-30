@@ -1,28 +1,28 @@
-Campus,Code,Zone,UG,Grad,Total,Tuition,Domestic_UG,Domestic_Grad,Admission
-Story Arts Centre ,CST,282,,,"1,425",,,,
-Ashtonbee Campus,CAS,526,,,"2,332",,,,
-Progress Campus,CPR,493,,,"11,871",,,,
-Morningside Campus,CMO,564,,,,,,,
-Downsview Campus,CDV,419,,,,,,,
-Eglinton Learning Site,CEG,200,,,19,,,,
-Pickering Learning Site,CPI,1042,,,32,,,,
-Performing Arts Commons at Daniels Spectrum,CDS,18,,,,,,,
-Oshawa Campus,DOS,1179,,,"9,380",,,,
-Whitby Campus,DWH,1148,,,"2,095",,,,
-McMaster Campus,MCM,5198,,,,,,,
-Burlington Campus/Ron Joyce Centre,MCB,4069,,,,,,,
-Fennell Campus (Main Campus),MOF,5142,,,"11,820",,,,
-Stoney Creek Campus ,MOS,5119,,,"1,178",,,,
-Institute for Applied Health Sciences,MOI,5198,,,"1,373",,,,
-Downtown Oshawa Campus,OTD,1208,,,,,,,
-North Oshawa Campus,OTN,1179,,,,,,,
-"Davis Campus, Brampton",SHD,3325,,,"8,708",,,,
-"Hazel McCallion Campus, Mississauga",SHH,3842,,,"4,294",,,,
-"Trafalgar Road Campus, Oakville",SHT,4029,,,"7,353",,,,
-Mississauga Campus,MI,3631,,,,,,,
-Scarborough Campus,SC,566,,,,,,,
-St. George Campus,SG,69,,,,,,,
-Keele Campus,YK,391,,,,,,,
-Glendon Campus,YG,225,,,,,,,
-Ryerson University,RY,38,,,,,,,
-OCAD University,OC,67,,,,,,,
+Campus,Code,Zone,UG,Grad,Total
+Story Arts Centre ,CST,282,,,1425
+Ashtonbee Campus,CAS,526,,,2332
+Progress Campus,CPR,493,,,11871
+Morningside Campus,CMO,564,,,
+Downsview Campus,CDV,419,,,
+Eglinton Learning Site,CEG,200,,,19
+Pickering Learning Site,CPI,1042,,,32
+Performing Arts Commons at Daniels Spectrum,CDS,18,,,
+Oshawa Campus,DOS,1179,,,9380
+Whitby Campus,DWH,1148,,,2095
+McMaster Campus,MCM,5198,,,
+Burlington Campus/Ron Joyce Centre,MCB,4069,,,
+Fennell Campus (Main Campus),MOF,5142,,,11820
+Stoney Creek Campus ,MOS,5119,,,1178
+Institute for Applied Health Sciences,MOI,5198,,,1373
+Downtown Oshawa Campus,OTD,1208,,,
+North Oshawa Campus,OTN,1179,,,
+"Davis Campus, Brampton",SHD,3325,,,8708
+"Hazel McCallion Campus, Mississauga",SHH,3842,,,4294
+"Trafalgar Road Campus, Oakville",SHT,4029,,,7353
+Mississauga Campus,MI,3631,12706,592,13298
+Scarborough Campus,SC,566,11494,276,11770
+St. George Campus,SG,69,39293,14637,53930
+Keele Campus,YK,391,37263,3879,41142
+Glendon Campus,YG,225,2341,116,2457
+Ryerson University,RY,38,26027,2132,28159
+OCAD University,OC,67,3318,173,3491
