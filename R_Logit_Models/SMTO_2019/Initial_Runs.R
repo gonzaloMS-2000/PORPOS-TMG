@@ -20,7 +20,7 @@ mldf = mlogit.data(df, choice="School", shape="wide", varying = c(17:70, 72:98))
 mldf$Closest = as.integer(mldf$Closest & (mldf$Dist <= 2))
 
 # Reference Model
-model1 = mlogit(School ~ Dist + Enrol + Dist:Family | 0, data=mldf, reflevel='SG')
+model1 = mlogit(School ~ Dist + Enrol + Dist:Family | 0, data=mldf)
 summary(model1)[[18]]
 probs = as.data.frame(fitted(model1, outcome=FALSE))
 preds = vector()
@@ -45,3 +45,31 @@ y = confusionMatrix(preds, df$School)
 y[[3]][1]
 mean(fitted(model2))
 summary(model2)[[2]]
+
+
+# ASC Model
+model3 = mlogit(School ~ Dist + Dist:Family, data=mldf, reflevel='SG')
+summary(model3)[[18]]
+probs = as.data.frame(fitted(model3, outcome=FALSE))
+preds = vector()
+for (i in 1:nrow(probs)) preds = c(preds, names(probs)[which.max(probs[i,])])
+preds = as.factor(preds)
+levels(preds) = c(levels(preds), setdiff(levels(df$School), levels(preds)))
+y = confusionMatrix(preds, df$School)
+y[[3]][1]
+mean(fitted(model3))
+summary(model3)[[2]]
+
+
+# ASC Model (Closest <2km)
+model4 = update(model3, School ~ Dist + Dist:Family + Closest)
+summary(model4)[[18]]
+probs = as.data.frame(fitted(model4, outcome=FALSE))
+preds = vector()
+for (i in 1:nrow(probs)) preds = c(preds, names(probs)[which.max(probs[i,])])
+preds = as.factor(preds)
+levels(preds) = c(levels(preds), setdiff(levels(df$School), levels(preds)))
+y = confusionMatrix(preds, df$School)
+y[[3]][1]
+mean(fitted(model4))
+summary(model4)[[2]]
