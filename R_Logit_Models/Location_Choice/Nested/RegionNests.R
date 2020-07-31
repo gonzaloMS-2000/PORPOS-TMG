@@ -22,16 +22,30 @@ model2 = mlogit(School ~ Dist + Total + Family:Dist + IsClosest | 0, data=mldf, 
 summary(model2)[[18]]
 mean(fitted(model2))
 
-# Nested Model (No Closest)
+# Nested Model (Unique, No Closest)
 model3 = mlogit(School ~ Dist + Total + Family:Dist | 0, data=mldf, weights=mldf$Exp_Segment,
-               nests=list(dt = c("SG", "RY", "OC"), other = c("SC", "MI", "YG", "YK")))
+                nests=list(dt = c("SG", "RY", "OC"), other = c("SC", "MI", "YG", "YK")), un.nest.el=TRUE)
 summary(model3)[[18]]
 mean(fitted(model3))
 lrtest(model1, model3)
 
-# Nested Model (Closest)
+# Nested Model (Unique, Closest)
 model4 = mlogit(School ~ Dist + Total + Family:Dist + IsClosest | 0, data=mldf, weights=mldf$Exp_Segment,
-                nests=list(dt = c("SG", "RY", "OC"), other = c("SC", "MI", "YG", "YK")))
+                nests=list(dt = c("SG", "RY", "OC"), other = c("SC", "MI", "YG", "YK")), un.nest.el=TRUE)
 summary(model4)[[18]]
 mean(fitted(model4))
 lrtest(model2, model4)
+
+# Nested Model (No Closest)
+model5 = mlogit(School ~ Dist + Total + Family:Dist | 0, data=mldf, weights=mldf$Exp_Segment,
+               nests=list(dt = c("SG", "RY", "OC"), other = c("SC", "MI", "YG", "YK")))
+summary(model5)[[18]]
+mean(fitted(model5))
+lrtest(model3, model5)
+
+# Nested Model (Closest)
+model6 = mlogit(School ~ Dist + Total + Family:Dist + IsClosest | 0, data=mldf, weights=mldf$Exp_Segment,
+                nests=list(dt = c("SG", "RY", "OC"), other = c("SC", "MI", "YG", "YK")))
+summary(model6)[[18]]
+mean(fitted(model6))
+lrtest(model4, model6)
