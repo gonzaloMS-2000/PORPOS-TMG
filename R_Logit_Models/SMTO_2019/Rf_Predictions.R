@@ -30,7 +30,7 @@ calls = c("School ~ Dist + Enrol + Dist:Family | 0",
           "School ~ Dist + Enrol + Dist:Family + IsCol:Prob.Col + IsUni:Prob.Uni | 0")
 for (call in calls){
   model = mlogit(as.formula(call), data=mldf)
-  cat("Call:", call, "\n")
+  cat("\nCall:", call, "\n")
   print(summary(model)[[18]])
   cat("Log likelihood:", summary(model)[[2]], "\n")
   cat("Softmax Accuracy (APO):", mean(fitted(model)), "\n")
@@ -39,6 +39,6 @@ for (call in calls){
   for (i in 1:nrow(probs)) preds = c(preds, names(probs)[which.max(probs[i,])])
   preds = as.factor(preds)
   levels(preds) = c(levels(preds), setdiff(levels(df$School), levels(preds)))
-  y = confusionMatrix(preds, df$School)
-  cat("Hardmax Accuracy (ACC):", y[[3]][1], "\n\n")
+  y = suppressWarnings(confusionMatrix(preds, df$School))
+  cat("Hardmax Accuracy (ACC):", y[[3]][1], "\n")
 }
