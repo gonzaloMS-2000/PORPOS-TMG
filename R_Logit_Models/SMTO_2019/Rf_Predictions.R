@@ -25,14 +25,15 @@ mldf$IsPredType = ifelse((mldf$IsUni == 1) & (mldf$Pred == "Uni") | (mldf$IsCol 
 
 # Run Models ----
 calls = c("School ~ Dist + Enrol + Dist:Family | 0",
-          "School ~ Dist + Enrol + Dist:Family + IsPredType | 0",
           "School ~ Dist + Enrol + Dist:Family + IsCol:Prob.Col | 0",
+          "School ~ Dist + Enrol + Dist:Family + IsUni:Prob.Uni | 0",
+          "School ~ Dist + Enrol + Dist:Family + IsPredType | 0",
           "School ~ Dist + Enrol + Dist:Family + IsCol:Prob.Col + IsUni:Prob.Uni | 0")
 for (call in calls){
   model = mlogit(as.formula(call), data=mldf)
   cat("\nCall:", call, "\n")
   print(summary(model)[[18]])
-  cat("Log likelihood:", summary(model)[[2]], "\n")
+  cat("Log likelihood:", logLik(model)[[1]], "\n")
   cat("Softmax Accuracy (APO):", mean(fitted(model)), "\n")
   probs = as.data.frame(fitted(model, outcome=FALSE))
   preds = vector()
