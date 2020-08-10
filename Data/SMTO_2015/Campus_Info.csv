@@ -1,8 +1,8 @@
-School,Code,Zone
-Downtown Toronto (St. George),SG,69
-Scarborough (UTSC),SC,566
-Mississauga (UTM),MI,3631
-Keele,YK,391
-Glendon,YG,225
-RyersonU,RY,38
-OCADu,OC,67
+School,Code,Zone,Tuition,Domestic_UG,Domestic_Grad,Admission,Total,UG,Grad
+Downtown Toronto (St. George),SG,69,7519,0.808,0.8369,0.893,53930,39293,14637
+Scarborough (UTSC),SC,566,7813,0.8378,0.8406,0.841,11770,11494,276
+Mississauga (UTM),MI,3631,7670,0.8282,0.6981,0.83,13298,12706,592
+Keele,YK,391,7339,0.8921,0.8077,0.817,41142,37263,3879
+Glendon,YG,225,7339,0.8921,0.8077,0.817,2457,2341,116
+RyersonU,RY,38,7026,0.9673,0.8837,0.84,28159,26027,2132
+OCADu,OC,67,7052,0.8998,0.6786,0.824,3491,3318,173
