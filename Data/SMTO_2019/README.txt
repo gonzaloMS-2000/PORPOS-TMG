@@ -1,4 +1,4 @@
-This folder contains data files for the 2015 SMTO dataset.
+This folder contains data files for the 2019 SMTO dataset.
 
 Original data files (renamed):
 - Households.csv
@@ -10,7 +10,7 @@ Code files:
 
 Created data files:
 - Campus_Info.csv: List of campuses and attributes, zones from Joven's 'MOE-Schools & uni with DA.xlsx'
-	Enrollments from https://cudo.ouac.on.ca/ or https://data.ontario.ca/dataset/college-enrolment if source is indicated as 'Data'
+	Enrollments from https://cudo.ouac.on.ca/ or https://data.ontario.ca/dataset/college-enrolment or https://ontariosuniversities.ca/resources/data/multi-year-data/enrolment if source is indicated as 'Data'
 	If source is ASC, enrollment was predicted using logit model results.
 	If source is Prop, the sampling rate for different campuses were used where breakdowns by campus were unavailable
 - Formatted.csv: Full data file to be used as input for models
