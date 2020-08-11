@@ -15,5 +15,3 @@ Created data files:
 
 TBD:
 - Distances.ipynb
-- TTS_2016_ML_Output.csv
-- TTS_2016_ML_Format.csv

@@ -13,4 +13,3 @@ Created data files:
 
 TBD:
 - RF_Predictions.csv
-- SMTO_2015_ML_Format.csv
