@@ -11,6 +11,9 @@ University of Toronto, Toronto, Ontario, Canada (https://www.utoronto.ca/)
 This repository includes our work on Place of Residence - Place of School modelling for post-secondary students. The work was completed in May - August of 2020.
 Over the course of the summer, we used data from the 2015 and 2019 StudentMoveTO (SMTO) surveys, and 2016 Transportation Tomorrow Survey (TTS).
 
+### Usage
+Subfolders in this repository include `README.txt` text files which contain important information about the files included in that subfolder.
+
 ### Credits
 _Student Researchers:_ Ethan Baron, Gonzalo Martínez Santos  
 _Supervisor:_ Prof. Eric Miller (https://civmin.utoronto.ca/home/about-us/directory/professors/eric-miller/)  
