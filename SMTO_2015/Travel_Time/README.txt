@@ -1,1 +1,0 @@
-This folder contains our results from including travel time in the 2015 SMTO location choice model using mlogit in R.

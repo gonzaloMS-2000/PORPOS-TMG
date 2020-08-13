@@ -6,14 +6,10 @@ We developed an original model using ML.NET's Model Builder tool on Visual Studi
 The selected model was a light gradient-boosting machine. Because of this, we developed a light gradient-boosting machine using Python.
 
 Code files:
-- SMTO_2015_Input.ipynb: Create SMTO_2015_Input.csv
-- TTS_2016_Input.ipynb: Create TTS_2016_Input.csv
 - Train_Model: Train gradient-boosting machine to create model.txt
 - Predictions.ipynb: Predict living arrangement using model and write Predictions.csv
 
 Created data files:
-- SMTO_2015_Input.csv: Formatted for machine learning input
-- TTS_2016_Input.csv: Formatted for machine learning input
 - Predictions.csv: Predictions for filtered TTS data
 
 Other created files:

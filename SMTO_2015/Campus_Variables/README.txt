@@ -1,1 +1,0 @@
-This folder includes our results from experimenting with campus-specific variables using mlogit in R.
