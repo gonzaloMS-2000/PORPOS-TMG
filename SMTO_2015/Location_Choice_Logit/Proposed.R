@@ -1,9 +1,9 @@
 # Imports ----
 library(mlogit)
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/SMTO_2015")
 source("../Metrics.R")
 
 # Load and Format Data ----
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/SMTO_2015")
 df <- read.csv("../Data/SMTO_2015/Formatted.csv")
 df$School = as.factor(df$School)
 actuals = df$School
