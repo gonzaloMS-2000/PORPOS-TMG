@@ -10,7 +10,8 @@ Code files:
 - Single_with_Threshold.ipynb: Here, we use the 2km threshold with the singly-constrained model and look at the results
 
 Result files:
-- Initial_Results: Early results from our first experimentation with the closest dummies. Inspired the threshold analysis.
+- Initial_Results.xlsx: Early results from our first experimentation with the closest dummies. Inspired the threshold analysis.
+- Confusion_Matrices.xlsx: Confusion matrices for "Proposed" vs. "Eric" models
 
 HTML files:
 These are files produced by Biogeme that show the outputs for various threshold models.
