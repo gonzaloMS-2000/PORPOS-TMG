@@ -13,6 +13,7 @@ Over the course of the summer, we used data from the 2015 and 2019 StudentMoveTO
 
 ### Usage
 Subfolders in this repository include `README.txt` text files which contain important information about the files included in that subfolder.
+This folder contains a draft of Ethan's summary report of this project, as well as Metrics.R, a file containing useful functions for R implementation of the logit models.
 
 ### Credits
 _Student Researchers:_ Ethan Baron, Gonzalo Martínez Santos  
