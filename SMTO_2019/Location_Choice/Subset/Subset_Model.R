@@ -1,11 +1,11 @@
 # Imports ----
 library(mlogit)
 library(data.table)
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/SMTO_2019")
-source("../../Metrics.R")
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/SMTO_2019/Location_Choice/Subset")
+source("../../../Metrics.R")
 
 # Load and Format Data ----
-df <- read.csv("../../Data/SMTO_2019/Formatted.csv")
+df <- read.csv("../../../Data/SMTO_2019/Formatted.csv")
 df = subset(df, School %in% c("SG", "SC", "MI", "YK", "YG", "RY", "OC"))
 actuals = df$School = as.factor(droplevels(as.factor(df$School)))
 real_levels = levels(actuals)

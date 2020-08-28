@@ -10,6 +10,4 @@ Code files:
 Created data files:
 - Campus_Info.csv: List of campuses and key attributes, zones from Joven's 'MOE-Schools & uni with DA.xlsx', campus information from https://cudo.ouac.on.ca/
 - Formatted.csv: Full data file to be used as input for models
-
-TBD:
-- RF_Predictions.csv
+- RF_Predictions.csv: Probabilities and predictions produced by the random forest model

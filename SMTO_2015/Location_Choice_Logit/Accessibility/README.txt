@@ -3,9 +3,11 @@ The accessibility model includes a term that is the inclusive value (expected ma
 
 Code files:
 - Accessibility.ipynb (outdated): Our accessibility work in Biogeme, used to create Biogeme_Results.xlsx
-- Accessibility.R: Accessibility results from R
+- Simple_Accessibility.R: Accessibility results with the doubly-constrained gravity model (ASCs)
+- Proposed_Accessibility.R: Accessibility results with the proposed model (enrollment, closest dummies, family:distance)
 
 Results files:
 - Biogeme_Results.xlsx: Segmented results for accessibility model for singly- and doubly-constrained models
+- R_Results.xlsx: Results from Simple_Accessibility.R
 
 The Outdated folder includes older work in R with segmented accessibility models.

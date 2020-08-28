@@ -5,9 +5,8 @@ Some of the notebooks in this folder are old. While they have been re-run with u
 Tabulation notebooks:
 - General_and_Mode_Choice.ipynb
 - Segmentation.ipynb
+- TTS_2016_Choice_Sets.ipynb: Attempting to establish whether certain schools in the subsetted data can be removed from choice sets according to distance or age
 
 Outdated tabulation notebooks:
 - Distance_and_Travel_Time.ipynb
 
-TBD:
-- TTS_2016_Choice_Sets.ipynb

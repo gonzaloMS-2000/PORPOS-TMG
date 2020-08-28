@@ -1,12 +1,12 @@
 # Imports ----
 library(mlogit)
 library(data.table)
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/SMTO_2019")
-source("../../Metrics.R")
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/SMTO_2019/Location_choice/Random_Forest_Predictions")
+source("../../../Metrics.R")
 
 # Load Data ----
-df <- read.csv("../../Data/SMTO_2019/Formatted.csv")
-rf_df = read.csv("../../2019 UniCollege Models/RF_Predictions.csv", row.names=1)
+df <- read.csv("../../../Data/SMTO_2019/Formatted.csv")
+rf_df = read.csv("../../School_Type_Random_Forest/2019_RF_Predictions.csv", row.names=1)
 df = cbind(df, rf_df)
 df$School = as.factor(df$School)
 df$Family = ifelse(df$Family == "True", 1, 0)
@@ -33,7 +33,7 @@ uni_probs = predict(uni_model, newdata=pred_uni_mldf)
 # University Hardmax Metrics ----
 hard_preds = hardmax_preds(uni_probs, colnames(uni_probs))
 hard_cm = get_cm(hard_preds, actuals)
-write.table(print_cm(hard_cm))
+# write.table(print_cm(hard_cm))
 get_prec(hard_cm)
 get_rec(hard_cm)
 get_f1(hard_cm)
@@ -47,7 +47,7 @@ for (i in 1:l){
   if (is.null(nrow(probs))) cm[i,] = probs
   else cm[i,] = colSums(uni_probs[which(actuals == levels(df$School)[i]),])
 }
-write.table(cm, row.names = levels(df$School), col.names = colnames(uni_probs))
+# write.table(cm, row.names = levels(df$School), col.names = colnames(uni_probs))
 
 get_prob = function(s, probs){
   if (s %in% names(probs)) return(probs[as.character(s)])
@@ -84,7 +84,7 @@ col_probs = predict(col_model, newdata=pred_col_mldf)
 # College Hardmax Metrics ----
 hard_preds = hardmax_preds(col_probs, colnames(col_probs))
 hard_cm = get_cm(hard_preds, actuals)
-write.table(print_cm(hard_cm))
+# write.table(print_cm(hard_cm))
 get_prec(hard_cm)
 get_rec(hard_cm)
 get_f1(hard_cm)
@@ -98,7 +98,7 @@ for (i in 1:l){
   if (is.null(nrow(probs))) cm[i,] = probs
   else cm[i,] = colSums(col_probs[which(actuals == levels(df$School)[i]),])
 }
-write.table(cm, row.names = levels(df$School), col.names = colnames(col_probs))
+# write.table(cm, row.names = levels(df$School), col.names = colnames(col_probs))
 
 get_prob = function(s, probs){
   if (s %in% names(probs)) return(probs[as.character(s)])

@@ -14,6 +14,3 @@ Created data files:
 	If source is ASC, enrollment was predicted using logit model results.
 	If source is Prop, the sampling rate for different campuses were used where breakdowns by campus were unavailable
 - Formatted.csv: Full data file to be used as input for models
-
-TBD:
-- CampusZones.csv

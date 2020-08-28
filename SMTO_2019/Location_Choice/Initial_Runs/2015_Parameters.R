@@ -1,76 +1,64 @@
 # Packages ----
 library(mlogit)
-library(data.table)
-library(caret)
-library(e1071)
-library(mltools)
+source("../../../Metrics.R")
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/SMTO_2019/Location_Choice/Initial_Runs")
 
-# Load and Format Data ----
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/SMTO_2019")
-df <- read.csv("../../Data/SMTO_2019/SMTO_2019_Complete_Input.csv")
+# 2015 Model ----
+df <- read.csv("../../../Data/SMTO_2015/Formatted.csv")
 df$School = as.factor(df$School)
-df$Family = ifelse(df$Family == "True", 1, 0)
-mldf = mlogit.data(df, choice="School", shape="wide", varying = c(17:70, 72:98))
-
-# Run Model ----
-model = mlogit(School ~ Dist + Enrol + Dist:Family | 0, data=mldf)
+codes = c("SG", "SC", "MI", "YK", "YG", "RY", "OC")
+for (code in codes) df[[paste0('IsClosest.', code)]] = as.integer((df[[paste0('Dist.', code)]] <= 2) & df[[paste0('Closest.', code)]])
+mldf = mlogit.data(df, choice="School", shape="wide", varying = c(19:95, 100:106))
+model = mlogit(School ~ Dist + log(Total) + Family:Dist + IsClosest | 0, data=mldf)
+summary(model)
 
 # Calculate Utilities ----
 B_Dist = coef(model)[[1]]
 B_Enrol = coef(model)[[2]]
-B_Famdist = coef(model)[[3]]
-mldf$Util = mldf$Dist * (B_Dist + mldf$Family * B_Famdist) + mldf$Enrol * B_Enrol
+B_Closest = coef(model)[[3]]
+B_Famdist = coef(model)[[4]]
+mldf$Util = mldf$Dist * (B_Dist + mldf$Family * B_Famdist) + log(mldf$Total) * B_Enrol + B_Closest * mldf$IsClosest 
 
-# Generate Logsums ----
+# Ensure Logsums Calculated Correctly ----
 logsums = vector(length = nrow(df))
-for (i in 0:(nrow(df) -1)){
-  start = i * 27 + 1
-  end = (i + 1) * 27
-  logsums[i+1] = log(sum(exp(mldf$Util[start:end])))
+for (i in 1:nrow(df)){
+  start = i * 7 - 6
+  end = i * 7
+  logsums[i] = log(sum(exp(mldf$Util[start:end])))
 } 
 x = logsum(model)
 max(abs(logsums - x))
 
-# Probabilities ----
-probs_from_utils = matrix(NA, nrow(df), 27)
-for (i in 0:(nrow(df) -1)){
-  start = i * 27 + 1
-  end = (i + 1) * 27
-  probs_from_utils[i + 1, ] = exp(mldf$Util[start:end]) / exp(x[i + 1])
-} 
-z = fitted(model, outcome=FALSE)
-max(abs(probs_from_utils - z))
+# 2019 Data ----
+df <- read.csv("../../../Data/SMTO_2019/Formatted.csv")
+actuals = df$School = as.factor(df$School)
+real_levels = levels(actuals)
+df$FamilyTrue = ifelse(df$Family == "True", 1, 0)
+mldf = mlogit.data(df, choice="School", shape="wide", varying = c(18:71, 73:99))
+mldf$Closest = as.integer(mldf$Closest & (mldf$Dist <= 2))
 
-# Calculate Utilities ----
-B_Dist = -0.1371
-B_Enrol = 1.0063
-B_Famdist = 0.0662
-mldf$Util_2015 = mldf$Dist * (B_Dist + mldf$Family * B_Famdist) + mldf$Enrol * B_Enrol
+# Calculate Utilities and Probabilities ----
+mldf$Util = mldf$Dist * (B_Dist + mldf$FamilyTrue * B_Famdist) + log(mldf$Enrol) * B_Enrol + B_Closest * mldf$Closest 
+probs = matrix(NA, nrow(df), 27)
+for (i in 1:nrow(df)){
+  start = i * 27 - 26
+  end = i * 27
+  probs[i, ] = exp(mldf$Util[start:end]) / sum(exp(mldf$Util[start:end]))
+}
+probs = as.data.frame(probs)
+names(probs) = levels(df$School)
 
-# Generate Logsums ----
-logsums_2015 = vector(length = nrow(df))
-for (i in 0:(nrow(df) -1)){
-  start = i * 27 + 1
-  end = (i + 1) * 27
-  logsums_2015[i+1] = log(sum(exp(mldf$Util_2015[start:end])))
-} 
-
-# Probabilities ----
-probs_from_utils_2015 = matrix(NA, nrow(df), 27)
-for (i in 0:(nrow(df) -1)){
-  start = i * 27 + 1
-  end = (i + 1) * 27
-  probs_from_utils_2015[i + 1, ] = exp(mldf$Util_2015[start:end]) / exp(x[i + 1])
-} 
-probs_from_utils_2015 = as.data.frame(probs_from_utils_2015)
-
-campus_names = names(as.data.frame(fitted(model, outcome=FALSE)))
-preds = vector()
-for (i in 1:nrow(probs_from_utils_2015)) preds = c(preds, campus_names[which.max(probs_from_utils_2015[i,])])
-preds = as.factor(preds)
-levels(preds) = c(levels(preds), setdiff(levels(df$School), levels(preds)))
-y = suppressWarnings(confusionMatrix(preds, df$School))
-cat("Hardmax Accuracy (ACC):", y[[3]][1], "\n")
+# Metrics ----
+hard_preds = hardmax_preds(probs, real_levels)
+hard_cm = get_cm(hard_preds, actuals)
+cm = softmax_cm(probs, actuals, real_levels)
+sum(diag(cm))/sum(cm)
+obs_probs = matrix(nrow(df))
+for (i in 1:nrow(df)){
+  obs_probs[i] = probs[df$School[i]][i,]
+}
+mean(obs_probs)
+sum(log(obs_probs))
 
 # Notes ----
 # For logsums: logsum(coefs or model[[1]], X=model.matrix(model, mldf), formula=formula)

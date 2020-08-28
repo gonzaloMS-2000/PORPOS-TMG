@@ -6,6 +6,4 @@ Tabulation notebooks:
 - General_Tabulation.ipynb
 
 Outdated tabulation notebooks:
-- Mode_Choice.ipynb
-- Commute_Times.ipynb
 - Tabulation_and_Segmentation.ipynb

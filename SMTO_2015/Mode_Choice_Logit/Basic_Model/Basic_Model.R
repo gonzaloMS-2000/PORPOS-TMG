@@ -1,47 +1,33 @@
+# Install packages ----
 library(mlogit)
 library(data.table)
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/SMTO_2015/Mode_Choice/Basic_Model")
+source("../../../Metrics.R")
 
-# Read ModeChoice_input.csv
-df <- read.csv("C:/Users/gonza/Desktop/ModeChoice_Input.csv")
-df$Mode = as.factor(df$Mode)
-str(df)
+# Load Data ----
+df = read.csv("../../../Data/SMTO_2015/Formatted.csv")
+df = df[!(df$Time.Auto > 1000),]
+df = df[!(df$Mode == "Other"),]
+actuals = df$Mode = as.factor(df$Mode)
+real_levels = levels(actuals)
 
-dim(df)
+# Mode Choice Data ----
+df = df[c('Mode', 'Time.Auto', 'Time.Transit', 'Time.Active')]
+mldf = mlogit.data(df, varying = 2:4, choice = "Mode", shape = "wide")
 
-# # # Plot original densities
-d <- density(df_mode$Time.Auto)
-plot(d, main="Density of Transit Times")
-polygon(d, col="red", border="blue")
-
-df_mode <- df[!(df$Time.Active > 600),]
-df_mode <- df_mode[!(df_mode$Time.Transit > 200),]
-df_mode <- df_mode[!(df_mode$Time.Auto > 150),]
-
-# Transform dataframe from wide to long
-mldf = mlogit.data(df_mode, varying = 2:4, choice = "Mode", shape = "wide")
-head(mldf)
-
-# Run MNL model
-model = mlogit(Mode ~ 0|1|Time, data = mldf, reflevel = "Auto")
+# Mode Choice Model ----
+model = mlogit(Mode ~ 0 | 1 | Time, data=mldf, reflevel="Transit")
 summary(model)
-x = summary(model)
 
-# Write results to .csv file:
-coefs_and_stats = array(numeric(), c(8,4))
-x = summary(model)
-for (i in 1:5)
-{
-  coefs_and_stats[i,1] = x[[18]][[i]]
-  coefs_and_stats[i,2] = x[[18]][[i+15]]
-  coefs_and_stats[i,3] = x[[18]][[i+10]]
-  coefs_and_stats[i,4] = x[[18]][[i+5]]
-}
-
-coefs_and_stats[7,1] = x[[2]][[1]]
-coefs_and_stats[8,1] = x[[20]][[1]]
-
-
-d = as.data.frame(coefs_and_stats)
-setnames(d, old = c('V1','V2', 'V3', 'V4'), new = c("Estimate","p-value","z-value","Std. Error"))
-write.csv(d, "ModeChoice_noCost_output.csv", row.names = c(
-  "ASC_Active", "ASC_Transit", "B_Auto", "B_Active", "B_Transit", "","LOG_LHOOD", "MCF_R^2"))
+# Metrics ----
+probs = fitted(model, outcome=FALSE)
+hard_preds = hardmax_preds(probs, real_levels)
+hard_cm = get_cm(hard_preds, actuals)
+print_cm(hard_cm)
+softmax_cm(probs, actuals, real_levels)
+get_prec(hard_cm)
+get_rec(hard_cm)
+get_f1(hard_cm)
+get_accuracy(hard_cm)
+get_softmax_accuracy(model)
+get_log_lik(model)

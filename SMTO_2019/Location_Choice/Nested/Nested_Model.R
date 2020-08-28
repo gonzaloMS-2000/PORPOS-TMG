@@ -1,51 +1,43 @@
 # Packages ----
 library(mlogit)
 library(data.table)
+source('../../../Metrics.R')
 
 # Load and Format Data ----
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/SMTO_2019")
-df <- read.csv("../../Data/SMTO_2019/SMTO_2019_Complete_Input.csv")
-df$Liv_Arr = as.factor(df$Liv_Arr)
-df$School = as.factor(df$School)
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/SMTO_2019/Location_Choice/Nested")
+df <- read.csv("../../../Data/SMTO_2019/Formatted.csv")
+actuals = df$School = as.factor(df$School)
 df$School_Type = as.factor(df$School_Type)
-df$Work = as.factor(df$Work)
-df$Licence = as.logical.factor(df$Liv_Arr)
-df$Family = ifelse(df$Family, 1, 0)
+df$Family = ifelse(df$Family == "True", 1, 0)
 unis = levels(droplevels(subset(df, School_Type == 'University')$School))
 cols = setdiff(levels(df$School), unis)
-mldf = mlogit.data(df, choice="School", shape="wide", varying = 17:70)
+mldf = mlogit.data(df, choice="School", shape="wide", varying = c(18:71, 73:99))
+mldf$Closest = as.integer(mldf$Closest == 1 & mldf$Dist <= 2)
 
 # Reference (Unnested) Model
-model = mlogit(School ~ Dist + Enrol + Dist:Family | 0, data=mldf, reflevel='SG')
-coef(model)
+model = mlogit(School ~ Dist + log(Enrol) + Dist:Family + Closest | 0, data=mldf)
+summary(model)
+hard_preds = hardmax_preds(fitted(model, outcome=FALSE), levels(actuals))
+hard_cm = get_cm(hard_preds, actuals)
+get_accuracy(hard_cm)
 mean(fitted(model))
-probs = fitted(model, outcome=FALSE)
+get_log_lik(model)
 
 # Nested Model - Unique Elasticities
-one_iv = mlogit(School ~ Dist + Enrol + Dist:Family | 0, data=mldf, reflevel='SG', nests=list(uni=unis, col=cols), un.nest.el=TRUE)
-coef(one_iv)
+one_iv = mlogit(School ~ Dist + log(Enrol) + Dist:Family + Closest | 0, data=mldf,
+                nests=list(uni=unis, col=cols), un.nest.el=TRUE)
+summary(one_iv)
+hard_preds = hardmax_preds(fitted(one_iv, outcome=FALSE), levels(actuals))
+hard_cm = get_cm(hard_preds, actuals)
+get_accuracy(hard_cm)
 mean(fitted(one_iv))
-lrtest(model, one_iv)
+get_log_lik(one_iv)
 
 # Nested Model
 nest_model = update(one_iv, un.nest.el=FALSE)
-coef(nest_model)
+summary(nest_model)
+hard_preds = hardmax_preds(fitted(nest_model, outcome=FALSE), levels(actuals))
+hard_cm = get_cm(hard_preds, actuals)
+get_accuracy(hard_cm)
 mean(fitted(nest_model))
-lrtest(one_iv, nest_model)
-
-iv = coef(nest_model)['iv:uni'] # 1 - iv is correlation in unobserved factors within nest
-var = vcov(nest_model)['iv:uni', 'iv:uni']
-(iv - 1) / sqrt(var) # t-test that iv = 1
-iv = coef(nest_model)['iv:col'] # 1 - iv is correlation in unobserved factors within nest
-var = vcov(nest_model)['iv:col', 'iv:col']
-(iv - 1) / sqrt(var) # t-test that iv = 1
-
-# codes = names(as.data.frame(probs))
-# num_campuses = length(codes)
-# cm = matrix(NA, nrow = num_campuses, ncol = num_campuses)
-# for (i in 1:num_campuses){
-#   cm[i, 1:num_campuses] = colSums(probs[which(df$School == codes[i]), ])
-# }
-# apo = sum(diag(cm)) / sum(cm)
-
-
+get_log_lik(nest_model)

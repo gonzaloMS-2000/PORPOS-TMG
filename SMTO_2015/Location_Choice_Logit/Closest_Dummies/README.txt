@@ -8,12 +8,12 @@ In both cases the log of enrollment is included.
 Code files:
 - Threshold_Analysis.ipynb: In this documented notebook we experiment with various thresholds and determine that the ideal one is 2km
 - Single_with_Threshold.ipynb: Here, we use the 2km threshold with the singly-constrained model and look at the results
+- Thresholds_by_Segment.R: We test different thresholds when applied to the sample, segmented by living arrangement
 
 Result files:
 - Initial_Results.xlsx: Early results from our first experimentation with the closest dummies. Inspired the threshold analysis.
 - Confusion_Matrices.xlsx: Confusion matrices for "Proposed" vs. "Eric" models
-
-HTML files:
-These are files produced by Biogeme that show the outputs for various threshold models.
-The files were created with the code files listed above.
-
+- Thresholds_by_Segment.xlsx: Results from Thresholds_by_Segment.R
+- Eric_Closest_7_T=2.0.html: File produced by Biogeme with output for "Eric" model with 2km threshold
+- Prop_Closest_7_T=2.0.html: File produced by Biogeme with output for "Proposed" model with 2km threshold
+- Singly_Constrained_2km.html: File produced by Biogeme with output for selected threshold model

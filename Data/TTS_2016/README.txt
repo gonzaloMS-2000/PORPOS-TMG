@@ -12,6 +12,3 @@ Created data files:
 - Filtered.csv: Data after filtering out high school students and non-commuters
 - Subsetted.csv: Data with only school codes known to be universities/colleges
 - SubsetSchoolCodes.csv: Codes and information for known universities/colleges
-
-TBD:
-- Distances.ipynb

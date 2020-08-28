@@ -1,11 +1,11 @@
 # Imports ----
 library(mlogit)
 library(data.table)
-setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/R_Logit_Models/SMTO_Combined")
-source("../../Metrics.R")
+setwd("C:/Users/ethan/Documents/Ethan/TMG/Research/PORPOS-TMG/SMTO_Combined")
+source("../Metrics.R")
 
 # Load and Format Data ----
-df <- read.csv("../../Data/SMTO_Combined/Formatted.csv")
+df <- read.csv("../Data/SMTO_Combined/Formatted.csv")
 df = subset(df, School %in% c("SG", "SC", "MI", "YK", "YG", "RY", "OC"))
 actuals = df$School = as.factor(droplevels(as.factor(df$School)))
 real_levels = levels(actuals)
@@ -16,7 +16,7 @@ mldf = mlogit.data(df, choice="School", shape="wide", varying=4:24)
 mldf$Closest = as.integer((mldf$Closest == 'True') & (mldf$Dist <= 2))
 
 # Reference Model
-ref = mlogit(School ~ Dist + log(Enrol) + Closest | 0, data=mldf)
+ref = mlogit(School ~ Dist + log(Enrol) + Closest + Dist:Family | 0, data=mldf)
 summary(ref)
 probs = get_probs(ref)
 hard_preds = hardmax_preds(probs, real_levels)
