@@ -8,4 +8,4 @@ Created data files:
 - Testing.csv
 
 Results files:
-- Proposed_Results.xlsx: Feature iomportances, performance metrics, and confusion matrices for testing data
+- Proposed_Results.xlsx: Feature importances, performance metrics, and confusion matrices for testing data
