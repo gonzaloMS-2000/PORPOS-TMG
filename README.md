@@ -12,8 +12,9 @@ This repository includes our work on Place of Residence - Place of School modell
 Over the course of the summer, we used data from the 2015 and 2019 StudentMoveTO (SMTO) surveys, and 2016 Transportation Tomorrow Survey (TTS).
 
 ### Usage
+For the TMG technical report put together see https://tmg.utoronto.ca/files/Place%20of%20School_Loctation_Choice%20Modelling.pdf or "Place of School Location Choice Modelling.pdf".
 Subfolders in this repository include `README.txt` text files which contain important information about the files included in that subfolder.
-This folder contains a draft of Ethan's summary report of this project, as well as Metrics.R, a file containing useful functions for R implementation of the logit models.
+This folder contains a draft of Ethan's summary report of this project, "Summary_Report.docx", as well as "Metrics.R", a file containing useful functions for R implementation of the logit models.
 
 ### Credits
 _Student Researchers:_ Ethan Baron, Gonzalo Martínez Santos  
