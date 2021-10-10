@@ -1,5 +1,7 @@
 # PORPOS-TMG
-Place of Residence - Place of School Model for Post-Secondary Students in the GTHA
+In this project, we investigate post-secondary school location choices of students in the Greater Toronto and Hamilton Area (GTHA) for travel demand modelling applications.
+
+Our paper titled "Modelling GTHA Post-Secondary School Location Choice" was presented by Ethan Baron at the 2021 Transportation Association of Canada (TAC) Conference & Exhibition (see https://www.tac-atc.ca/en/conference/papers/modelling-gtha-post-secondary-school-location-choice).
 
 ### Project Details
 Travel Modelling Group (https://tmg.utoronto.ca/)  
