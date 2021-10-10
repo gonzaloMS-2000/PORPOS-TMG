@@ -1,4 +1,4 @@
-# PORPOS-TMG
+# Modelling GTHA Post-Secondary School Location Choice
 In this project, we investigate post-secondary school location choices of students in the Greater Toronto and Hamilton Area (GTHA) for travel demand modelling applications.
 
 Our paper titled "Modelling GTHA Post-Secondary School Location Choice" was presented by Ethan Baron at the 2021 Transportation Association of Canada (TAC) Conference & Exhibition (see https://www.tac-atc.ca/en/conference/papers/modelling-gtha-post-secondary-school-location-choice).
